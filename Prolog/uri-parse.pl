@@ -1,10 +1,10 @@
 % uri_parse/2
 
-uri_parse(URIString, uri(Schema, Authority, RestPath)) :-
+uri_parse(URIString, uri(Schema, UserInfo, Host, RestPath)) :-
     string(URIString),
     string_chars(URIString, Chars),
     uri_schema(Chars, SchemaList, RestAuthority),
-    uri_authority(RestAuthority, Authority, RestPath),
+    uri_authority(RestAuthority, uri_auth(UserInfo, Host), RestPath),
     string_chars(Schema, SchemaList).
 
 % uri_schema/3
