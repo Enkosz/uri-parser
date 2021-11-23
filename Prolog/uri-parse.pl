@@ -27,9 +27,9 @@ uri_schema([X | Xs], [X | Ys],  Rest) :-
 
 % authority type: userinfo@domain
 uri_authority(['/', '/' | Host], ParsedAuth, Rest) :-
-    parse_host(Host, ParsedHost, Rest),
-    uri_userinfo(ParsedHost, ParsedInfo, Domain),
-    ParsedAuth = uri_auth(ParsedInfo, Domain),
+    uri_userinfo(Host, ParsedInfo, Domain),
+    parse_host(Domain, ParsedHost, Rest),
+    ParsedAuth = uri_auth(ParsedInfo, ParsedHost),
     !.
 
 % authority type: domain
@@ -38,11 +38,18 @@ uri_authority(['/', '/' | Host], ParsedAuth, Rest) :-
     ParsedAuth = uri_auth(_, ParsedHost),
     !.
 
-parse_host([], [], _) :- !. % nel caso finisse qui URI
+parse_host([], [], []) :- !. % nel caso finisse qui URI
 parse_host(['/' | Rest], [], Rest) :- !.
+parse_host(['.' | Rest], ['.' | ParsedSubHost], PathRest) :- parse_subhost(Rest, ParsedSubHost, PathRest).
 parse_host([X | Xs], [X | Ys],  Rest) :-
     invalid_char_host(X),
     parse_host(Xs, Ys, Rest).
+
+parse_subhost([], [], _) :- !. % nel caso finisse qui URI
+parse_subhost(['/' | Rest], [], Rest) :- !.
+parse_subhost([X | Xs], [X | Ys], Rest) :-
+    invalid_char_host(X),
+    parse_subhost(Xs, Ys, Rest).
 
 % uri_userinfo/3
 uri_userinfo(['@' | Rest], [], Rest) :- !.
