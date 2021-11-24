@@ -94,12 +94,18 @@ path_aux([]) --> [/], !.
 path_aux([]) --> [].
     
 ip(Ip) --> 
-    triplets(A), ['.'], triplets(B), ['.'], triplets(C), ['.'], triplets(D), 
+    triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 triplets(X) --> 
     digit(A), digit(B), digit(C),
-    { X = [A, B, C] }.
+    {
+        X = [A, B, C],
+        string_chars(Str, X),
+        number_string(Num, Str),
+        between(0, 255, Num)
+    }.
+
 
 digit(X) --> [X], { is_digit(X) }.
 
