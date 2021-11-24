@@ -73,15 +73,25 @@ port(port(Port)) -->
 port(port([])) --> [].
 
 path(path(Path)) -->
+    path_aux(PathList),
+    {flatten(PathList, FlattenPath)},
+    {string_chars(Path, FlattenPath)}.
+
+% path_aux//
+% Parse the path starting with /
+path_aux(PathList) -->
     [/],
     identificator(A),
-    path(B),
-    {flatten([A, [B | [/]]], Path)},
+    path_aux(B),
+    {PathList = [[/ | A], B]},
     !.
-path(path(Path)) -->
-    identificator(PathList),
-    {string_chars(Path, PathList)}.
-path([]) --> [].
+path_aux(PathList) -->
+    [/],
+    identificator(A),
+    {PathList = [/ | A]},
+    !.
+path_aux([]) --> [/], !.
+path_aux([]) --> [].
     
 ip(Ip) --> 
     triplets(A), ['.'], triplets(B), ['.'], triplets(C), ['.'], triplets(D), 
