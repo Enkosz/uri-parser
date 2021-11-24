@@ -4,24 +4,24 @@
 
 :- set_prolog_flag(double_quotes, chars).
 
-uri_parse(URIString, URI) :-
-    phrase(uri(URI), URIString).
+uri_parse_(URIString, uri(Scheme, Authority, Path)) :-
+    phrase(uri(uristructure(Scheme, Authority, Path)), URIString).
 
-uri(X) -->
-    scheme(A),
-    authority(B),
-    {X = [A, B]}.
+uri(uristructure(Scheme, Authority, Path)) -->
+    scheme(Scheme),
+    authority(Authority),
+    path(Path).
 
-authority(X) -->
+authority(uri_authority(UserInfo, Host, Port)) -->
     [/, /],
-    userInfo(A),
-    host_aux(B),
-    port(C),
-    {X = [A, B, C]}.
+    user_info(UserInfo),
+    host_aux(Host),
+    port(Port).
 
-scheme(X) --> 
-    identificator(X),
-    [:].
+scheme(uri_scheme(Scheme)) --> 
+    identificator(SchemeList),
+    [:],
+    { string_chars(Scheme, SchemeList) }.
 
 identificator([H | T]) -->
     [H],
@@ -30,27 +30,30 @@ identificator([H | T]) -->
     !.
 identificator([X | []]) --> [X], { valid_char(X) }.
 
-userInfo(X) -->
-    identificator(X),
+user_info(user_info(UserInfo)) -->
+    identificator(UserInfoList),
     [@],
+    { string_chars(UserInfo, UserInfoList) },
     !.
-userInfo([]) --> [].
+user_info(user_info([])) --> [].
 
-host_aux(X) -->
-    ip(X),
+host_aux(host(Ip)) -->
+    ip(IpList),
+    { string_chars(Ip, IpList) },
     !.
-host_aux(X) -->
-    host(X),
+host_aux(host(Host)) -->
+    host(HostList),
+    { string_chars(Host, HostList) },
     !.
 
 host(X) -->
-    identificator(A),
+    identificator_host(A),
     [.],
     host(B),
-    {X = [A, B]},
+    {flatten([[A | [.]], B], X)},
     !.
 host(X) -->
-    identificator(X).
+    identificator_host(X).
 
 valid_char(X) :-
     char_type(X, alpha).
@@ -62,15 +65,27 @@ identificator_host([H | T]) -->
     !.
 identificator_host([X | []]) --> [X], { valid_char(X), X \= '.'}.
 
-port(X) -->
+port(port(Port)) -->
     [:],
-    digits(X),
+    digits(PortList),
+    {string_chars(Port, PortList)},
     !.
-port([]) --> [].
+port(port([])) --> [].
+
+path(path(Path)) -->
+    [/],
+    identificator(A),
+    path(B),
+    {flatten([A, [B | [/]]], Path)},
+    !.
+path(path(Path)) -->
+    identificator(PathList),
+    {string_chars(Path, PathList)}.
+path([]) --> [].
     
-ip(X) --> 
+ip(Ip) --> 
     triplets(A), ['.'], triplets(B), ['.'], triplets(C), ['.'], triplets(D), 
-    { X = [A, '.', B, '.', C, '.', D] }.
+    { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 triplets(X) --> 
     digit(A), digit(B), digit(C),
