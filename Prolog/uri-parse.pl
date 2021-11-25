@@ -17,11 +17,17 @@ uri(uristructure(Scheme, Authority, Path, Query, Fragment)) -->
     fragment(Fragment),
     !.
 
+% "news" ‘:’ host 
+uri(uristructure(Scheme, uri_authority("", Host, ""), "", "", "")) -->
+    scheme(Scheme),
+    host_aux(Host),
+    {string_chars(NewsString, "news"), Scheme = uri_scheme(NewsString)},
+    !.
+
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
-% caso non funzionante: 
 uri(uristructure(Scheme, "", Path, Query, Fragment)) -->
     scheme(Scheme),
-    path(Path), % questa cosa non funziona ancora per via della sintassi qui sopra
+    path(Path),
     query(Query),
     fragment(Fragment),
     !.
