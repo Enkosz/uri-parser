@@ -4,13 +4,16 @@
 
 :- set_prolog_flag(double_quotes, chars).
 
-uri_parse_(URIString, uri(Scheme, Authority, Path)) :-
-    phrase(uri(uristructure(Scheme, Authority, Path)), URIString).
+uri_parse_(URIString, uri(URI)) :-
+    phrase(uri(URI), URIString).
 
-uri(uristructure(Scheme, Authority, Path)) -->
+uri(uristructure(Scheme, Authority, Path, Query, Fragment)) -->
     scheme(Scheme),
     authority(Authority),
-    path(Path).
+    path(Path),
+    query(Query),
+    fragment(Fragment),
+    !.
 
 authority(uri_authority(UserInfo, Host, Port)) -->
     [/, /],
@@ -71,6 +74,28 @@ port(port(Port)) -->
     {string_chars(Port, PortList)},
     !.
 port(port([])) --> [].
+
+fragment(fragment(Fragment)) -->
+    fragment_aux(FragmentList),
+    {flatten(FragmentList, FlattenFragment)},
+    {string_chars(Fragment, FlattenFragment)}.
+
+fragment_aux(FragmentList) -->
+    [#],
+    identificator(FragmentList),
+    !.
+fragment_aux([]) --> [].
+
+query(query(Query)) -->
+    query_aux(QueryList),
+    {flatten(QueryList, FlattenQuery)},
+    {string_chars(Query, FlattenQuery)}.
+
+query_aux(QueryList) -->
+    [?],
+    identificator(QueryList),
+    !.
+query_aux([]) --> [].
 
 path(path(Path)) -->
     path_aux(PathList),
