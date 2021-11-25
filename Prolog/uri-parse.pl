@@ -6,6 +6,9 @@
 
 :- set_prolog_flag(double_quotes, chars).
 
+uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
+    uri_parse_(URIString, uri(uristructure(uri_scheme(Scheme), uri_authority(UserInfo, Host, Port), port(Port), path(Path), query(Query), fragment(Fragment)))).
+
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
@@ -22,6 +25,14 @@ uri(uristructure(Scheme, uri_authority("", Host, ""), "", "", "")) -->
     scheme(Scheme),
     host_aux(Host),
     {string_chars(NewsString, "news"), Scheme = uri_scheme(NewsString)},
+    !.
+
+% "mailto" ‘:’ userinfo ['@'' host] 
+uri(uristructure(Scheme, uri_authority(UserInfo, Host, ""), "", "", "")) -->
+    scheme(Scheme),
+    user_info(UserInfo),
+    host_aux(Host),
+    {string_chars(MailtoString, "mailto"), Scheme = uri_scheme(MailtoString)},
     !.
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
