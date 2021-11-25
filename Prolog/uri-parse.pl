@@ -6,13 +6,25 @@
 
 :- set_prolog_flag(double_quotes, chars).
 
-uri_parse_(URIString, uri(Scheme, Authority, Path)) :-
-    phrase(uri(uristructure(Scheme, Authority, Path)), URIString).
+uri_parse_(URIString, uri(URI)) :-
+    phrase(uri(URI), URIString).
 
-uri(uristructure(Scheme, Authority, Path)) -->
+uri(uristructure(Scheme, Authority, Path, Query, Fragment)) -->
     scheme(Scheme),
     authority(Authority),
-    path(Path).
+    path(Path),
+    query(Query),
+    fragment(Fragment),
+    !.
+
+% scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
+% caso non funzionante: 
+uri(uristructure(Scheme, Path, Query, Fragment)) -->
+    scheme(Scheme),
+    path(Path), % questa cosa non funziona ancora per via della sintassi qui sopra
+    query(Query),
+    fragment(Fragment),
+    !.
 
 authority(uri_authority(UserInfo, Host, Port)) -->
     [/, /],
@@ -74,6 +86,28 @@ port(port(Port)) -->
     !.
 port(port([])) --> [].
 
+fragment(fragment(Fragment)) -->
+    fragment_aux(FragmentList),
+    {flatten(FragmentList, FlattenFragment)},
+    {string_chars(Fragment, FlattenFragment)}.
+
+fragment_aux(FragmentList) -->
+    [#],
+    identificator(FragmentList),
+    !.
+fragment_aux([]) --> [].
+
+query(query(Query)) -->
+    query_aux(QueryList),
+    {flatten(QueryList, FlattenQuery)},
+    {string_chars(Query, FlattenQuery)}.
+
+query_aux(QueryList) -->
+    [?],
+    identificator(QueryList),
+    !.
+query_aux([]) --> [].
+
 path(path(Path)) -->
     path_aux(PathList),
     {flatten(PathList, FlattenPath)},
@@ -96,12 +130,18 @@ path_aux([]) --> [/], !.
 path_aux([]) --> [].
     
 ip(Ip) --> 
-    triplets(A), ['.'], triplets(B), ['.'], triplets(C), ['.'], triplets(D), 
+    triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 triplets(X) --> 
     digit(A), digit(B), digit(C),
-    { X = [A, B, C] }.
+    {
+        X = [A, B, C],
+        string_chars(Str, X),
+        number_string(Num, Str),
+        between(0, 255, Num)
+    }.
+
 
 digit(X) --> [X], { is_digit(X) }.
 
