@@ -34,7 +34,7 @@ uri(components(Scheme, authority(userinfo(''), Host, port('')), path(''), query(
     {string_chars(NewsString, "news"), Scheme = scheme(NewsString)},
     !.
 
-% "mailto" ‘:’ userinfo ['@'' host] 
+% "mailto" ‘:’ userinfo ['@' host] 
 uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
@@ -57,19 +57,19 @@ uri_authority(authority(UserInfo, Host, Port)) -->
     uri_port(Port).
 
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList),
+    identificator(SchemeList, "/?#@:"),
     [:],
     { string_chars(Scheme, SchemeList) }.
 
-identificator([H | T]) -->
+identificator([H | T], List) -->
     [H],
-    { valid_char(H) },
-    identificator(T),
+    { valid_char(H, List) },
+    identificator(T, List),
     !.
-identificator([X | []]) --> [X], { valid_char(X) }.
+identificator([X | []], List) --> [X], { valid_char(X, List) }.
 
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList),
+    identificator(UserInfoList, "/?#@:"),
     [@],
     { string_chars(UserInfo, UserInfoList) },
     !.
@@ -85,23 +85,23 @@ uri_host_aux(host(Host)) -->
     !.
 
 uri_host(X) -->
-    identificator_host(A),
+    identificator(A, "./?#@:"),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 uri_host(X) -->
-    identificator_host(X).
+    identificator(X, "./?#@:").
 
-valid_char(X) :-
-    char_type(X, alpha).
+valid_char(X, List) :-
+    char_type(X, ascii),
+    not(char_type(X, space)),
+    valid_char_aux(X, List).
 
-identificator_host([H | T]) -->
-    [H],
-    { valid_char(H), H \= '.'},
-    identificator_host(T),
-    !.
-identificator_host([X | []]) --> [X], { valid_char(X), X \= '.'}.
+valid_char_aux(_, []) :- !.
+valid_char_aux(X, [Invalid_char | Rest]) :-
+    X \= Invalid_char,
+    valid_char_aux(X, Rest).
 
 uri_port(port(Port)) -->
     [:],
@@ -117,7 +117,7 @@ uri_fragment(fragment(Fragment)) -->
 
 uri_fragment_aux(FragmentList) -->
     [#],
-    identificator(FragmentList),
+    identificator(FragmentList, ""),
     !.
 uri_fragment_aux([]) --> [].
 
@@ -128,7 +128,7 @@ uri_query(query(Query)) -->
 
 uri_query_aux(QueryList) -->
     [?],
-    identificator(QueryList),
+    identificator(QueryList, "#"),
     !.
 uri_query_aux([]) --> [].
 
@@ -141,19 +141,22 @@ uri_path(path(Path)) -->
 % Parse the path starting with /
 uri_path_aux(PathList) -->
     [/],
-    identificator(A),
+    identificator(A, "/?#@:"),
     uri_path_aux(B),
     {PathList = [[/ | A], B]},
     !.
 uri_path_aux(PathList) -->
     [/],
-    identificator(A),
+    identificator(A, "/?#@:"),
     {PathList = [/ | A]},
     !.
 % special method to parse the second type of URI
 % scheme : path
+% qui si rompe, Esempio:
+% uri_parse("scheme://user@host:1ab23/path?queri#frag", X). 
+% possibile soluzione: nome regola diversa per il secondo caso
 uri_path_aux(PathList) -->
-    identificator(A),
+    identificator(A, "/?#@:"),
     uri_path_aux(B),
     {PathList = [[/ | A], B]},
     !.
