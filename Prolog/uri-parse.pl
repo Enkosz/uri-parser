@@ -15,6 +15,15 @@ uri(uristructure(Scheme, Authority, Path, Query, Fragment)) -->
     fragment(Fragment),
     !.
 
+% scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
+% caso non funzionante: 
+uri(uristructure(Scheme, Path, Query, Fragment)) -->
+    scheme(Scheme),
+    path(Path), % questa cosa non funziona ancora per via della sintassi qui sopra
+    query(Query),
+    fragment(Fragment),
+    !.
+
 authority(uri_authority(UserInfo, Host, Port)) -->
     [/, /],
     user_info(UserInfo),
