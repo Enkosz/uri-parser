@@ -19,7 +19,7 @@ uri(uristructure(Scheme, Authority, Path, Query, Fragment)) -->
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
 % caso non funzionante: 
-uri(uristructure(Scheme, Path, Query, Fragment)) -->
+uri(uristructure(Scheme, "", Path, Query, Fragment)) -->
     scheme(Scheme),
     path(Path), % questa cosa non funziona ancora per via della sintassi qui sopra
     query(Query),
@@ -125,6 +125,13 @@ path_aux(PathList) -->
     [/],
     identificator(A),
     {PathList = [/ | A]},
+    !.
+% special method to parse the second type of URI
+% scheme : path
+path_aux(PathList) -->
+    identificator(A),
+    path_aux(B),
+    {PathList = [[/ | A], B]},
     !.
 path_aux([]) --> [/], !.
 path_aux([]) --> [].
