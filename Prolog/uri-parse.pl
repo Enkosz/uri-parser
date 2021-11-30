@@ -4,6 +4,7 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
+:- module(uri_parse, [uri_parse/2]).
 :- set_prolog_flag(double_quotes, chars).
 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
