@@ -23,9 +23,15 @@ uri_parse_(URIString, uri(URI)) :-
 uri(components(Scheme, Authority, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     uri_authority(Authority),
+    [/],
     uri_path(Path),
     uri_query(Query),
     uri_fragment(Fragment),
+    !.
+
+uri(components(Scheme, Authority, path(""), query(""), fragment(""))) -->
+    uri_scheme(Scheme),
+    uri_authority(Authority),
     !.
 
 % "news" ‘:’ host 
@@ -43,10 +49,14 @@ uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''),
     {string_chars(MailtoString, "mailto"), Scheme = scheme(MailtoString)},
     !.
 
+% TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
+% suppundo che path sia obbligatorio, in caso non lo sia basta aggiungere un caso base vuoto
+
+
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
 uri(components(Scheme, authority(userinfo(''), host(''), port('')), Path, Query, Fragment)) -->
     uri_scheme(Scheme),
-    uri_path(Path),
+    uri_path_second(Path),
     uri_query(Query),
     uri_fragment(Fragment),
     !.
@@ -80,6 +90,7 @@ uri_host_aux(host(Ip)) -->
     uri_ip(IpList),
     { string_chars(Ip, IpList) },
     !.
+
 uri_host_aux(host(Host)) -->
     uri_host(HostList),
     { string_chars(Host, HostList) },
@@ -91,6 +102,7 @@ uri_host(X) -->
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
+
 uri_host(X) -->
     identificator(X, "./?#@:").
 
@@ -100,6 +112,7 @@ valid_char(X, List) :-
     valid_char_aux(X, List).
 
 valid_char_aux(_, []) :- !.
+
 valid_char_aux(X, [Invalid_char | Rest]) :-
     X \= Invalid_char,
     valid_char_aux(X, Rest).
@@ -120,6 +133,7 @@ uri_fragment_aux(FragmentList) -->
     [#],
     identificator(FragmentList, ""),
     !.
+
 uri_fragment_aux([]) --> [].
 
 uri_query(query(Query)) -->
@@ -131,6 +145,7 @@ uri_query_aux(QueryList) -->
     [?],
     identificator(QueryList, "#"),
     !.
+
 uri_query_aux([]) --> [].
 
 uri_path(path(Path)) -->
@@ -141,28 +156,31 @@ uri_path(path(Path)) -->
 % path_aux//
 % Parse the path starting with /
 uri_path_aux(PathList) -->
-    [/],
     identificator(A, "/?#@:"),
+    [/],
     uri_path_aux(B),
-    {PathList = [[/ | A], B]},
+    {PathList = [A, [/ | B]]},
     !.
 uri_path_aux(PathList) -->
-    [/],
-    identificator(A, "/?#@:"),
-    {PathList = [/ | A]},
+    identificator(PathList, "/?#@:"),
     !.
+uri_path_aux([]) --> [].
+
 % special method to parse the second type of URI
 % scheme : path
-% qui si rompe, Esempio:
-% uri_parse("scheme://user@host:1ab23/path?queri#frag", X). 
-% possibile soluzione: nome regola diversa per il secondo caso
-uri_path_aux(PathList) -->
+% da togliere, avevo sonno e non avevo voglia di ragionare quindi aspetto domani mattina per sistemare
+uri_path_second(path(Path)) -->
+    uri_path_second_aux(PathList),
+    {flatten(PathList, FlattenPath)},
+    {string_chars(Path, FlattenPath)}.
+
+uri_path_second_aux(PathList) -->
     identificator(A, "/?#@:"),
-    uri_path_aux(B),
+    uri_path_second_aux(B),
     {PathList = [[/ | A], B]},
     !.
-uri_path_aux([]) --> [/], !.
-uri_path_aux([]) --> [].
+uri_path_second_aux([]) --> [/], !.
+uri_path_second_aux([]) --> [].
     
 uri_ip(Ip) --> 
     triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
