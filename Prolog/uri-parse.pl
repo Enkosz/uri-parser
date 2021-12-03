@@ -4,7 +4,7 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
-%:- module(uri_parse, [uri_parse/2]).
+:- module(uri_parse, [uri_parse/2]).
 
 :- set_prolog_flag(double_quotes, chars).
 
