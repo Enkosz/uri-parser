@@ -4,11 +4,12 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
-:- module(uri_parse, [uri_parse/2]).
+%:- module(uri_parse, [uri_parse/2]).
+
 :- set_prolog_flag(double_quotes, chars).
 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
-    uri_parse_(URIString, 
+    uri_parse_(URIString,
         uri(components(
             scheme(Scheme), 
             authority(userinfo(UserInfo), host(Host), port(_Port)),
@@ -16,7 +17,7 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
             fragment(Fragment)
         ))
               ),
-    ( _Port = [] -> uri_default_port(Scheme, Port); Port = '' ).
+    ( _Port = [] -> string_chars(Scheme, SchemeList), uri_default_port(SchemeList, X), string_chars(Port, X); Port = '' ).
 
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
