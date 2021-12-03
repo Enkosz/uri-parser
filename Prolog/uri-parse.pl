@@ -165,6 +165,8 @@ uri_query_aux(QueryList) -->
 
 uri_query_aux([]) --> [].
 
+uri_path(path([])) --> [], !.
+
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
     {flatten(PathList, FlattenPath)},
@@ -180,7 +182,6 @@ uri_path_aux(PathList) -->
 uri_path_aux(PathList) -->
     identificator(PathList, ['/', '?', '#', '@', ':']),
     !.
-uri_path_aux([]) --> [].
 
 uri_ip(Ip) --> 
     triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
