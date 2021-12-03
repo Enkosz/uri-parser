@@ -81,10 +81,15 @@ uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment))
     !.
 
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList, ['/', '?', '#', '@', ':']),
+    identificator(SchemeList, ['/', '?', '#', '@', ':', ' ']),
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
+identificator(['%', '2', '0' | T], List) -->
+    [' '],
+    { valid_char(' ', List) },
+    identificator(T, List),
+    !.
 identificator([H | T], List) -->
     [H],
     { valid_char(H, List) },
@@ -93,7 +98,7 @@ identificator([H | T], List) -->
 identificator([X | []], List) --> [X], { valid_char(X, List) }.
 
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':']),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' ']),
     [@],
     { atom_chars(UserInfo, UserInfoList) },
     !.
@@ -110,18 +115,17 @@ uri_host_aux(host(Host)) -->
     !.
 
 uri_host(X) -->
-    identificator(A, ['.', '/', '?', '#', '@', ':']),
+    identificator(A, ['.', '/', '?', '#', '@', ':', ' ']),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 
 uri_host(X) -->
-    identificator(X, ['.', '/', '?', '#', '@', ':']).
+    identificator(X, ['.', '/', '?', '#', '@', ':', ' ']).
 
 valid_char(X, List) :-
     char_type(X, ascii),
-    not(char_type(X, space)),
     valid_char_aux(X, List).
 
 valid_char_aux(_, []) :- !.
@@ -202,6 +206,6 @@ digits([X | []]) --> digit(X), !.
 current_scheme('tel') :- !.
 current_scheme('fax') :- !.
 
-uri_default_port('http', '', '80') :- !.
-uri_default_port('https', '', '443') :- !.
+uri_default_port(scheme(http), port([]), port('80')) :- !.
+uri_default_port(scheme(https), port([]), port('443')) :- !.
 uri_default_port(_, ActualPort, ActualPort) :- !.
