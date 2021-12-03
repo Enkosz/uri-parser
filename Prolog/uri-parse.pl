@@ -35,7 +35,13 @@ uri(components(Scheme, authority(userinfo(''), Host, port('')), path(''), query(
     {string_chars(NewsString, "news"), Scheme = scheme(NewsString)},
     !.
 
-% "mailto" ‘:’ userinfo ['@' host] 
+% ["fax" | "tel"] ‘:’ host 
+uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
+    uri_scheme(Scheme),
+    uri_userinfo(UserInfo),
+    {string_chars(TelString, "tel"), Scheme = scheme(TelString)}, !.
+
+% "mailto" ‘:’ userinfo ['@'' host] 
 uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
