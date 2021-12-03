@@ -104,6 +104,7 @@ uri_userinfo(userinfo(UserInfo)) -->
     !.
 uri_userinfo(userinfo([])) --> [].
 
+
 uri_host_aux(host(Ip)) -->
     uri_ip(IpList),
     { atom_chars(Ip, IpList) },
@@ -113,6 +114,10 @@ uri_host_aux(host(Host)) -->
     uri_host(HostList),
     { atom_chars(Host, HostList) },
     !.
+
+uri_ip(Ip) --> 
+    triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
+    { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 uri_host(X) -->
     identificator(A, ['.', '/', '?', '#', '@', ':', ' ']),
@@ -153,6 +158,8 @@ uri_fragment_aux(FragmentList) -->
 
 uri_fragment_aux([]) --> [].
 
+uri_query(query([])) --> [], !.
+
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
     {flatten(QueryList, FlattenQuery)},
@@ -162,8 +169,6 @@ uri_query_aux(QueryList) -->
     [?],
     identificator(QueryList, ['#']),
     !.
-
-uri_query_aux([]) --> [].
 
 uri_path(path([])) --> [], !.
 
@@ -182,10 +187,6 @@ uri_path_aux(PathList) -->
 uri_path_aux(PathList) -->
     identificator(PathList, ['/', '?', '#', '@', ':']),
     !.
-
-uri_ip(Ip) --> 
-    triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
-    { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 triplets(X) --> 
     digit(A), digit(B), digit(C),
