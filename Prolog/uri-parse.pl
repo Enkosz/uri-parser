@@ -6,55 +6,65 @@
 
 :- module(uri_parse, [uri_parse/2]).
 
-:- set_prolog_flag(double_quotes, chars).
-
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
-    uri_parse_(URIString,
+    string_chars(URIString, URIChars),
+    uri_parse_(URIChars,
         uri(components(
-            scheme(Scheme), 
-            authority(userinfo(UserInfo), host(Host), port(_Port)),
-            path(Path), query(Query), 
+            scheme(Scheme),
+            userinfo(UserInfo), 
+            host(Host),
+            port(Port),
+            path(Path), 
+            query(Query), 
             fragment(Fragment)
-        ))
-              ),
-    ( _Port = [] -> string_chars(Scheme, SchemeList), uri_default_port(SchemeList, X), string_chars(Port, X); Port = '' ).
+        ))).
 
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
-uri(components(Scheme, Authority, Path, Query, Fragment)) -->
+% scheme ‘:’ authorithy[‘/’ [path] [‘?’ query] [‘#’ fragment]]
+uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
-    uri_authority(Authority),
+    [/, /],
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host),
+    uri_port(ActualPort),
     [/],
     uri_path(Path),
     uri_query(Query),
     uri_fragment(Fragment),
+    {uri_default_port(Scheme, ActualPort, Port)},
     !.
 
-uri(components(Scheme, Authority, path([]), query([]), fragment([]))) -->
+% scheme ‘:’ authorithy
+uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
-    uri_authority(Authority),
+    [/, /],
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host),
+    uri_port(ActualPort),
+    {uri_default_port(Scheme, ActualPort, Port)},
     !.
 
 % "news" ‘:’ host 
-uri(components(Scheme, authority(userinfo([]), Host, port([])), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     uri_host_aux(Host),
-    {string_chars(NewsString, "news"), Scheme = scheme(NewsString)},
+    {Scheme = scheme('news')},
     !.
 
 % ["fax" | "tel"] ‘:’ host 
 uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
-    {string_chars(TelString, "tel"), Scheme = scheme(TelString)}, !.
+    {current_scheme(Scheme)}, !.
 
 % "mailto" ‘:’ userinfo ['@'' host] 
-uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''), fragment(''))) -->
+uri(components(Scheme, UserInfo, Host, port(''), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
     uri_host_aux(Host),
-    {string_chars(MailtoString, "mailto"), Scheme = scheme(MailtoString)},
+    {Scheme = scheme('mailto')},
     !.
 
 % TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
@@ -62,7 +72,7 @@ uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''),
 
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
-uri(components(Scheme, authority(userinfo([]), host([]), port([])), Path, Query, Fragment)) -->
+uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     ([/]; []),
     uri_path(Path),
@@ -70,16 +80,10 @@ uri(components(Scheme, authority(userinfo([]), host([]), port([])), Path, Query,
     uri_fragment(Fragment),
     !.
 
-uri_authority(authority(UserInfo, Host, Port)) -->
-    [/, /],
-    uri_userinfo(UserInfo),
-    uri_host_aux(Host),
-    uri_port(Port).
-
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList, "/?#@:"),
+    identificator(SchemeList, ['/', '?', '#', '@', ':']),
     [:],
-    { string_chars(Scheme, SchemeList) }.
+    { atom_chars(Scheme, SchemeList) }.
 
 identificator([H | T], List) -->
     [H],
@@ -89,31 +93,31 @@ identificator([H | T], List) -->
 identificator([X | []], List) --> [X], { valid_char(X, List) }.
 
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList, "/?#@:"),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':']),
     [@],
-    { string_chars(UserInfo, UserInfoList) },
+    { atom_chars(UserInfo, UserInfoList) },
     !.
 uri_userinfo(userinfo([])) --> [].
 
 uri_host_aux(host(Ip)) -->
     uri_ip(IpList),
-    { string_chars(Ip, IpList) },
+    { atom_chars(Ip, IpList) },
     !.
 
 uri_host_aux(host(Host)) -->
     uri_host(HostList),
-    { string_chars(Host, HostList) },
+    { atom_chars(Host, HostList) },
     !.
 
 uri_host(X) -->
-    identificator(A, "./?#@:"),
+    identificator(A, ['.', '/', '?', '#', '@', ':']),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 
 uri_host(X) -->
-    identificator(X, "./?#@:").
+    identificator(X, ['.', '/', '?', '#', '@', ':']).
 
 valid_char(X, List) :-
     char_type(X, ascii),
@@ -129,18 +133,18 @@ valid_char_aux(X, [Invalid_char | Rest]) :-
 uri_port(port(Port)) -->
     [:],
     digits(PortList),
-    {string_chars(Port, PortList)},
+    {atom_chars(Port, PortList)},
     !.
 uri_port(port([])) --> [].
 
 uri_fragment(fragment(Fragment)) -->
     uri_fragment_aux(FragmentList),
     {flatten(FragmentList, FlattenFragment)},
-    {string_chars(Fragment, FlattenFragment)}.
+    {atom_chars(Fragment, FlattenFragment)}.
 
 uri_fragment_aux(FragmentList) -->
     [#],
-    identificator(FragmentList, ""),
+    identificator(FragmentList, []),
     !.
 
 uri_fragment_aux([]) --> [].
@@ -148,11 +152,11 @@ uri_fragment_aux([]) --> [].
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
     {flatten(QueryList, FlattenQuery)},
-    {string_chars(Query, FlattenQuery)}.
+    {atom_chars(Query, FlattenQuery)}.
 
 uri_query_aux(QueryList) -->
     [?],
-    identificator(QueryList, "#"),
+    identificator(QueryList, ['#']),
     !.
 
 uri_query_aux([]) --> [].
@@ -160,25 +164,20 @@ uri_query_aux([]) --> [].
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
     {flatten(PathList, FlattenPath)},
-    {string_chars(Path, FlattenPath)}.
+    {atom_chars(Path, FlattenPath)}.
 
-% path_aux//
-% Parse the path starting with /
+% path_aux//1
 uri_path_aux(PathList) -->
-    identificator(A, "/?#@:"),
+    identificator(A, ['/', '?', '#', '@', ':']),
     [/],
     uri_path_aux(B),
     {PathList = [A, [/ | B]]},
     !.
 uri_path_aux(PathList) -->
-    identificator(PathList, "/?#@:"),
+    identificator(PathList, ['/', '?', '#', '@', ':']),
     !.
 uri_path_aux([]) --> [].
 
-% special method to parse the second type of URI
-% scheme : path
-% da togliere, avevo sonno e non avevo voglia di ragionare quindi aspetto domani mattina per sistemare
-    
 uri_ip(Ip) --> 
     triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
@@ -187,7 +186,7 @@ triplets(X) -->
     digit(A), digit(B), digit(C),
     {
         X = [A, B, C],
-        string_chars(Str, X),
+        atom_chars(Str, X),
         number_string(Num, Str),
         between(0, 255, Num)
     }.
@@ -200,5 +199,9 @@ digits([X | Xs]) -->
     digits(Xs).
 digits([X | []]) --> digit(X), !.
 
-uri_default_port("http", "80").
-uri_default_port("https", "443").
+current_scheme('tel') :- !.
+current_scheme('fax') :- !.
+
+uri_default_port('http', '', '80') :- !.
+uri_default_port('https', '', '443') :- !.
+uri_default_port(_, ActualPort, ActualPort) :- !.
