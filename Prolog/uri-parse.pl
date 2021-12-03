@@ -5,17 +5,19 @@
 % 866147 Biotto Simone
 
 :- module(uri_parse, [uri_parse/2]).
+
 :- set_prolog_flag(double_quotes, chars).
 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
-    uri_parse_(URIString, 
+    uri_parse_(URIString,
         uri(components(
             scheme(Scheme), 
-            authority(userinfo(UserInfo), host(Host), port(Port)), 
+            authority(userinfo(UserInfo), host(Host), port(_Port)),
             path(Path), query(Query), 
             fragment(Fragment)
         ))
-    ).
+              ),
+    ( _Port = [] -> string_chars(Scheme, SchemeList), uri_default_port(SchemeList, X), string_chars(Port, X); Port = '' ).
 
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
@@ -41,7 +43,13 @@ uri(components(Scheme, authority(userinfo(''), Host, port('')), path(''), query(
     {string_chars(NewsString, "news"), Scheme = scheme(NewsString)},
     !.
 
-% "mailto" ‘:’ userinfo ['@' host] 
+% ["fax" | "tel"] ‘:’ host 
+uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
+    uri_scheme(Scheme),
+    uri_userinfo(UserInfo),
+    {string_chars(TelString, "tel"), Scheme = scheme(TelString)}, !.
+
+% "mailto" ‘:’ userinfo ['@'' host] 
 uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
@@ -202,3 +210,6 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
+
+uri_default_port("http", "80").
+uri_default_port("https", "443").
