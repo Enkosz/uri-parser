@@ -11,11 +11,12 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
     uri_parse_(URIString, 
         uri(components(
             scheme(Scheme), 
-            authority(userinfo(UserInfo), host(Host), port(Port)), 
+            authority(userinfo(UserInfo), host(Host), port(_Port)),
             path(Path), query(Query), 
             fragment(Fragment)
         ))
-    ).
+              ),
+    ( _Port = [] -> uri_default_port(Scheme, Port); Port = '' ).
 
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
@@ -190,3 +191,6 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
+
+uri_default_port("http", "80").
+uri_default_port("https", "443").
