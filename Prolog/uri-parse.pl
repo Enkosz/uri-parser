@@ -31,13 +31,13 @@ uri(components(Scheme, Authority, Path, Query, Fragment)) -->
     uri_fragment(Fragment),
     !.
 
-uri(components(Scheme, Authority, path(""), query(""), fragment(""))) -->
+uri(components(Scheme, Authority, path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     uri_authority(Authority),
     !.
 
 % "news" ‘:’ host 
-uri(components(Scheme, authority(userinfo(''), Host, port('')), path(''), query(''), fragment(''))) -->
+uri(components(Scheme, authority(userinfo([]), Host, port([])), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     uri_host_aux(Host),
     {string_chars(NewsString, "news"), Scheme = scheme(NewsString)},
@@ -62,9 +62,10 @@ uri(components(Scheme, authority(UserInfo, Host, port('')), path(''), query(''),
 
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
-uri(components(Scheme, authority(userinfo(''), host(''), port('')), Path, Query, Fragment)) -->
+uri(components(Scheme, authority(userinfo([]), host([]), port([])), Path, Query, Fragment)) -->
     uri_scheme(Scheme),
-    uri_path_second(Path),
+    ([/]; []),
+    uri_path(Path),
     uri_query(Query),
     uri_fragment(Fragment),
     !.
@@ -177,18 +178,6 @@ uri_path_aux([]) --> [].
 % special method to parse the second type of URI
 % scheme : path
 % da togliere, avevo sonno e non avevo voglia di ragionare quindi aspetto domani mattina per sistemare
-uri_path_second(path(Path)) -->
-    uri_path_second_aux(PathList),
-    {flatten(PathList, FlattenPath)},
-    {string_chars(Path, FlattenPath)}.
-
-uri_path_second_aux(PathList) -->
-    identificator(A, "/?#@:"),
-    uri_path_second_aux(B),
-    {PathList = [[/ | A], B]},
-    !.
-uri_path_second_aux([]) --> [/], !.
-uri_path_second_aux([]) --> [].
     
 uri_ip(Ip) --> 
     triplets(A), [.], triplets(B), [.], triplets(C), [.], triplets(D), 
