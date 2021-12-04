@@ -159,24 +159,24 @@ uri_fragment_aux(FragmentList) -->
 
 uri_fragment_aux([]) --> [].
 
-uri_query(query([])) --> [], !.
-
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
     {flatten(QueryList, FlattenQuery)},
     {atom_chars(Query, FlattenQuery)}.
+
+uri_query(query([])) --> [], !.
 
 uri_query_aux(QueryList) -->
     [?],
     identificator(QueryList, ['#'], ascii),
     !.
 
-uri_path(path([])) --> [], !.
-
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
     {flatten(PathList, FlattenPath)},
     {atom_chars(Path, FlattenPath)}.
+
+uri_path(path([])) --> [], !.
 
 % path_aux//1
 uri_path_aux(PathList) -->
@@ -223,8 +223,8 @@ triplets(X) -->
         between(0, 255, Num)
     }.
 
-current_scheme('tel') :- !.
-current_scheme('fax') :- !.
+current_scheme(scheme('tel')) :- !.
+current_scheme(scheme('fax')) :- !.
 
 uri_default_port(scheme(http), port([]), port('80')) :- !.
 uri_default_port(scheme(https), port([]), port('80')) :- !.

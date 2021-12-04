@@ -75,7 +75,6 @@ test(host_4) :- \+(uri_parse("scheme://userinfo@ho/st:123", uri(_, _, _, _, _, _
 test(host_5) :- \+(uri_parse("scheme://userinfo@ho#st:123", uri(_, _, _, _, _, _, _))).
 test(host_6) :- \+(uri_parse("scheme://userinfo@ho st:123", uri(_, _, _, _, _, _, _))).
 
-
 % TEST PORT
 test(port1) :- uri_parse("scheme://host:123", uri(_, _, 'host', '123', _, _, _)).
 test(port2) :- uri_parse("scheme://host:123/path", uri(_, _, 'host', '123', 'path', _, _)).
