@@ -225,7 +225,7 @@ uri_path_zos(path(Path)) -->
     !.
 
 uri_id44(Id44) -->
-    identificator(A, ['.'], alnum),
+    identificator(A, ['.', ' '], alnum),
     [.],
     uri_id44(B),
     {
@@ -234,11 +234,11 @@ uri_id44(Id44) -->
     !.
 
 uri_id44(Id44) -->
-    identificator(Id44, ['.'], alnum),
+    identificator(Id44, ['.', ' '], alnum),
     !.
 
 uri_id8(Id8) -->
-    identificator(Id8, [], alnum),
+    identificator(Id8, [' '], alnum),
     !.
 
 triplets(TripletsChars) --> 
