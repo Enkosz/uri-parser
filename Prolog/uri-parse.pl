@@ -4,7 +4,11 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
-:- module(uri_parse, [uri_parse/2]).
+:- module(uri_parse, [uri_parse/2, uri_display/1]).
+
+uri_display(URIString) :-
+    uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
+    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w', [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
@@ -40,9 +44,9 @@ uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragme
 uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {Scheme = scheme('mailto')},
-    !,
     uri_userinfo_scheme_syntax(UserInfo),
     [@],
+    !,
     uri_host_aux(Host).
 
 % "mailto" ‘:’ userinfo
@@ -52,8 +56,7 @@ uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragme
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
-% TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
-% suppundo che path sia obbligatorio, in caso non lo sia basta aggiungere un caso base vuoto
+% "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     {Scheme = scheme('zos')},
@@ -272,4 +275,3 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
-    
