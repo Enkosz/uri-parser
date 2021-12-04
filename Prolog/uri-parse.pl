@@ -241,13 +241,12 @@ uri_id8(Id8) -->
     identificator(Id8, [], alnum),
     !.
 
-triplets(X) --> 
+triplets(TripletsChars) --> 
     digit(A), digit(B), digit(C),
     {
-        X = [A, B, C],
-        atom_chars(Str, X),
-        number_string(Num, Str),
-        between(0, 255, Num)
+        TripletsChars = [A, B, C],
+        number_chars(TripletsNumber, TripletsChars),
+        between(0, 255, TripletsNumber)
     }.
 
 current_scheme(scheme('tel')) :- !.
