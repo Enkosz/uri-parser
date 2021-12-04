@@ -197,6 +197,22 @@ triplets(X) -->
         between(0, 255, Num)
     }.
 
+current_scheme('tel') :- !.
+current_scheme('fax') :- !.
+
+uri_default_port(scheme(http), port([]), port('80')) :- !.
+uri_default_port(scheme(https), port([]), port('80')) :- !.
+uri_default_port(_, ActualPort, ActualPort) :- !.
+
+valid_char(X, List, CharType) :-
+    char_type(X, CharType),
+    valid_char_aux(X, List).
+
+valid_char_aux(_, []) :- !.
+
+valid_char_aux(X, [Invalid_char | Rest]) :-
+    X \= Invalid_char,
+    valid_char_aux(X, Rest).
 
 digit(X) --> [X], { is_digit(X) }.
 
@@ -204,10 +220,3 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
-
-current_scheme('tel') :- !.
-current_scheme('fax') :- !.
-
-uri_default_port(scheme(http), port([]), port('80')) :- !.
-uri_default_port(scheme(https), port([]), port('443')) :- !.
-uri_default_port(_, ActualPort, ActualPort) :- !.
