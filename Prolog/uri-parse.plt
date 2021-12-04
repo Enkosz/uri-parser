@@ -10,6 +10,25 @@ test(schema3) :- uri_parse("_http_://google.com", uri('_http_', _, _, _, _, _, _
 test(schema_1) :- \+(uri_parse("htt p://google.com", uri(_, _, _, _, _, _, _))).
 test(schema_2) :- \+(uri_parse("htt:p://google.com", uri(_, _, _, _, _, _, _))).
 
+% TEST SCHEMA MAILTO
+test(mailto1) :- uri_parse("mailto:userinfo", uri('mailto', 'userinfo', _, _, _, _, _)).
+test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'host', _, _, _, _)).
+test(mailto_1) :- \+(uri_parse("mailto:", uri(_, _, _, _, _, _, _))).
+test(mailto_2) :- \+(uri_parse("mailto:userinfo@", uri(_, _, _, _, _, _, _))).
+
+% TEST SCHEMA NEWS
+test(news1) :- uri_parse("news:host", uri('news', _, 'host', _, _, _, _)).
+test(news2) :- uri_parse("news:host.subhost", uri('news', _, 'host.subhost', _, _, _, _)).
+test(news2) :- uri_parse("news:ho123st", uri('news', _, 'ho123st', _, _, _, _)).
+test(news_1) :- \+(uri_parse("invalidschema:host", uri(_, _, _, _, _, _, _))).
+test(news_2) :- \+(uri_parse("news:ho st", uri(_, _, _, _, _, _, _))).
+test(news_3) :- \+(uri_parse("news:ho/st", uri(_, _, _, _, _, _, _))).
+test(news_4) :- \+(uri_parse("news:host/path", uri(_, _, _, _, _, _, _))).
+test(news_5) :- \+(uri_parse("news:host/path?query", uri(_, _, _, _, _, _, _))).
+test(news_6) :- \+(uri_parse("news:host/path?query#fragment", uri(_, _, _, _, _, _, _))).
+test(news_7) :- \+(uri_parse("news:host:80", uri(_, _, _, _, _, _, _))).
+test(news_8) :- \+(uri_parse("news:userinfo@host", uri(_, _, _, _, _, _, _))).
+
 % TEST USERINFO
 test(userinfo1) :- uri_parse("http://userinfo@host", uri(_, 'userinfo', 'host', _, _, _, _)).
 test(userinfo2) :- uri_parse("http://user_info@host", uri(_, 'user_info', 'host', _, _, _, _)).
@@ -20,8 +39,8 @@ test(userinfo_3) :- \+(uri_parse("http://userin/fo@host", uri(_, _, _, _, _, _, 
 test(userinfo_4) :- \+(uri_parse("http://userin?fo@host", uri(_, _, _, _, _, _, _))).
 test(userinfo_5) :- \+(uri_parse("http://userin#fo@host", uri(_, _, _, _, _, _, _))).
 test(userinfo_6) :- \+(uri_parse("http://userin fo@host", uri(_, _, _, _, _, _, _))).
-
-% Quando si sistemerà il problema con "/" bisogna corregere il path nell'uri, in quanto non avrà "/" all'inizio
+test(userinfo_7) :- \+(uri_parse("http://userinfo@", uri(_, _, _, _, _, _, _))).
+test(userinfo_8) :- \+(uri_parse("http://@", uri(_, _, _, _, _, _, _))).
 
 % TEST HOST
 test(host1) :- uri_parse("scheme://host", uri(_, _, 'host', _, _, _, _)).
@@ -74,5 +93,7 @@ test(query8) :- uri_parse("scheme://host", uri(_, _, _, _, _, [], _)).
 test(query9) :- uri_parse("scheme://host/", uri(_, _, _, _, _, [], _)).
 test(query10) :- uri_parse("scheme://host/path?query#fragment", uri(_, _, _, _, 'path', 'query', 'fragment')).
 test(query_1) :- \+(uri_parse("scheme://host/?", uri(_, _, _, _, _, _, _))).
+
+% TEST INTEGRATION (Discuterne)
 
 :- end_tests(uri_parse).

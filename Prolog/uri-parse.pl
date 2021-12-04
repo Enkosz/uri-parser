@@ -36,7 +36,7 @@ uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragme
     !.
 
 % "mailto" ‘:’ userinfo ['@'' host] 
-uri(components(Scheme, UserInfo, Host, port(''), path(''), query(''), fragment(''))) -->
+uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
     uri_host_aux(Host),
