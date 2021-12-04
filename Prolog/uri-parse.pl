@@ -22,29 +22,11 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
-% scheme ‘:’ authorithy[‘/’ [path] [‘?’ query] [‘#’ fragment]]
-uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
+% ["fax" | "tel"] ‘:’ host 
+uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
     uri_scheme(Scheme),
-    [/, /],
     uri_userinfo(UserInfo),
-    uri_host_aux(Host),
-    uri_port(ActualPort),
-    [/],
-    uri_path(Path),
-    uri_query(Query),
-    uri_fragment(Fragment),
-    {uri_default_port(Scheme, ActualPort, Port)},
-    !.
-
-% scheme ‘:’ authorithy
-uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
-    uri_scheme(Scheme),
-    [/, /],
-    uri_userinfo(UserInfo),
-    uri_host_aux(Host),
-    uri_port(ActualPort),
-    {uri_default_port(Scheme, ActualPort, Port)},
-    !.
+    {current_scheme(Scheme)}, !.
 
 % "news" ‘:’ host 
 uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
@@ -52,12 +34,6 @@ uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragme
     uri_host_aux(Host),
     {Scheme = scheme('news')},
     !.
-
-% ["fax" | "tel"] ‘:’ host 
-uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
-    uri_scheme(Scheme),
-    uri_userinfo(UserInfo),
-    {current_scheme(Scheme)}, !.
 
 % "mailto" ‘:’ userinfo ['@'' host] 
 uri(components(Scheme, UserInfo, Host, port(''), path(''), query(''), fragment(''))) -->
@@ -80,6 +56,30 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_query(Query),
     uri_fragment(Fragment),
     {Scheme = scheme('zos'), uri_default_port(Scheme, ActualPort, Port)},
+    !.
+
+% scheme ‘:’ authorithy[‘/’ [path] [‘?’ query] [‘#’ fragment]]
+uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
+    uri_scheme(Scheme),
+    [/, /],
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host),
+    uri_port(ActualPort),
+    [/],
+    uri_path(Path),
+    uri_query(Query),
+    uri_fragment(Fragment),
+    {uri_default_port(Scheme, ActualPort, Port)},
+    !.
+
+% scheme ‘:’ authorithy
+uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
+    uri_scheme(Scheme),
+    [/, /],
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host),
+    uri_port(ActualPort),
+    {uri_default_port(Scheme, ActualPort, Port)},
     !.
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
@@ -194,7 +194,7 @@ uri_path_zos(path(Path)) -->
     ['('],
     uri_id8(B),
     [')'],
-    {flatten([A, '(', B, ')'], Path)},
+    {length(A, LA), LA <= 44, length(B, LB), LB <= 8, flatten([A, '(', B, ')'], Path)},
     !.
 
 uri_id44(Id44) -->
@@ -202,16 +202,16 @@ uri_id44(Id44) -->
     [.],
     uri_id44(B),
     {
-        flatten([[A | [.]], B], Id44),
-        length(Id44, 44)
+        flatten([[A | [.]], B], Id44)
     },
+    !.
+
+uri_id44(Id44) -->
+    identificator(Id44, ['.'], alnum),
     !.
 
 uri_id8(Id8) -->
     identificator(Id8, [], alnum),
-    {
-        length(Id8, 8)
-    },
     !.
 
 triplets(X) --> 
@@ -225,6 +225,8 @@ triplets(X) -->
 
 current_scheme('tel') :- !.
 current_scheme('fax') :- !.
+current_scheme('zos') :- !.
+current_scheme('mailto') :- !.
 
 uri_default_port(scheme(http), port([]), port('80')) :- !.
 uri_default_port(scheme(https), port([]), port('80')) :- !.
@@ -246,3 +248,8 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
+
+check_lenght(List, MaxLenght) :-
+    length(List, X),
+    X <= MaxLenght.
+    
