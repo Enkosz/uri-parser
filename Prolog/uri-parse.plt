@@ -44,7 +44,7 @@ test(port2) :- uri_parse("scheme://host:123/path", uri(_, _, 'host', '123', 'pat
 test(port3) :- uri_parse("http://host:123", uri(_, _, _, '123', _, _, _)).
 test(port4) :- uri_parse("http://host", uri(_, _, _, '80', _, _, _)).
 test(port5) :- uri_parse("https://host:123", uri(_, _, _, '123', _, _, _)).
-test(port6) :- uri_parse("https://host", uri(_, _, _, '443', _, _, _)).
+test(port6) :- uri_parse("https://host", uri(_, _, _, '80', _, _, _)).
 test(port_1) :- \+(uri_parse("scheme://host:1_23", uri(_, _, _, _, _, _, _))).
 test(port_2) :- \+(uri_parse("scheme://host:1a23", uri(_, _, _, _, _, _, _))).
 test(port_3) :- \+(uri_parse("scheme://host:", uri(_, _, _, _, _, _, _))).

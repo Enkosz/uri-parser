@@ -194,7 +194,7 @@ uri_path_zos(path(Path)) -->
     ['('],
     uri_id8(B),
     [')'],
-    {length(A, LA), LA <= 44, length(B, LB), LB <= 8, flatten([A, '(', B, ')'], Path)},
+    {length(A, LA), LA =< 44, length(B, LB), LB =< 8, flatten([A, '(', B, ')'], Path)},
     !.
 
 uri_id44(Id44) -->
@@ -248,8 +248,4 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
-
-check_lenght(List, MaxLenght) :-
-    length(List, X),
-    X <= MaxLenght.
     
