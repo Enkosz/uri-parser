@@ -69,7 +69,18 @@ uri(components(Scheme, UserInfo, Host, port(''), path(''), query(''), fragment('
 
 % TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
 % suppundo che path sia obbligatorio, in caso non lo sia basta aggiungere un caso base vuoto
-
+uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
+    uri_scheme(Scheme),
+    [/, /],
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host),
+    uri_port(ActualPort),
+    [/],
+    uri_path_zos(Path),
+    uri_query(Query),
+    uri_fragment(Fragment),
+    {Scheme = scheme('zos'), uri_default_port(Scheme, ActualPort, Port)},
+    !.
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
 uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
@@ -81,24 +92,24 @@ uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment))
     !.
 
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList, ['/', '?', '#', '@', ':', ' ']),
+    identificator(SchemeList, ['/', '?', '#', '@', ':', ' '], ascii),
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
-identificator(['%', '2', '0' | T], List) -->
+identificator(['%', '2', '0' | T], List, CharType) -->
     [' '],
-    { valid_char(' ', List) },
-    identificator(T, List),
+    { valid_char(' ', List, CharType) },
+    identificator(T, List, CharType),
     !.
-identificator([H | T], List) -->
+identificator([H | T], List, CharType) -->
     [H],
-    { valid_char(H, List) },
-    identificator(T, List),
+    { valid_char(H, List, CharType) },
+    identificator(T, List, CharType),
     !.
-identificator([X | []], List) --> [X], { valid_char(X, List) }.
+identificator([X | []], List, CharType) --> [X], { valid_char(X, List, CharType) }.
 
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' ']),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
     [@],
     { atom_chars(UserInfo, UserInfoList) },
     !.
@@ -120,24 +131,14 @@ uri_ip(Ip) -->
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 uri_host(X) -->
-    identificator(A, ['.', '/', '?', '#', '@', ':', ' ']),
+    identificator(A, ['.', '/', '?', '#', '@', ':', ' '], ascii),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 
 uri_host(X) -->
-    identificator(X, ['.', '/', '?', '#', '@', ':', ' ']).
-
-valid_char(X, List) :-
-    char_type(X, ascii),
-    valid_char_aux(X, List).
-
-valid_char_aux(_, []) :- !.
-
-valid_char_aux(X, [Invalid_char | Rest]) :-
-    X \= Invalid_char,
-    valid_char_aux(X, Rest).
+    identificator(X, ['.', '/', '?', '#', '@', ':', ' '], ascii).
 
 uri_port(port(Port)) -->
     [:],
@@ -153,7 +154,7 @@ uri_fragment(fragment(Fragment)) -->
 
 uri_fragment_aux(FragmentList) -->
     [#],
-    identificator(FragmentList, []),
+    identificator(FragmentList, [], ascii),
     !.
 
 uri_fragment_aux([]) --> [].
@@ -167,7 +168,7 @@ uri_query(query(Query)) -->
 
 uri_query_aux(QueryList) -->
     [?],
-    identificator(QueryList, ['#']),
+    identificator(QueryList, ['#'], ascii),
     !.
 
 uri_path(path([])) --> [], !.
@@ -179,13 +180,38 @@ uri_path(path(Path)) -->
 
 % path_aux//1
 uri_path_aux(PathList) -->
-    identificator(A, ['/', '?', '#', '@', ':']),
+    identificator(A, ['/', '?', '#', '@', ':'], ascii),
     [/],
     uri_path_aux(B),
     {PathList = [A, [/ | B]]},
     !.
 uri_path_aux(PathList) -->
-    identificator(PathList, ['/', '?', '#', '@', ':']),
+    identificator(PathList, ['/', '?', '#', '@', ':'], ascii),
+    !.
+
+uri_path_zos(path(Path)) -->
+    uri_id44(A),
+    ['('],
+    uri_id8(B),
+    [')'],
+    {flatten([A, '(', B, ')'], Path)},
+    !.
+
+uri_id44(Id44) -->
+    identificator(A, ['.'], alnum),
+    [.],
+    uri_id44(B),
+    {
+        flatten([[A | [.]], B], Id44),
+        length(Id44, 44)
+    },
+    !.
+
+uri_id8(Id8) -->
+    identificator(Id8, [], alnum),
+    {
+        length(Id8, 8)
+    },
     !.
 
 triplets(X) --> 
