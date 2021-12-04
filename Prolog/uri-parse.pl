@@ -22,8 +22,8 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
-% ["fax" | "tel"] ‘:’ host 
-uri(components(Scheme, authority(UserInfo, host(''), port('')), path(''), query(''), fragment(''))) -->
+% ["fax" | "tel"] ‘:’ userinfo 
+uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     uri_userinfo(UserInfo),
     {current_scheme(Scheme)}, !.
@@ -225,8 +225,6 @@ triplets(X) -->
 
 current_scheme('tel') :- !.
 current_scheme('fax') :- !.
-current_scheme('zos') :- !.
-current_scheme('mailto') :- !.
 
 uri_default_port(scheme(http), port([]), port('80')) :- !.
 uri_default_port(scheme(https), port([]), port('80')) :- !.

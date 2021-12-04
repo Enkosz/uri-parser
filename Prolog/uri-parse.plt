@@ -16,6 +16,25 @@ test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'ho
 test(mailto_1) :- \+(uri_parse("mailto:", uri(_, _, _, _, _, _, _))).
 test(mailto_2) :- \+(uri_parse("mailto:userinfo@", uri(_, _, _, _, _, _, _))).
 
+% TEST SCHEMA FAX
+test(fax1) :- uri_parse("fax:userinfo", uri('fax', 'userinfo', _, _, _, _, _)).
+test(fax2) :- uri_parse("fax:user123info", uri('fax', 'user123info', _, _, _, _, _)).
+test(fax_1) :- \+(uri_parse("invalidschema:userinfo", uri(_, _, _, _, _, _, _))).
+test(fax_2) :- \+(uri_parse("fax:", uri(_, _, _, _, _, _, _))).
+test(fax_3) :- \+(uri_parse("fax:user info", uri(_, _, _, _, _, _, _))).
+test(fax_4) :- \+(uri_parse("fax:userinfo@host", uri(_, _, _, _, _, _, _))).
+test(fax_5) :- \+(uri_parse("fax:userinfo/path", uri(_, _, _, _, _, _, _))).
+
+% TEST SCHEMA TEL
+test(tel1) :- uri_parse("tel:userinfo", uri('tel', 'userinfo', _, _, _, _, _)).
+test(tel2) :- uri_parse("tel:user123info", uri('tel', 'user123info', _, _, _, _, _)).
+test(tel3) :- uri_parse("tel:0293564242", uri('tel', '0293564242', _, _, _, _, _)).
+test(tel_1) :- \+(uri_parse("invalidschema:userinfo", uri(_, _, _, _, _, _, _))).
+test(tel_2) :- \+(uri_parse("tel:", uri(_, _, _, _, _, _, _))).
+test(tel_3) :- \+(uri_parse("tel:user info", uri(_, _, _, _, _, _, _))).
+test(tel_4) :- \+(uri_parse("tel:userinfo@host", uri(_, _, _, _, _, _, _))).
+test(tel_5) :- \+(uri_parse("tel:userinfo/path", uri(_, _, _, _, _, _, _))).
+
 % TEST SCHEMA NEWS
 test(news1) :- uri_parse("news:host", uri('news', _, 'host', _, _, _, _)).
 test(news2) :- uri_parse("news:host.subhost", uri('news', _, 'host.subhost', _, _, _, _)).
