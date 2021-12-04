@@ -27,7 +27,7 @@ uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragme
     uri_scheme(Scheme),
     {current_scheme(Scheme)},
     !,
-    uri_userinfo(UserInfo).
+    uri_userinfo_scheme_syntax(UserInfo).
 
 % "news" ‘:’ host 
 uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
@@ -41,8 +41,16 @@ uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([
     uri_scheme(Scheme),
     {Scheme = scheme('mailto')},
     !,
-    uri_userinfo(UserInfo),
+    uri_userinfo_scheme_syntax(UserInfo),
+    [@],
     uri_host_aux(Host).
+
+% "mailto" ‘:’ userinfo
+uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+    uri_scheme(Scheme),
+    {Scheme = scheme('mailto')},
+    !,
+    uri_userinfo_scheme_syntax(UserInfo).
 
 % TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
 % suppundo che path sia obbligatorio, in caso non lo sia basta aggiungere un caso base vuoto
@@ -116,8 +124,13 @@ uri_userinfo(userinfo(UserInfo)) -->
     [@],
     { atom_chars(UserInfo, UserInfoList) },
     !.
-uri_userinfo(userinfo([])) --> [].
 
+uri_userinfo(userinfo([])) --> [], !.
+
+uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
+    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
+    { atom_chars(UserInfo, UserInfoList) },
+    !.
 
 uri_host_aux(host(Ip)) -->
     uri_ip(IpList),

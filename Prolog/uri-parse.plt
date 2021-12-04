@@ -15,6 +15,7 @@ test(mailto1) :- uri_parse("mailto:userinfo", uri('mailto', 'userinfo', _, _, _,
 test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'host', _, _, _, _)).
 test(mailto_1) :- \+(uri_parse("mailto:", uri(_, _, _, _, _, _, _))).
 test(mailto_2) :- \+(uri_parse("mailto:userinfo@", uri(_, _, _, _, _, _, _))).
+test(mailto_3) :- \+(uri_parse("mailto:userinfo@host?query", uri(_, _, _, _, _, _, _))).
 
 % TEST SCHEMA FAX
 test(fax1) :- uri_parse("fax:userinfo", uri('fax', 'userinfo', _, _, _, _, _)).
