@@ -128,7 +128,13 @@ test(query8) :- uri_parse("scheme://host", uri(_, _, _, _, _, [], _)).
 test(query9) :- uri_parse("scheme://host/", uri(_, _, _, _, _, [], _)).
 test(query10) :- uri_parse("scheme://host/path?query#fragment", uri(_, _, _, _, 'path', 'query', 'fragment')).
 test(query_1) :- \+(uri_parse("scheme://host/?", uri(_, _, _, _, _, _, _))).
+test(query_2) :- \+(uri_parse("scheme://host/?#", uri(_, _, _, _, _, _, _))).
 
-% TEST INTEGRATION (Discuterne)
+% TEST FRAGMENT
+test(fragment1) :- uri_parse("scheme://host/#frag", uri(_, _, _, _, _, _, 'frag')).
+test(fragment2) :- uri_parse("scheme://host/path?query#frag", uri(_, _, _, _, 'path', 'query', 'frag')).
+test(fragment3) :- uri_parse("scheme://host/?query#frag", uri(_, _, _, _, _, 'query', 'frag')).
+test(fragment4) :- uri_parse("scheme://host", uri(_, _, _, _, _, _, [])).
+test(fragment_1) :- \+(uri_parse("scheme://host/#", uri(_, _, _, _, _, _, _))).
 
 :- end_tests(uri_parse).
