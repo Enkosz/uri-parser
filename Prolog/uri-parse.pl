@@ -25,28 +25,31 @@ uri_parse_(URIString, uri(URI)) :-
 % ["fax" | "tel"] ‘:’ userinfo 
 uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
-    uri_userinfo(UserInfo),
-    {current_scheme(Scheme)}, !.
+    {current_scheme(Scheme)},
+    !,
+    uri_userinfo(UserInfo).
 
 % "news" ‘:’ host 
 uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
-    uri_host_aux(Host),
     {Scheme = scheme('news')},
-    !.
+    !,
+    uri_host_aux(Host).
 
 % "mailto" ‘:’ userinfo ['@'' host] 
 uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
-    uri_userinfo(UserInfo),
-    uri_host_aux(Host),
     {Scheme = scheme('mailto')},
-    !.
+    !,
+    uri_userinfo(UserInfo),
+    uri_host_aux(Host).
 
 % TODO: "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
 % suppundo che path sia obbligatorio, in caso non lo sia basta aggiungere un caso base vuoto
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
+    {Scheme = scheme('zos')},
+    !,
     [/, /],
     uri_userinfo(UserInfo),
     uri_host_aux(Host),
@@ -55,7 +58,7 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_path_zos(Path),
     uri_query(Query),
     uri_fragment(Fragment),
-    {Scheme = scheme('zos'), uri_default_port(Scheme, ActualPort, Port)},
+    {uri_default_port(Scheme, ActualPort, Port)},
     !.
 
 % scheme ‘:’ authorithy[‘/’ [path] [‘?’ query] [‘#’ fragment]]
@@ -173,6 +176,7 @@ uri_query_aux(QueryList) -->
 
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
+    !,
     {flatten(PathList, FlattenPath)},
     {atom_chars(Path, FlattenPath)}.
 
@@ -190,11 +194,21 @@ uri_path_aux(PathList) -->
     !.
 
 uri_path_zos(path(Path)) -->
-    uri_id44(A),
+    uri_id44(Id44),
     ['('],
-    uri_id8(B),
+    uri_id8(Id8),
     [')'],
-    {length(A, LA), LA =< 44, length(B, LB), LB =< 8, flatten([A, '(', B, ')'], Path)},
+    {length(Id44, Id44Length), Id44Length =< 44},
+    {length(Id8, Id8Length), Id8Length =< 8},
+    {flatten([Id44, '(', Id8, ')'], FlattenPath)},
+    {atom_chars(Path, FlattenPath)},
+    !.
+
+uri_path_zos(path(Path)) -->
+    uri_id44(Id44),
+    {length(Id44, Id44Length), Id44Length =< 44},
+    {flatten(Id44, FlattenPath)},
+    {atom_chars(Path, FlattenPath)},
     !.
 
 uri_id44(Id44) -->

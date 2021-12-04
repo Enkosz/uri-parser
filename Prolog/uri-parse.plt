@@ -45,6 +45,25 @@ test(news_6) :- \+(uri_parse("news:host/path?query#fragment", uri(_, _, _, _, _,
 test(news_7) :- \+(uri_parse("news:host:80", uri(_, _, _, _, _, _, _))).
 test(news_8) :- \+(uri_parse("news:userinfo@host", uri(_, _, _, _, _, _, _))).
 
+% TEST SCHEMA ZOS
+test(zos1) :- uri_parse("zos://host/id44(id8)", uri('zos', _, 'host', _, 'id44(id8)', _, _)).
+test(zos2) :- uri_parse("zos://userinfo@host/id44(id8)", uri('zos', 'userinfo', 'host', _, 'id44(id8)', _, _)).
+test(zos3) :- uri_parse("zos://userinfo@host:4832/id44(id8)", uri('zos', 'userinfo', 'host', '4832', 'id44(id8)', _, _)).
+test(zos4) :- uri_parse("zos://userinfo@host:4832/id44(id8)?query", uri('zos', 'userinfo', 'host', '4832', 'id44(id8)', 'query', _)).
+test(zos5) :- uri_parse("zos://userinfo@host:4832/id44(id8)?query#fragment", uri('zos', 'userinfo', 'host', '4832', 'id44(id8)', 'query', 'fragment')).
+test(zos6) :- uri_parse("zos://host/id.44(id8)", uri('zos', _, 'host', _, 'id.44(id8)', _, _)).
+test(zos7) :- uri_parse("zos://host/i.d.4.4(id8)", uri('zos', _, 'host', _, 'i.d.4.4(id8)', _, _)).
+test(zos8) :- uri_parse("zos://host/i.d.4.4", uri('zos', _, 'host', _, 'i.d.4.4', _, _)).
+test(zos_1) :- \+(uri_parse("zos://host", uri(_, _, _, _, _, _, _))).
+test(zos_2) :- \+(uri_parse("zos://host/.i.d", uri(_, _, _, _, _, _, _))).
+test(zos_3) :- \+(uri_parse("zos://host/.", uri(_, _, _, _, _, _, _))).
+test(zos_4) :- \+(uri_parse("zos://host/", uri(_, _, _, _, _, _, _))).
+test(zos_5) :- \+(uri_parse("zos://host/012345678901234567890123456789012345678901234(id)", uri(_, _, _, _, _, _, _))).
+test(zos_6) :- \+(uri_parse("zos://host/path(012345678)", uri(_, _, _, _, _, _, _))).
+test(zos_7) :- \+(uri_parse("zos://host/012345678901234567890123456789012345678901234(012345678)", uri(_, _, _, _, _, _, _))).
+test(zos_8) :- \+(uri_parse("zos://host/(id44)", uri(_, _, _, _, _, _, _))).
+test(zos_9) :- \+(uri_parse("zos://host/pi@ppo(id44)", uri(_, _, _, _, _, _, _))).
+
 % TEST USERINFO
 test(userinfo1) :- uri_parse("http://userinfo@host", uri(_, 'userinfo', 'host', _, _, _, _)).
 test(userinfo2) :- uri_parse("http://user_info@host", uri(_, 'user_info', 'host', _, _, _, _)).
