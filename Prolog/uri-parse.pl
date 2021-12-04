@@ -168,15 +168,16 @@ uri_port(port([])) --> [].
 
 uri_fragment(fragment(Fragment)) -->
     uri_fragment_aux(FragmentList),
+    !,
     {flatten(FragmentList, FlattenFragment)},
     {atom_chars(Fragment, FlattenFragment)}.
+
+uri_fragment(fragment([])) --> [], !.
 
 uri_fragment_aux(FragmentList) -->
     [#],
     identificator(FragmentList, [], ascii),
     !.
-
-uri_fragment_aux([]) --> [].
 
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
