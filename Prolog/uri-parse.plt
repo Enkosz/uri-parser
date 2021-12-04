@@ -87,62 +87,62 @@ test(userinfo_7) :- \+(uri_parse("http://userinfo@", _)).
 test(userinfo_8) :- \+(uri_parse("http://@", _)).
 
 % TEST HOST
-test(host1) :- uri_parse("scheme://host", uri(_, _, 'host', _, _, _, _)).
-test(host2) :- uri_parse("scheme://userinfo@host", uri(_, 'userinfo', 'host', _, _, _, _)).
-test(host3) :- uri_parse("scheme://host:123", uri(_, _, 'host', '123', _, _, _)).
-test(host4) :- uri_parse("scheme://userinfo@host:123", uri(_, 'userinfo', 'host', '123', _, _, _)).
-test(host5) :- uri_parse("scheme://host/path", uri(_, _, 'host', _, 'path', _, _)).
-test(host6) :- uri_parse("scheme://userinfo@host.com:123", uri(_, 'userinfo', 'host.com', '123', _, _, _)).
-test(host_1) :- \+(uri_parse("scheme://userinfo@ho?st:123", uri(_, _, _, _, _, _, _))).
-test(host_2) :- \+(uri_parse("scheme://userinfo@ho@st:123", uri(_, _, _, _, _, _, _))).
-test(host_3) :- \+(uri_parse("scheme://userinfo@ho:st:123", uri(_, _, _, _, _, _, _))).
-test(host_4) :- \+(uri_parse("scheme://userinfo@ho/st:123", uri(_, _, _, _, _, _, _))).
-test(host_5) :- \+(uri_parse("scheme://userinfo@ho#st:123", uri(_, _, _, _, _, _, _))).
-test(host_6) :- \+(uri_parse("scheme://userinfo@ho st:123", uri(_, _, _, _, _, _, _))).
+test(host1) :- uri_parse("scheme://host", uri('scheme', [], 'host', [], [], [], [])).
+test(host2) :- uri_parse("scheme://userinfo@host", uri('scheme', 'userinfo', 'host', [], [], [], [])).
+test(host3) :- uri_parse("scheme://host:123", uri('scheme', [], 'host', '123', [], [], [])).
+test(host4) :- uri_parse("scheme://userinfo@host:123", uri('scheme', 'userinfo', 'host', '123', [], [], [])).
+test(host5) :- uri_parse("scheme://host/path", uri('scheme', [], 'host', [], 'path', [], [])).
+test(host6) :- uri_parse("scheme://userinfo@host.com:123", uri('scheme', 'userinfo', 'host.com', '123', [], [], [])).
+test(host_1) :- \+(uri_parse("scheme://userinfo@ho?st:123", _)).
+test(host_2) :- \+(uri_parse("scheme://userinfo@ho@st:123", _)).
+test(host_3) :- \+(uri_parse("scheme://userinfo@ho:st:123", _)).
+test(host_4) :- \+(uri_parse("scheme://userinfo@ho/st:123", _)).
+test(host_5) :- \+(uri_parse("scheme://userinfo@ho#st:123", _)).
+test(host_6) :- \+(uri_parse("scheme://userinfo@ho st:123", _)).
 
 % TEST PORT
-test(port1) :- uri_parse("scheme://host:123", uri(_, _, 'host', '123', _, _, _)).
-test(port2) :- uri_parse("scheme://host:123/path", uri(_, _, 'host', '123', 'path', _, _)).
-test(port3) :- uri_parse("http://host:123", uri(_, _, _, '123', _, _, _)).
-test(port4) :- uri_parse("http://host", uri(_, _, _, '80', _, _, _)).
-test(port5) :- uri_parse("https://host:123", uri(_, _, _, '123', _, _, _)).
-test(port6) :- uri_parse("https://host", uri(_, _, _, '80', _, _, _)).
-test(port_1) :- \+(uri_parse("scheme://host:1_23", uri(_, _, _, _, _, _, _))).
-test(port_2) :- \+(uri_parse("scheme://host:1a23", uri(_, _, _, _, _, _, _))).
-test(port_3) :- \+(uri_parse("scheme://host:", uri(_, _, _, _, _, _, _))).
-test(port_4) :- \+(uri_parse("scheme://host: ", uri(_, _, _, _, _, _, _))).
+test(port1) :- uri_parse("scheme://host:123", uri('scheme', [], 'host', '123', [], [], [])).
+test(port2) :- uri_parse("scheme://host:123/path", uri('scheme', [], 'host', '123', 'path', [], [])).
+test(port3) :- uri_parse("http://host:123", uri('http', [], 'host', '123', [], [], [])).
+test(port4) :- uri_parse("http://host", uri('http', [], 'host', '80', [], [], [])).
+test(port5) :- uri_parse("https://host:123", uri('https', [], 'host', '123', [], [], [])).
+test(port6) :- uri_parse("https://host", uri('https', [], 'host', '80', [], [], [])).
+test(port_1) :- \+(uri_parse("scheme://host:1_23", _)).
+test(port_2) :- \+(uri_parse("scheme://host:1a23", _)).
+test(port_3) :- \+(uri_parse("scheme://host:", _)).
+test(port_4) :- \+(uri_parse("scheme://host: ", _)).
 
 % TEST PATH
-test(path1) :- uri_parse("scheme://host/path", uri(_, _, _, _, 'path', _, _)).
-test(path2) :- uri_parse("scheme://host/path/prova", uri(_, _, _, _, 'path/prova', _, _)).
-test(path3) :- uri_parse("scheme://host/", uri(_, _, _, _, [], _, _)).
-test(path4) :- uri_parse("scheme://host", uri(_, _, _, _, [], _, _)).
-test(path5) :- uri_parse("scheme://host/path?query", uri(_, _, 'host', _, 'path', 'query', _)).
-test(path6) :- uri_parse("scheme://host/pro va", uri(_, _, _, _, 'pro%20va', _, _)).
-test(path7) :- uri_parse("scheme://host/pro.va", uri(_, _, _, _, 'pro.va', _, _)).
-test(path_1) :- \+(uri_parse("scheme://host/path/", uri(_, _, _, _, _, _, _))).
-test(path_2) :- \+(uri_parse("scheme://host/p:ath", uri(_, _, _, _, _, _, _))).
-test(path_3) :- \+(uri_parse("scheme://host/p@ath", uri(_, _, _, _, _, _, _))).
+test(path1) :- uri_parse("scheme://host/path", uri('scheme', [], 'host', [], 'path', [], [])).
+test(path2) :- uri_parse("scheme://host/path/prova", uri('scheme', [], 'host', [], 'path/prova', [], [])).
+test(path3) :- uri_parse("scheme://host/", uri('scheme', [], 'host', [], [], [], [])).
+test(path4) :- uri_parse("scheme://host", uri('scheme', [], 'host', [], [], [], [])).
+test(path5) :- uri_parse("scheme://host/path?query", uri('scheme', [], 'host', _, 'path', 'query', [])).
+test(path6) :- uri_parse("scheme://host/pro va", uri('scheme', [], 'host', [], 'pro%20va', [], [])).
+test(path7) :- uri_parse("scheme://host/pro.va", uri('scheme', [], 'host', [], 'pro.va', [], [])).
+test(path_1) :- \+(uri_parse("scheme://host/path/", _)).
+test(path_2) :- \+(uri_parse("scheme://host/p:ath", _)).
+test(path_3) :- \+(uri_parse("scheme://host/p@ath", _)).
 
 % TEST QUERY
-test(query1) :- uri_parse("scheme://host/?query", uri(_, _, _, _, _, 'query', _)).
-test(query2) :- uri_parse("scheme://host/?qu ery", uri(_, _, _, _, _, 'qu%20ery', _)).
-test(query3) :- uri_parse("scheme://host/?qu.ery", uri(_, _, _, _, _, 'qu.ery', _)).
-test(query4) :- uri_parse("scheme://host/?qu:ery", uri(_, _, _, _, _, 'qu:ery', _)).
-test(query5) :- uri_parse("scheme://host/?qu@ery", uri(_, _, _, _, _, 'qu@ery', _)).
-test(query6) :- uri_parse("scheme://host/?qu/ery", uri(_, _, _, _, _, 'qu/ery', _)).
-test(query7) :- uri_parse("scheme://host/?qu?ery", uri(_, _, _, _, _, 'qu?ery', _)).
-test(query8) :- uri_parse("scheme://host", uri(_, _, _, _, _, [], _)).
-test(query9) :- uri_parse("scheme://host/", uri(_, _, _, _, _, [], _)).
-test(query10) :- uri_parse("scheme://host/path?query#fragment", uri(_, _, _, _, 'path', 'query', 'fragment')).
-test(query_1) :- \+(uri_parse("scheme://host/?", uri(_, _, _, _, _, _, _))).
-test(query_2) :- \+(uri_parse("scheme://host/?#", uri(_, _, _, _, _, _, _))).
+test(query1) :- uri_parse("scheme://host/?query", uri('scheme', [], 'host', [], [], 'query', [])).
+test(query2) :- uri_parse("scheme://host/?qu ery", uri('scheme', [], 'host', [], [], 'qu%20ery', [])).
+test(query3) :- uri_parse("scheme://host/?qu.ery", uri('scheme', [], 'host', [], [], 'qu.ery', [])).
+test(query4) :- uri_parse("scheme://host/?qu:ery", uri('scheme', [], 'host', [], [], 'qu:ery', [])).
+test(query5) :- uri_parse("scheme://host/?qu@ery", uri('scheme', [], 'host', [], [], 'qu@ery', [])).
+test(query6) :- uri_parse("scheme://host/?qu/ery", uri('scheme', [], 'host', [], [], 'qu/ery', [])).
+test(query7) :- uri_parse("scheme://host/?qu?ery", uri('scheme', [], 'host', [], [], 'qu?ery', [])).
+test(query8) :- uri_parse("scheme://host", uri('scheme', [], 'host', [], [], [], [])).
+test(query9) :- uri_parse("scheme://host/", uri('scheme', [], 'host', [], [], [], [])).
+test(query10) :- uri_parse("scheme://host/path?query#fragment", uri('scheme', [], 'host', [], 'path', 'query', 'fragment')).
+test(query_1) :- \+(uri_parse("scheme://host/?", _)).
+test(query_2) :- \+(uri_parse("scheme://host/?#", _)).
 
 % TEST FRAGMENT
-test(fragment1) :- uri_parse("scheme://host/#frag", uri(_, _, _, _, _, _, 'frag')).
-test(fragment2) :- uri_parse("scheme://host/path?query#frag", uri(_, _, _, _, 'path', 'query', 'frag')).
-test(fragment3) :- uri_parse("scheme://host/?query#frag", uri(_, _, _, _, _, 'query', 'frag')).
-test(fragment4) :- uri_parse("scheme://host", uri(_, _, _, _, _, _, [])).
-test(fragment_1) :- \+(uri_parse("scheme://host/#", uri(_, _, _, _, _, _, _))).
+test(fragment1) :- uri_parse("scheme://host/#frag", uri('scheme', [], 'host', [], [], [], 'frag')).
+test(fragment2) :- uri_parse("scheme://host/path?query#frag", uri('scheme', [], 'host', [], 'path', 'query', 'frag')).
+test(fragment3) :- uri_parse("scheme://host/?query#frag", uri('scheme', [], 'host', [], [], 'query', 'frag')).
+test(fragment4) :- uri_parse("scheme://host", uri('scheme', [], 'host', [], [], [], [])).
+test(fragment_1) :- \+(uri_parse("scheme://host/#", _)).
 
 :- end_tests(uri_parse).
