@@ -4,7 +4,7 @@
 :- begin_tests(uri_parse).
 
 % TEST SCHEMA
-test(schema1) :- uri_parse("http://google.com", uri('http', [], 'google.com', [], [], [], [])).
+test(schema1) :- uri_parse("http://google.com", uri('http', [], 'google.com', '80', [], [], [])).
 test(schema2) :- uri_parse("h11ps://google.com", uri('h11ps', [], 'google.com', [], [], [], [])).
 test(schema3) :- uri_parse("_http_://google.com", uri('_http_', [], 'google.com', [], [], [], [])).
 test(schema_1) :- \+(uri_parse("htt p://google.com", _)).
@@ -74,9 +74,9 @@ test(zos_16) :- \+(uri_parse("zos://host/pippo(", _)).
 test(zos_17) :- \+(uri_parse("zos://host/pippo)", _)).
 
 % TEST USERINFO
-test(userinfo1) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', [], [], [], [])).
-test(userinfo2) :- uri_parse("http://user_info@host", uri('http', 'user_info', 'host', [], [], [], [])).
-test(userinfo3) :- uri_parse("http://user123info@host", uri('http', 'user123info', 'host', [], [], [], [])).
+test(userinfo1) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', '80', [], [], [])).
+test(userinfo2) :- uri_parse("http://user_info@host", uri('http', 'user_info', 'host', '80', [], [], [])).
+test(userinfo3) :- uri_parse("http://user123info@host", uri('http', 'user123info', 'host', '80', [], [], [])).
 test(userinfo_1) :- \+(uri_parse("http://user@info@host", _)).
 test(userinfo_2) :- \+(uri_parse("http://userin:fo@host", _)).
 test(userinfo_3) :- \+(uri_parse("http://userin/fo@host", _)).
