@@ -6,11 +6,21 @@
 
 :- module(uri_parse, [uri_parse/2, uri_display/1]).
 
+% uri_display/1 
+% Permette dato un URIString di stampare in modo pretty i relativi campi
 uri_display(URIString) :-
-    uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
-    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w', [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
+    uri_parse(URIString, 
+              uri(Scheme,
+                  UserInfo, Host, Port, 
+                  Path, Query, Fragment)),
+    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~n
+            Query: ~w ~nFragment: ~w', 
+            [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
-uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
+% uri_parse/2 
+% Metodo principale 
+uri_parse(URIString, 
+          uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
     uri_parse_(URIChars,
         uri(components(
@@ -27,21 +37,25 @@ uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
 % ["fax" | "tel"] ‘:’ userinfo 
-uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo, 
+               host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {current_scheme(Scheme)},
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
 % "news" ‘:’ host 
-uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, 
+               userinfo([]), Host, port([]),
+               path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {Scheme = scheme('news')},
     !,
     uri_host_aux(Host).
 
 % "mailto" ‘:’ userinfo ['@'' host] 
-uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo, Host,
+               port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {Scheme = scheme('mailto')},
     uri_userinfo_scheme_syntax(UserInfo),
@@ -50,7 +64,8 @@ uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([
     uri_host_aux(Host).
 
 % "mailto" ‘:’ userinfo
-uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo,
+               host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {Scheme = scheme('mailto')},
     !,
@@ -87,7 +102,8 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     !.
 
 % scheme ‘:’ authorithy
-uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo, Host, Port, 
+               path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     [/, /],
     uri_userinfo(UserInfo),
@@ -97,7 +113,8 @@ uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([])))
     !.
 
 % scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
-uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
+uri(components(Scheme, userinfo([]), host([]), port([]), 
+               Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     ([/]; []),
     uri_path(Path),
@@ -120,7 +137,8 @@ identificator([H | T], List, CharType) -->
     { valid_char(H, List, CharType) },
     identificator(T, List, CharType),
     !.
-identificator([X | []], List, CharType) --> [X], { valid_char(X, List, CharType) }.
+identificator([X | []], List, CharType) --> 
+    [X], { valid_char(X, List, CharType) }.
 
 uri_userinfo(userinfo(UserInfo)) -->
     identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
