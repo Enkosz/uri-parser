@@ -1,21 +1,20 @@
 (defun identificator% (list &optional delimitators eol accumulator)
   (when list
-    (cond 
-      ((and (null (cdr list)) (not (member (first list) delimitators)) eol) (values (nreverse accumulator) list))
-    )
-    (if (member (first list) delimitators)
-    (values (nreverse accumulator) list)
-      (identificator% (rest list)
-              delimitators
-              (cons (car list) accumulator)))))
+    (if (and (null (cdr list)) (not (member (first list) delimitators)) eol) (values (nreverse (cons (car list) accumulator)) nil)
+      (if (member (first list) delimitators)
+          (values (nreverse accumulator) list)
+          (identificator% (rest list) delimitators eol
+              (cons (car list) accumulator)))
+      )
+    ))
 
 ; "abc" c -> "bc" c -> 
 ; identificator% "abc" "b" -> (a) (c)
 ; identificator% nil "b" -> nil
 ; identificator% "abc" "d" -> nil
 
-(defun identificator (list delimitator)
-  (let ((parse (multiple-value-list (identificator% list delimitator))))
+(defun identificator (list delimitator &optional eol)
+  (let ((parse (multiple-value-list (identificator% list delimitator eol))))
     (if (first parse)
         (values-list parse)
       (values nil list))))
@@ -35,9 +34,9 @@
 
 (defun host (list)
 (multiple-value-bind (uri-host rest)
-    (identificator list '(#\: #\/))
+    (identificator list '(#\: #\/) T)
      (if (null uri-host) (values (list 'uri-host nil) rest)
-      (values (cons 'uri-host uri-host) (cdr rest)))
+      (values (cons 'uri-host uri-host) rest))
   )
 )
 
