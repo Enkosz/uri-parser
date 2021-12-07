@@ -4,6 +4,9 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
+% La Libreria fa uso delle DCG per la realizzazione di un parser
+% della RFC3986 semplificata
+
 :- module(uri_parse, [uri_parse/2, uri_display/1]).
 
 % uri_display/1 
@@ -18,7 +21,7 @@ uri_display(URIString) :-
             [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
 % uri_parse/2 
-% Metodo principale 
+% Metodo principale che risponde Vero se URIString è un uri valido
 uri_parse(URIString, 
           uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
@@ -33,8 +36,10 @@ uri_parse(URIString,
             fragment(Fragment)
         ))).
 
+
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
+
 
 % ["fax" | "tel"] ‘:’ userinfo 
 uri(components(Scheme, UserInfo, 
