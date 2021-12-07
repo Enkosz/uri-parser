@@ -1,7 +1,10 @@
-(defun identificator% (list &optional delimitators accumulator)
+(defun identificator% (list &optional delimitators eol accumulator)
   (when list
+    (cond 
+      ((and (null (cdr list)) (not (member (first list) delimitators)) eol) (values (nreverse accumulator) list))
+    )
     (if (member (first list) delimitators)
-    (values (nreverse accumulator) (rest list))
+    (values (nreverse accumulator) list)
       (identificator% (rest list)
               delimitators
               (cons (car list) accumulator)))))
@@ -15,26 +18,33 @@
   (let ((parse (multiple-value-list (identificator% list delimitator))))
     (if (first parse)
         (values-list parse)
-      (values nil (second parse)))))
+      (values nil list))))
 
 (defun scheme (list)
   (multiple-value-bind (schema rest)
-    (identificator list #\:)
+    (identificator list '(#\:))
     (values (cons 'uri-scheme schema) rest)
   )
 )
 
 (defun userinfo (list)
   (multiple-value-bind (schema rest)
-    (identificator list #\@)
-    (values (cons 'uri-userinfo schema) rest)
+    (identificator list '(#\@))
+    (if (null schema) (values (list 'uri-userinfo nil) rest)
+      (values (cons 'uri-userinfo schema) (cdr rest)))))
+
+(defun host (list)
+(multiple-value-bind (uri-host rest)
+    (identificator list '(#\: #\/))
+     (if (null uri-host) (values (list 'uri-host nil) rest)
+      (values (cons 'uri-host uri-host) (cdr rest)))
   )
 )
 
-(defun host (list)
-(multiple-value-bind (schema rest)
-    (identificator list #\:)
-    (values (cons 'uri-host schema) rest)
+(defun port (list)
+  (cond
+    ((eq (first list) #\:) (list 'uri-port 80))
+    (T (values (list 'uri-port nil) list))
   )
 )
 
@@ -42,9 +52,10 @@
   (cond 
     ((and (eq (first list) #\/) (eq (second list) #\/)) 
       (let* (
-        (parsedUserInfo (multiple-value-list (userinfo list)))
-        (parsedHost (multiple-value-list (host (second parsedUserInfo)))))
-        (list (first parsedUserInfo) (first parsedHost))
+        (parsedUserInfo (multiple-value-list (userinfo (rest (rest list)))))
+        (parsedHost (multiple-value-list (host (second parsedUserInfo))))
+        (parsedPort (multiple-value-list (port (second parsedHost)))))
+        (list (first parsedUserInfo) (first parsedHost) (first parsedPort) (second parsedPort))
       ))
   )
 )
@@ -52,7 +63,7 @@
 (defun parse (InputString)
   (let* (
     (parsedSchema (multiple-value-list (scheme (coerce InputString 'list))))
-    (parsedAuthority (multiple-value-list (authority (second parsedSchema)))))
+    (parsedAuthority (multiple-value-list (authority (rest (second parsedSchema))))))
     (list (first parsedSchema) parsedAuthority)
   )
 )
