@@ -1,28 +1,10 @@
-#| (defun identificator% (lista delimitator)
-  (cond (
-    ((null lista) nil)
-    ((eq (car lista) delimitator) (values nil (cdr lista)))
-    (T (multiple-value-bind (left right)
-      (identificator% (cdr lista) delimitator)
-      ()
-    ))
-  ))
-) |#
-
-(defun without-last(l)
-    (reverse (cdr (reverse l)))
-    )
-
-(defun identificator% (list &optional del)
-  (cond ((null list) nil)
-        ((not (member del list)) (values nil list))
-        ((eq (first list) del) (values nil (cdr list)))
-        (T (multiple-value-bind (result rest)
-          (identificator% (cdr list) del); expr
-          (values (cons (car list) result) rest); body
-          ))
-    )
-  )
+(defun identificator% (list &optional delimitators accumulator)
+  (when list
+    (if (member (first list) delimitators)
+    (values (nreverse accumulator) (rest list))
+      (identificator% (rest list)
+              delimitators
+              (cons (car list) accumulator)))))
 
 ; "abc" c -> "bc" c -> 
 ; identificator% "abc" "b" -> (a) (c)
