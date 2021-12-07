@@ -258,7 +258,15 @@ current_scheme(scheme('fax')) :- !.
 
 uri_default_port(scheme(http), port([]), port('80')) :- !.
 uri_default_port(scheme(https), port([]), port('80')) :- !.
-uri_default_port(_, ActualPort, ActualPort) :- !.
+uri_default_port(scheme(Scheme), ActualPort, ActualPort) :- 
+    Scheme \= 'http',
+    Scheme \= 'https',
+    !.
+uri_default_port(scheme(Scheme), ActualPort, ActualPort) :- 
+    (Scheme = 'http';
+    Scheme = 'https'),
+    ActualPort \= port([]),
+    !.
 
 valid_char(X, List, CharType) :-
     char_type(X, CharType),
