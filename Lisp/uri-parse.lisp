@@ -84,7 +84,7 @@
 
 (defun uri-parse_ (InputString)
   (let (
-    (streamed (append (coerce InputString 'list) '(eof))))
+    (streamed (append (coerce InputString 'list) '(eof)))) ; Appendo EOF a fine stringa per usarlo come delimitatore
     (let* (
         (parsedSchema (multiple-value-list (scheme streamed)))
         (parsedAuthority (multiple-value-list (authority (second parsedSchema))))
