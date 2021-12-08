@@ -1,52 +1,46 @@
+(define-condition uri-invalid (error) ())
 ; Definizione delle Classi
 (defclass schema ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass userinfo ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass host ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass port ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass path ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass query ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass fragment ()
   ((value
     :initarg :value
     :accessor value)
-  )
-)
+  ))
 
 (defclass authority ()
   (
@@ -62,8 +56,7 @@
      :initarg :port
      :initform nil
      :accessor get-port)
-   )
-)
+   ))
 
 (defclass uri-structure ()
  (
@@ -128,30 +121,40 @@
         (T (value (get-fragment uri-struct))))
  )
 
-(defun identificator% (list &optional delimitators accumulator)
+(defun identificator% (list &optional delimitators banned accumulator)
   (when list
     (if (member (first list) delimitators)
-    (values (nreverse accumulator) list)
+     (values (nreverse accumulator) list)
+     (when (not (member (first list) banned))
       (identificator% (rest list)
-              delimitators
-              (cons (car list) accumulator)))))
+                      delimitators
+                      banned
+                      (cons (car list) accumulator))))))
 
-(defun identificator (list delimitator)
-  (let ((parse (multiple-value-list (identificator% list delimitator))))
+(defun identificator (list delimitator &optional banned)
+  (let ((parse (multiple-value-list (identificator% list delimitator banned))))
     (if (first parse)
         (values-list parse)
       (values nil list))))
 
+(defun identificator-host (list delimitators &optional banned)
+  (let ((parse (multiple-value-list (identificator list delimitators banned))))
+    (if (eq (first (second parse)) #\.) ; abbiamo un subhost
+        (let ((secondParse (identificator-host (cdr (second parse)) delimitators banned)))
+              (if (eq (first (second secondParse)) #\.) (make-condition 'uri-invalid) 
+               (values (append (first parse) (first secondParse)) (second secondParse))
+              ))  
+      (values-list parse)))
+)
+
 (defun parse-scheme (list)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\:))
-    (values (make-instance 'schema :value (coerce parsed 'string)) (rest remaining))
-  )
-)
+    (identificator list '(#\:) (coerce "/?#@" 'list))
+    (values (make-instance 'schema :value (coerce parsed 'string)) (rest remaining))))
 
 (defun parse-userinfo (list)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\@))
+    (identificator list '(#\@) (coerce "/?#" 'list))
     (cond ((null parsed) 
             (values nil remaining)
            )
@@ -161,7 +164,7 @@
 
 (defun parse-host (list)
   (multiple-value-bind (parsed remaining)
-      (identificator list '(#\: #\/ eof))
+      (identificator list '(#\: #\/ #\. eof) (coerce "?#@" 'list))
       (cond ((null parsed) 
             (values nil remaining)
            )
@@ -236,30 +239,30 @@
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
 (defun parse-authority (URIStringList)
   (let* (
-    (parsed_userinfo (multiple-value-list (parse-userinfo URIStringList)))
-    (parsed_host (multiple-value-list (parse-host (second parsed_userinfo))))
-    (parsed_port (multiple-value-list (parse-port (second parsed_host)))))
+    (parsed-userinfo (multiple-value-list (parse-userinfo URIStringList)))
+    (parsed-host (multiple-value-list (parse-host (second parsed-userinfo))))
+    (parsed-port (multiple-value-list (parse-port (second parsed-host)))))
     (values 
      (make-instance 'authority 
-      :userinfo (first parsed_userinfo) 
-      :host (first parsed_host) 
-      :port (first parsed_port)) 
-     (second parsed_port))
+      :userinfo (first parsed-userinfo) 
+      :host (first parsed-host) 
+      :port (first parsed-port)) 
+     (second parsed-port))
   )
 )
 
 ; scheme ‘:’ authorithy [‘/’ [path] [‘?’ query] [‘#’ fragment]]
 (defun parse-default-uri (URIStringList)
   (let* (
-    (parsed_authority (multiple-value-list (parse-authority URIStringList)))
-    (parsed_path (multiple-value-list (parse-path (second parsed_authority))))
-    (parsed_query (multiple-value-list (parse-query (second parsed_path))))
-    (parsed_fragment (multiple-value-list (parse-fragment (second parsed_query)))))
+    (parsed-authority (multiple-value-list (parse-authority URIStringList)))
+    (parsed-path (multiple-value-list (parse-path (second parsed-authority))))
+    (parsed-query (multiple-value-list (parse-query (second parsed-path))))
+    (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
     (list 
-      (first parsed_authority) 
-      (first parsed_path) 
-      (first parsed_query) 
-      (first parsed_fragment)
+      (first parsed-authority) 
+      (first parsed-path) 
+      (first parsed-query) 
+      (first parsed-fragment)
     )
   )
 )
@@ -268,14 +271,14 @@
 ; TODO Gestire il slash opzionale
 (defun parse-resource-uri (URIStringList)
   (let* (
-    (parsed_path (multiple-value-list (parse-path URIStringList)))
-    (parsed_query (multiple-value-list (parse-query (second parsed_path))))
-    (parsed_fragment (multiple-value-list (parse-fragment (second parsed_query)))))
+    (parsed-path (multiple-value-list (parse-path URIStringList)))
+    (parsed-query (multiple-value-list (parse-query (second parsed-path))))
+    (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
     (list 
       (list 'uri-authority) 
-      (first parsed_path) 
-      (first parsed_query) 
-      (first parsed_fragment)
+      (first parsed-path) 
+      (first parsed-query) 
+      (first parsed-fragment)
     )
   )
 )
@@ -283,20 +286,20 @@
 ; Chiama la funzione corretta in base a cosa abbiamo dopo "scheme : "
 (defun parse-uri-type (URIStringList)
   (let (
-    (parsed_scheme (multiple-value-list (parse-scheme URIStringList))))
+    (parsed-scheme (multiple-value-list (parse-scheme URIStringList))))
     (cond
       ((and
-        (char= (first (second parsed_scheme)) #\/)
-        (char= (second (second parsed_scheme)) #\/))
+        (char= (first (second parsed-scheme)) #\/)
+        (char= (second (second parsed-scheme)) #\/))
         (let 
-          ((otherComp (parse-default-uri (cdr (cdr (second parsed_scheme))))))
-          (make-instance 'uri-structure :schema (first parsed_scheme) 
+          ((otherComp (parse-default-uri (cdr (cdr (second parsed-scheme))))))
+          (make-instance 'uri-structure :schema (first parsed-scheme) 
                                         :authority (first otherComp)
                                         :path (second otherComp)
                                         :query (third otherComp)
                                         :fragment (fourth otherComp))))
       (T 
-        (append (first parsed_scheme) (parse-resource-uri (second parsed_scheme)))
+        (append (first parsed-scheme) (parse-resource-uri (second parsed-scheme)))
       )
     )
   )
