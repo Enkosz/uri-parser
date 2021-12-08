@@ -137,14 +137,15 @@
         (values-list parse)
       (values nil list))))
 
-(defun identificator-host (list delimitators &optional banned)
-  (let ((parse (multiple-value-list (identificator list delimitators banned))))
+(defun identificator-host (URIHostList)
+  (cond 
+    ((or (eq (first URIHostList) 'eof) (member (first URIHostList) '(#\. #\/ #\? #\# #\@ #\:))) (error 'uri-invalid))
+    (T (let ((parse (multiple-value-list (identificator URIHostList '(#\. #\/ #\: eof) '(#\? #\# #\@)))))
     (if (eq (first (second parse)) #\.) ; abbiamo un subhost
-        (let ((secondParse (identificator-host (cdr (second parse)) delimitators banned)))
-              (if (eq (first (second secondParse)) #\.) (make-condition 'uri-invalid) 
-               (values (append (first parse) (first secondParse)) (second secondParse))
-              ))  
-      (values-list parse)))
+        (let ((secondParse (multiple-value-list (identificator-host (cdr (second parse))))))
+              (values (append (first parse) '(#\.) (first secondParse)) (second secondParse)))  
+      (values-list parse))))
+  )
 )
 
 (defun parse-scheme (list)
@@ -164,7 +165,7 @@
 
 (defun parse-host (list)
   (multiple-value-bind (parsed remaining)
-      (identificator list '(#\: #\/ #\. eof) (coerce "?#@" 'list))
+      (identificator-host list)
       (cond ((null parsed) 
             (values nil remaining)
            )
@@ -313,5 +314,8 @@
 
 ; Funzione principale, converta la stringa in Input come una lista di caratteri
 (defun uri-parse (URIString)
-  (uri-parse_ (coerce URIString 'list))
+  (handler-case (uri-parse_ (coerce URIString 'list))
+    (error ()
+      (format t "URI non valido")
+  ))
 )
