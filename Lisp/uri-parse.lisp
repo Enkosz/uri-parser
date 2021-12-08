@@ -12,28 +12,28 @@
         (values-list parse)
       (values nil list))))
 
-(defun scheme (list)
+(defun parse-scheme (list)
   (multiple-value-bind (schema rest)
     (identificator list '(#\:))
-    (values (cons 'uri-scheme schema) rest)
+    (values (cons 'uri-scheme schema) (cdr rest))
   )
 )
 
-(defun userinfo (list)
+(defun parse-userinfo (list)
   (multiple-value-bind (schema rest)
     (identificator list '(#\@))
     (values (cons 'uri-userinfo schema) rest)
   )
 )
 
-(defun host (list)
+(defun parse-host (list)
   (multiple-value-bind (schema rest)
       (identificator list '(#\: #\/ eof))
       (values (cons 'uri-host schema) rest)
     )
 )
 
-(defun port (list)
+(defun parse-port (list)
    (if (not (eq (first list) #\:))
       (values (list 'uri-port) list)
       (multiple-value-bind (parsed remaining)
@@ -43,14 +43,14 @@
   )
 )
 
-(defun path (list)
+(defun parse-path (list)
   (multiple-value-bind (parsed rest)
     (identificator list '(#\? #\# eof))
     (values (list 'uri-path parsed) rest)
   )
 )
 
-(defun query (list)
+(defun parse-query (list)
   (if (not (eq (first list) #\?))
     (values (list 'uri-query) list)
     (multiple-value-bind (parsed rest)
@@ -60,7 +60,7 @@
   )
 )
 
-(defun fragment (list)
+(defun parse-fragment (list)
   (if (not (eq (first list) #\#))
       (values (list 'uri-fragment) list)
       (multiple-value-bind (parsed rest)
@@ -70,34 +70,48 @@
   )
 )
 
-(defun authority (list)
-  (cond 
-    ((and (eq (second list) #\/) (eq (third list) #\/)) 
-      (let* (
-        (parsedUserInfo (multiple-value-list (userinfo (cdr (cdr (cdr list))))))
-        (parsedHost (multiple-value-list (host (second parsedUserInfo))))
-        (parsedPort (multiple-value-list (port (second parsedHost)))))
-        (values (list (first parsedUserInfo) (first parsedHost) (first parsedPort)) (second parsedPort))
-      ))
+(defun parse-authority (URIStringList)
+  (let* (
+    (parsed_userinfo (multiple-value-list (parse-userinfo URIStringList)))
+    (parsed_host (multiple-value-list (parse-host (second parsed_userinfo))))
+    (parsed_port (multiple-value-list (parse-port (second parsed_host)))))
+    (values (list (first parsed_userinfo) (first parsed_host) (first parsed_port)) (second parsed_port))
   )
 )
 
-(defun uri-parse_ (InputString)
+(defun parse-default-type (URIStringList)
+  (let* (
+    (parsed_authority (multiple-value-list (parse-authority URIStringList)))
+    (parsed_path (multiple-value-list (parse-path (second parsed_authority))))
+    (parsed_query (multiple-value-list (parse-query (second parsed_path))))
+    (parsed_fragment (multiple-value-list (parse-fragment (second parsed_query)))))
+    (list (first parsed_authority) (first parsed_path) (first parsed_query) (first parsed_fragment))
+  )
+)
+
+(defun parse-uri-type (URIStringList)
   (let (
-    (streamed (append (coerce InputString 'list) '(eof)))) ; Appendo EOF a fine stringa per usarlo come delimitatore
-    (let* (
-        (parsedSchema (multiple-value-list (scheme streamed)))
-        (parsedAuthority (multiple-value-list (authority (second parsedSchema))))
-        (parsedPath (multiple-value-list (path (second parsedAuthority))))
-        (parsedQuery (multiple-value-list (query (second parsedPath))))
-        (parsedFragment (multiple-value-list (fragment (second parsedQuery)))))
-        (list 
-          (first parsedSchema)
-          (first parsedAuthority)
-          (first parsedPath)
-          (first parsedQuery)
-          (first parsedFragment)
-        )
+    (parsed_scheme (multiple-value-list (parse-scheme URIStringList))))
+    (cond
+      ((and
+        (char= (first (second parsed_scheme)) #\/)
+        (char= (second (second parsed_scheme)) #\/)) 
+          (append (first parsed_scheme) (parse-default-type (cdr (cdr (second parsed_scheme)))))
+      )
     )
   )
+)
+
+(defun uri-parse_ (URIStringList)
+  (let (
+    (parsed_input (append URIStringList '(eof)))) ; Appendo EOF a fine stringa per usarlo come delimitatore
+    (let (
+        (parsed_uri (multiple-value-list (parse-uri-type parsed_input))))
+        (list 'uri-component parsed_uri)
+    )
+  )
+)
+
+(defun uri-parse (URIString)
+  (uri-parse_ (coerce URIString 'list))
 )
