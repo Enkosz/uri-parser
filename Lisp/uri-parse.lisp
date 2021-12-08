@@ -1,4 +1,4 @@
-(defstruct (uri_scheme
+; Definizione delle Classi
   (:constructor create-uri-scheme (value)))
   value
 )
