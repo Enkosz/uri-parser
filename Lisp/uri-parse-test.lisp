@@ -5,10 +5,16 @@
 (defparameter tot 0)
 
 (defun test (name value expected) 
-  (if (equalp value expected)
-      (setq passed (1+  passed))
-      (and (setq failed (1+ failed))
-	   (format T "~%Test ~A failed --> Expected: ~A Found: ~A" name expected value)))
+  (if (and (equalp (uri-scheme value) (uri-scheme expected))
+    (equalp (uri-userinfo value) (uri-userinfo expected))
+    (equalp (uri-host value) (uri-host expected))
+    (equalp (uri-port value) (uri-port expected))
+    (equalp (uri-path value) (uri-path expected))
+    (eq (uri-query value) (uri-query expected))
+    (equalp (uri-path value) (uri-path expected)))
+        (setq passed (1+  passed))
+    (and (setq failed (1+ failed))
+        (format T "~%Test ~A failed --> Expected: ~A Found: ~A" name expected value)))
   (setq tot (1+ tot))
 )
 
@@ -38,6 +44,22 @@
     (uri-parse "http://google.com")
     (prepare-uri 
         :scheme "http"
+        :host "google.com"
+    )
+)
+
+(test "test-scheme-2"
+    (uri-parse "h11ps://google.com")
+    (prepare-uri 
+        :scheme "h11ps"
+        :host "google.com"
+    )
+)
+
+(test "test-scheme-2"
+    (uri-parse "_http_://google.com")
+    (prepare-uri 
+        :scheme "_http_"
         :host "google.com"
     )
 )
