@@ -137,13 +137,13 @@
         (values-list parse)
       (values nil list))))
 
-(defun identificator-host (URIHostList)
+(defun identificator-special (list delimitator delimitatorIdentificator &optional bannedIdentificator)
   (cond 
-    ((or (eq (first URIHostList) 'eof) (member (first URIHostList) '(#\. #\/ #\? #\# #\@ #\:))) (error 'uri-invalid-host))
-    (T (let ((parse (multiple-value-list (identificator URIHostList '(#\. #\/ #\: eof) '(#\? #\# #\@)))))
-    (if (eq (first (second parse)) #\.) ; abbiamo un subhost
-        (let ((secondParse (multiple-value-list (identificator-host (cdr (second parse))))))
-              (values (append (first parse) '(#\.) (first secondParse)) (second secondParse)))  
+    ((member (first list) '(#\. #\/ #\? #\# #\@ #\: eof)) (error 'uri-invalid-identificatorSpecial))
+    (T (let ((parse (multiple-value-list (identificator list delimitatorIdentificator bannedIdentificator))))
+    (if (eq (first (second parse)) delimitator) ; abbiamo un subhost/subpath
+        (let ((secondParse (multiple-value-list (identificator-special (cdr (second parse)) delimitator delimitatorIdentificator bannedIdentificator))))
+              (values (append (first parse) (list delimitator) (first secondParse)) (second secondParse)))  
       (values-list parse))))
   )
 )
@@ -166,7 +166,7 @@
 
 (defun parse-host (list)
   (multiple-value-bind (parsed remaining)
-      (identificator-host list)
+      (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@))
       (cond ((null parsed) 
             (error 'uri-invalid-host))
           (T (values 
@@ -192,9 +192,14 @@
   )
 )
 
+(defun parse-path-aux (list)
+(cond 
+  ((member (first list) '(#\? #\# eof)) (values nil list))
+  (T (identificator-special list #\/ '(#\/ #\? #\# eof) '(#\: #\@)))))
+
 (defun parse-path (list)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\? #\# eof))
+    (parse-path-aux list)
     (cond ((null parsed) 
             (values nil remaining)
            )
