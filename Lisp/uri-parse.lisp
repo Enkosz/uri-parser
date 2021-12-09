@@ -196,7 +196,7 @@
   (multiple-value-bind (parsed remaining)
     (identificator list '(#\? #\# eof))
     (cond ((null parsed) 
-            (error 'uri-invalid-path)
+            (values nil remaining)
            )
           (T (values 
               (make-instance 'path :value (coerce parsed 'string)) 
