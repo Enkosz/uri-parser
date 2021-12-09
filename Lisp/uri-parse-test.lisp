@@ -5,24 +5,41 @@
 (defparameter tot 0)
 
 (defun test (name value expected) 
-  (if (equal value expected)
+  (if (equalp value expected)
       (setq passed (1+  passed))
       (and (setq failed (1+ failed))
 	   (format T "~%Test ~A failed --> Expected: ~A Found: ~A" name expected value)))
   (setq tot (1+ tot))
 )
 
+(defun prepare-uri (
+    &key
+    (scheme (error "missing required arg scheme"))
+    userinfo
+    (host (error "missing required arg host"))
+    port 
+    path 
+    query 
+    fragment)
+    (make-instance 'uri-structure 
+        :schema (make-instance 'schema :value scheme)
+        :authority  (make-instance 'authority 
+            :userinfo (when userinfo (make-instance 'userinfo :value userinfo))
+            :host (make-instance 'host :value host) 
+            :port (when port (make-instance 'port :value port))
+        )
+        :path (when path (make-instance 'path :value path))
+        :query (when query (make-instance 'query :value query))
+        :fragment (when fragment (make-instance 'fragment :value fragment))
+    )
+)
+
 (test "test-scheme-1"
-    (uri-scheme (uri-parse "http://google.com"))
-    "http"
-)
-(test "test-scheme-2"
-    (uri-scheme (uri-parse "h11ps://google.com"))
-    "h11ps"
-)
-(test "test-scheme-3"
-    (uri-scheme (uri-parse "_http_://google.com"))
-    "_http_"
+    (uri-parse "http://google.com")
+    (prepare-uri 
+        :scheme "http"
+        :host "google.com"
+    )
 )
 
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
