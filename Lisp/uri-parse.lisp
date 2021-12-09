@@ -139,7 +139,7 @@
 
 (defun identificator-host (URIHostList)
   (cond 
-    ((or (eq (first URIHostList) 'eof) (member (first URIHostList) '(#\. #\/ #\? #\# #\@ #\:))) (error 'uri-invalid))
+    ((or (eq (first URIHostList) 'eof) (member (first URIHostList) '(#\. #\/ #\? #\# #\@ #\:))) (error 'uri-invalid-host))
     (T (let ((parse (multiple-value-list (identificator URIHostList '(#\. #\/ #\: eof) '(#\? #\# #\@)))))
     (if (eq (first (second parse)) #\.) ; abbiamo un subhost
         (let ((secondParse (multiple-value-list (identificator-host (cdr (second parse))))))
@@ -148,6 +148,7 @@
   )
 )
 
+;TODO Controlli NIL
 (defun parse-scheme (list)
   (multiple-value-bind (parsed remaining)
     (identificator list '(#\:) (coerce "/?#@" 'list))
@@ -167,8 +168,7 @@
   (multiple-value-bind (parsed remaining)
       (identificator-host list)
       (cond ((null parsed) 
-            (values nil remaining)
-           )
+            (error 'uri-invalid-host))
           (T (values 
               (make-instance 'host :value (coerce parsed 'string)) 
               remaining))
@@ -180,13 +180,13 @@
    (if (not (eq (first list) #\:))
       (values nil list)
       (multiple-value-bind (parsed remaining)
-        (identificator list '(#\/ eof))
+        (identificator (cdr list) '(#\/ eof))
         (cond ((null parsed) 
-            (values nil remaining)
-           )
+            (error 'uri-invalid-port))
           ((every #'digit-char-p (coerce parsed 'string)) (values 
               (make-instance 'port :value (coerce parsed 'string)) 
-              (cdr remaining)))
+              remaining))
+          (T (error 'uri-invalid-port))
         )
       )
   )
@@ -196,7 +196,7 @@
   (multiple-value-bind (parsed remaining)
     (identificator list '(#\? #\# eof))
     (cond ((null parsed) 
-            (values nil remaining)
+            (error 'uri-invalid-path)
            )
           (T (values 
               (make-instance 'path :value (coerce parsed 'string)) 
@@ -211,7 +211,7 @@
     (multiple-value-bind (parsed remaining)
       (identificator (cdr list) '(#\# eof))
       (cond ((null parsed) 
-            (values nil remaining)
+            (error 'uri-invalid-query)
            )
           (T (values 
               (make-instance 'userinfo :value (coerce parsed 'string)) 
@@ -227,7 +227,7 @@
       (multiple-value-bind (parsed remaining)
         (identificator (cdr list) '(eof))
         (cond ((null parsed) 
-            (values nil remaining)
+            (error 'uri-invalid-fragment)
            )
           (T (values 
               (make-instance 'userinfo :value (coerce parsed 'string)) 
@@ -252,11 +252,19 @@
   )
 )
 
+(defun slash (list)
+  (cond
+    ((or (eq (first list) 'eof) (null list)) list)
+    ((eq (first list) #\/) (cdr list))
+    (T (error 'uri-invalid-slash))
+  )
+)
+
 ; scheme ‘:’ authorithy [‘/’ [path] [‘?’ query] [‘#’ fragment]]
 (defun parse-default-uri (URIStringList)
   (let* (
     (parsed-authority (multiple-value-list (parse-authority URIStringList)))
-    (parsed-path (multiple-value-list (parse-path (second parsed-authority))))
+    (parsed-path (multiple-value-list (parse-path (slash (second parsed-authority)))))
     (parsed-query (multiple-value-list (parse-query (second parsed-path))))
     (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
     (list 
@@ -315,7 +323,8 @@
 ; Funzione principale, converta la stringa in Input come una lista di caratteri
 (defun uri-parse (URIString)
   (handler-case (uri-parse_ (coerce URIString 'list))
-    (error ()
+    (error (c)
       (format t "URI non valido")
+      (values 0 c)
   ))
 )
