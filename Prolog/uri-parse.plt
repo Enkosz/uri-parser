@@ -7,8 +7,13 @@
 test(schema1) :- uri_parse("http://google.com", uri('http', [], 'google.com', '80', [], [], [])).
 test(schema2) :- uri_parse("h11ps://google.com", uri('h11ps', [], 'google.com', [], [], [], [])).
 test(schema3) :- uri_parse("_http_://google.com", uri('_http_', [], 'google.com', [], [], [], [])).
-test(schema_1) :- \+(uri_parse("htt p://google.com", _)).
-test(schema_2) :- \+(uri_parse("htt:p://google.com", _)).
+test(schema_1) :- \+(uri_parse("://google.com", _)).
+test(schema_2) :- \+(uri_parse("@://google.com", _)).
+test(schema_3) :- \+(uri_parse("h:h://google.com", _)).
+test(schema_4) :- \+(uri_parse("/hh://google.com", _)).
+test(schema_5) :- \+(uri_parse("h#h://google.com", _)).
+test(schema_6) :- \+(uri_parse("h?h://google.com", _)).
+test(schema_7) :- \+(uri_parse(":://google.com", _)).
 
 % TEST SCHEMA MAILTO
 test(mailto1) :- uri_parse("mailto:userinfo", uri('mailto', 'userinfo', [], [], [], [], [])).

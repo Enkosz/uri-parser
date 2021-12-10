@@ -40,6 +40,7 @@
     )
 )
 
+; TEST SCHEMA
 (test "test-scheme-1"
     (uri-parse "http://google.com")
     (prepare-uri 
@@ -47,7 +48,6 @@
         :host "google.com"
     )
 )
-
 (test "test-scheme-2"
     (uri-parse "h11ps://google.com")
     (prepare-uri 
@@ -55,13 +55,42 @@
         :host "google.com"
     )
 )
-
-(test "test-scheme-2"
+(test "test-scheme-3"
     (uri-parse "_http_://google.com")
     (prepare-uri 
         :scheme "_http_"
         :host "google.com"
     )
 )
+(test "test-scheme_1"
+    (uri-parse "://google.com")
+    nil
+)
+(test "test-scheme_2"
+    (uri-parse "@://google.com")
+    nil
+)
+(test "test-scheme_3"
+    (uri-parse "h:h://google.com")
+    nil
+)
+(test "test-scheme_4"
+    (uri-parse "/hh://google.com")
+    nil
+)
+(test "test-scheme_5"
+    (uri-parse "h#h://google.com")
+    nil
+)
+(test "test-scheme_6"
+    (uri-parse "h?h://google.com")
+    nil
+)
+(test "test-scheme_7"
+    (uri-parse ":://google.com")
+    nil
+)
+
+
 
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
