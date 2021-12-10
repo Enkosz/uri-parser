@@ -281,6 +281,10 @@
   )
 )
 
+(defun second-slash (list)
+  (if (eq (first list) #\/) (cdr list)
+    list))
+
 ; scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
 ; TODO Gestire il slash opzionale
 (defun parse-resource-uri (URIStringList)
@@ -288,8 +292,7 @@
     (parsed-path (multiple-value-list (parse-path URIStringList)))
     (parsed-query (multiple-value-list (parse-query (second parsed-path))))
     (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
-    (list 
-      (list 'uri-authority) 
+    (list  
       (first parsed-path) 
       (first parsed-query) 
       (first parsed-fragment)
@@ -303,8 +306,8 @@
     (parsed-scheme (multiple-value-list (parse-scheme URIStringList))))
     (cond
       ((and
-        (char= (first (second parsed-scheme)) #\/)
-        (char= (second (second parsed-scheme)) #\/))
+        (eq (first (second parsed-scheme)) #\/)
+        (eq (second (second parsed-scheme)) #\/))
         (let 
           ((otherComp (parse-default-uri (cdr (cdr (second parsed-scheme))))))
           (make-instance 'uri-structure :schema (first parsed-scheme) 
@@ -313,7 +316,13 @@
                                         :query (third otherComp)
                                         :fragment (fourth otherComp))))
       (T 
-        (append (first parsed-scheme) (parse-resource-uri (second parsed-scheme)))
+        (let 
+          ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
+          (make-instance 'uri-structure :schema (first parsed-scheme) 
+                                        :authority nil
+                                        :path (first otherComp)
+                                        :query (second otherComp)
+                                        :fragment (third otherComp)))
       )
     )
   )
