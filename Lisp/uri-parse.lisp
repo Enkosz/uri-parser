@@ -148,11 +148,14 @@
   )
 )
 
-;TODO Controlli NIL
 (defun parse-scheme (list)
   (multiple-value-bind (parsed remaining)
     (identificator list '(#\:) (coerce "/?#@" 'list))
-    (values (make-instance 'schema :value (coerce parsed 'string)) (rest remaining))))
+    (cond 
+      ((null parsed) (error 'uri-invalid-scheme))
+      (T (values (make-instance 'schema :value (coerce parsed 'string)) (rest remaining))))
+    )
+)
 
 (defun parse-userinfo (list)
   (multiple-value-bind (parsed remaining)
@@ -277,6 +280,7 @@
       (first parsed-path) 
       (first parsed-query) 
       (first parsed-fragment)
+      (second parsed-fragment)
     )
   )
 )
@@ -296,6 +300,7 @@
       (first parsed-path) 
       (first parsed-query) 
       (first parsed-fragment)
+      (second parsed-fragment)
     )
   )
 )
@@ -310,19 +315,19 @@
         (eq (second (second parsed-scheme)) #\/))
         (let 
           ((otherComp (parse-default-uri (cdr (cdr (second parsed-scheme))))))
-          (make-instance 'uri-structure :schema (first parsed-scheme) 
+          (values (make-instance 'uri-structure :schema (first parsed-scheme) 
                                         :authority (first otherComp)
                                         :path (second otherComp)
                                         :query (third otherComp)
-                                        :fragment (fourth otherComp))))
+                                        :fragment (fourth otherComp)) (fifth otherComp))))
       (T 
         (let 
           ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
-          (make-instance 'uri-structure :schema (first parsed-scheme) 
+          (values (make-instance 'uri-structure :schema (first parsed-scheme) 
                                         :authority nil
                                         :path (first otherComp)
                                         :query (second otherComp)
-                                        :fragment (third otherComp)))
+                                        :fragment (third otherComp)) (fourth otherComp)))
       )
     )
   )
@@ -331,7 +336,13 @@
 ; Utility interna, aggiunge EOF alla fine della lista come delimitatore
 ; Richiama una funzione che gestisce i vari tipi di URI
 (defun uri-parse_ (URIStringList)
-  (parse-uri-type (append URIStringList '(eof)))
+  (let 
+    ((parsed_uri (multiple-value-list (parse-uri-type (append URIStringList '(eof))))))
+    (cond 
+      ((not (eq (first (second parsed_uri)) 'eof)) (error 'invalid-uri))
+      (T (first parsed_uri))
+    )
+  )
 )
 
 ; Funzione principale, converta la stringa in Input come una lista di caratteri
@@ -339,6 +350,6 @@
   (handler-case (uri-parse_ (coerce URIString 'list))
     (error (c)
       (format t "URI non valido")
-      (values 0 c)
+      (values nil c)
   ))
 )
