@@ -4,11 +4,20 @@
 % 872783 Giannino Simone
 % 866147 Biotto Simone
 
-:- module(uri_parse, [uri_parse/2, uri_display/1]).
+:- module(uri_parse, [uri_parse/2, uri_display/1, uri_display/2]).
 
 uri_display(URIString) :-
+    /*uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
+    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w', 
+    [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).*/
+    current_output(CurrentStream),
+    uri_display(URIString, CurrentStream).
+
+uri_display(URIString, Stream) :-
+    is_stream(Stream),
     uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
-    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w', [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
+    format(Stream, 'Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w',
+    [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
@@ -26,40 +35,36 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
-% ["fax" | "tel"] ‘:’ userinfo 
+% ["fax" | "tel"] ':' userinfo 
 uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {current_scheme(Scheme)},
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
-% "news" ‘:’ host 
-uri(components(Scheme, userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
-    uri_scheme(Scheme),
-    {Scheme = scheme('news')},
+% "news" ':' host 
+uri(components(scheme('news'), userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
+    uri_scheme(scheme('news')),
     !,
     uri_host_aux(Host).
 
-% "mailto" ‘:’ userinfo ['@'' host] 
-uri(components(Scheme, UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
-    uri_scheme(Scheme),
-    {Scheme = scheme('mailto')},
+% "mailto" ':' userinfo ['@'' host] 
+uri(components(scheme('mailto'), UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
+    uri_scheme(scheme('mailto')),
     uri_userinfo_scheme_syntax(UserInfo),
     [@],
     !,
     uri_host_aux(Host).
 
-% "mailto" ‘:’ userinfo
-uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
-    uri_scheme(Scheme),
-    {Scheme = scheme('mailto')},
+% "mailto" ':' userinfo
+uri(components(scheme('mailto'), UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+    uri_scheme(scheme('mailto')),
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
 % "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
-uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
-    uri_scheme(Scheme),
-    {Scheme = scheme('zos')},
+uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
+    uri_scheme(scheme('zos')),
     !,
     [/, /],
     uri_userinfo(UserInfo),
@@ -69,10 +74,10 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_path_zos(Path),
     uri_query(Query),
     uri_fragment(Fragment),
-    {uri_default_port(Scheme, ActualPort, Port)},
+    {uri_default_port(ActualPort, Port)},
     !.
 
-% scheme ‘:’ authorithy[‘/’ [path] [‘?’ query] [‘#’ fragment]]
+% scheme ':' authorithy['/' [path] ['?' query] ['#' fragment]]
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     [/, /],
@@ -83,20 +88,20 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_path(Path),
     uri_query(Query),
     uri_fragment(Fragment),
-    {uri_default_port(Scheme, ActualPort, Port)},
+    {uri_default_port(ActualPort, Port)},
     !.
 
-% scheme ‘:’ authorithy
+% scheme ':' authorithy
 uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     [/, /],
     uri_userinfo(UserInfo),
     uri_host_aux(Host),
     uri_port(ActualPort),
-    {uri_default_port(Scheme, ActualPort, Port)},
+    {uri_default_port(ActualPort, Port)},
     !.
 
-% scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
+% scheme ':' ['/'] [path] ['?' query] ['#' fragment]
 uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     ([/]; []),
@@ -256,17 +261,8 @@ triplets(TripletsChars) -->
 current_scheme(scheme('tel')) :- !.
 current_scheme(scheme('fax')) :- !.
 
-uri_default_port(scheme(http), port([]), port('80')) :- !.
-uri_default_port(scheme(https), port([]), port('80')) :- !.
-uri_default_port(scheme(Scheme), ActualPort, ActualPort) :- 
-    Scheme \= 'http',
-    Scheme \= 'https',
-    !.
-uri_default_port(scheme(Scheme), ActualPort, ActualPort) :- 
-    (Scheme = 'http';
-    Scheme = 'https'),
-    ActualPort \= port([]),
-    !.
+uri_default_port(port([]), port('80')) :- !.
+uri_default_port(ActualPort, ActualPort) :- !.
 
 valid_char(X, List, CharType) :-
     char_type(X, CharType),
