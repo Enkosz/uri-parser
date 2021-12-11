@@ -159,7 +159,7 @@
 
 (defun parse-userinfo (list)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\@) (coerce "/?#" 'list))
+    (identificator list '(#\@) (coerce "/?#:" 'list))
     (cond ((null parsed) 
             (values nil remaining)
            )
@@ -181,7 +181,9 @@
 
 (defun parse-port (list)
    (if (not (eq (first list) #\:))
-      (values nil list)
+      (values 
+        (make-instance 'port :value "80") 
+        list)
       (multiple-value-bind (parsed remaining)
         (identificator (cdr list) '(#\/ eof))
         (cond ((null parsed) 
