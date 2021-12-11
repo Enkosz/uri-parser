@@ -307,6 +307,29 @@
   )
 )
 
+(defun parse-news-schema-uri (URIStringList)
+  (let (
+    (parsed-host (multiple-value-list (parse-host URIStringList))))
+    (values (make-instance 'uri-structure 
+    :schema "news"
+    :authority ( make-instance 'authority
+      :userinfo nil
+      :host (first parsed-host)
+      :port nil
+    )
+    :path nil
+    :query nil
+    :fragment nil) 
+    (second parsed-host))
+  )
+)
+
+(defun parse-special-schema-uri (URIStringList URIScheme)
+  (cond
+    ((equalp URIScheme "news") (parse-news-schema-uri URIStringList))
+  )
+)
+
 ; Chiama la funzione corretta in base a cosa abbiamo dopo "scheme : "
 (defun parse-uri-type (URIStringList)
   (let (
@@ -322,6 +345,9 @@
                                         :path (second otherComp)
                                         :query (third otherComp)
                                         :fragment (fourth otherComp)) (fifth otherComp))))
+      ((equalp (value (first parsed-scheme)) "news") 
+        (parse-special-schema-uri (second parsed-scheme) "news")
+      )
       (T 
         (let 
           ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
