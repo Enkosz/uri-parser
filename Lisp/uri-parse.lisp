@@ -344,6 +344,39 @@
   )
 )
 
+(defun parse-mailto (URiStringList)
+(let (
+    (parsed-userinfo (multiple-value-list (parse-userinfo URIStringList '(eof)))))
+    (if (equal (first (second parsed-userinfo)) #\@)
+      (let (
+        (parsed-host (multiple-value-list (parse-host (cdr (second parsed-userinfo))))))
+        (values (make-instance 'uri-structure 
+        :schema (make-instance 'schema :value "mailto")
+        :authority ( make-instance 'authority
+          :userinfo (first parsed-userinfo)
+          :host (first parsed-host)
+          :port nil
+        )
+        :path nil
+        :query nil
+        :fragment nil) 
+        (second parsed-host))
+      )
+      ;else
+      (values (make-instance 'uri-structure 
+      :schema (make-instance 'schema :value "mailto")
+      :authority ( make-instance 'authority
+        :userinfo (first parsed-userinfo)
+        :host nil
+        :port nil
+      )
+      :path nil
+      :query nil
+      :fragment nil) 
+      (second parsed-userinfo)))
+  )
+)
+
 (defun is-special-scheme (URIScheme)
   (or 
     (equalp URIScheme "news")
@@ -356,6 +389,7 @@
   (cond
     ((equalp URIScheme "news") (parse-news URIStringList))
     ((or (equalp URIScheme "fax") (equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
+    ((equalp URIScheme "mailto") (parse-mailto URIStringList))
   )
 )
 
