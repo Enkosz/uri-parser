@@ -262,7 +262,8 @@ current_scheme(scheme('tel')) :- !.
 current_scheme(scheme('fax')) :- !.
 
 uri_default_port(port([]), port('80')) :- !.
-uri_default_port(ActualPort, ActualPort) :- !.
+uri_default_port(ActualPort, ActualPort) :- 
+    ActualPort \= port([]), !.
 
 valid_char(X, List, CharType) :-
     char_type(X, CharType),
