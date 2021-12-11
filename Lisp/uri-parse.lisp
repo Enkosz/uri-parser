@@ -157,12 +157,15 @@
     )
 )
 
-(defun parse-userinfo (list)
+(defun parse-userinfo (list &optional delimitatorSpecial)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\@) '(#\/ #\? #\# #\: #\Space))
+    (identificator list (append '(#\@) delimitatorSpecial) (set-difference '(#\/ #\? #\# #\: #\Space) delimitatorSpecial))
     (cond ((null parsed) 
             (values nil remaining)
-           )
+          )
+          ((not (null delimitatorSpecial)) (values 
+              (make-instance 'userinfo :value (coerce parsed 'string)) 
+              remaining))
           (T (values 
               (make-instance 'userinfo :value (coerce parsed 'string)) 
               (cdr remaining))))))
@@ -307,11 +310,11 @@
   )
 )
 
-(defun parse-news-schema-uri (URIStringList)
+(defun parse-news (URIStringList)
   (let (
     (parsed-host (multiple-value-list (parse-host URIStringList))))
     (values (make-instance 'uri-structure 
-    :schema "news"
+    :schema (make-instance 'schema :value "news")
     :authority ( make-instance 'authority
       :userinfo nil
       :host (first parsed-host)
@@ -324,9 +327,35 @@
   )
 )
 
+(defun parse-telfax (URiStringList URIScheme)
+(let (
+    (parsed-userinfo (multiple-value-list (parse-userinfo URIStringList '(eof)))))
+    (values (make-instance 'uri-structure 
+    :schema (make-instance 'schema :value URIScheme)
+    :authority ( make-instance 'authority
+      :userinfo (first parsed-userinfo)
+      :host nil
+      :port nil
+    )
+    :path nil
+    :query nil
+    :fragment nil) 
+    (second parsed-userinfo))
+  )
+)
+
+(defun is-special-scheme (URIScheme)
+  (or 
+    (equalp URIScheme "news")
+    (equalp URIScheme "zos")
+    (equalp URIScheme "fax")
+    (equalp URIScheme "tel")
+    (equalp URIScheme "mailto")))
+
 (defun parse-special-schema-uri (URIStringList URIScheme)
   (cond
-    ((equalp URIScheme "news") (parse-news-schema-uri URIStringList))
+    ((equalp URIScheme "news") (parse-news URIStringList))
+    ((or (equalp URIScheme "fax") (equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
   )
 )
 
@@ -335,6 +364,9 @@
   (let (
     (parsed-scheme (multiple-value-list (parse-scheme URIStringList))))
     (cond
+      ((is-special-scheme (value (first parsed-scheme))) 
+        (parse-special-schema-uri (second parsed-scheme) (value (first parsed-scheme)))
+      )
       ((and
         (eq (first (second parsed-scheme)) #\/)
         (eq (second (second parsed-scheme)) #\/))
@@ -345,9 +377,7 @@
                                         :path (second otherComp)
                                         :query (third otherComp)
                                         :fragment (fourth otherComp)) (fifth otherComp))))
-      ((equalp (value (first parsed-scheme)) "news") 
-        (parse-special-schema-uri (second parsed-scheme) "news")
-      )
+      
       (T 
         (let 
           ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
