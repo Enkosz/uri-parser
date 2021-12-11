@@ -121,6 +121,20 @@
         (T (value (get-fragment uri-struct)))))
  )
 
+(defun make-uri-authority (&optional userinfo host port)
+  (make-instance 'authority 
+      :userinfo userinfo
+      :host host
+      :port port))
+
+(defun make-uri-structure (Scheme &optional authority path query fragment)
+  (make-instance 'uri-structure 
+    :schema Scheme
+    :authority authority
+    :path path
+    :query query
+    :fragment fragment))
+
 (defun identificator% (list &optional delimitators banned accumulator)
   (when list
     (if (member (first list) delimitators)
@@ -273,7 +287,7 @@
   )
 )
 
-; scheme ‘:’ authorithy [‘/’ [path] [‘?’ query] [‘#’ fragment]]
+; scheme ‘:’ authority [‘/’ [path] [‘?’ query] [‘#’ fragment]]
 (defun parse-default-uri (URIStringList)
   (let* (
     (parsed-authority (multiple-value-list (parse-authority URIStringList)))
@@ -313,16 +327,12 @@
 (defun parse-news (URIStringList)
   (let (
     (parsed-host (multiple-value-list (parse-host URIStringList))))
-    (values (make-instance 'uri-structure 
-    :schema (make-instance 'schema :value "news")
-    :authority ( make-instance 'authority
-      :userinfo nil
-      :host (first parsed-host)
-      :port nil
-    )
-    :path nil
-    :query nil
-    :fragment nil) 
+    (values 
+      (make-uri-structure 
+        (make-instance 'schema :value "news")
+        (make-uri-authority 
+          nil 
+          (first parsed-host))) 
     (second parsed-host))
   )
 )
@@ -330,16 +340,11 @@
 (defun parse-telfax (URiStringList URIScheme)
 (let (
     (parsed-userinfo (multiple-value-list (parse-userinfo URIStringList '(eof)))))
-    (values (make-instance 'uri-structure 
-    :schema (make-instance 'schema :value URIScheme)
-    :authority ( make-instance 'authority
-      :userinfo (first parsed-userinfo)
-      :host nil
-      :port nil
-    )
-    :path nil
-    :query nil
-    :fragment nil) 
+    (values 
+      (make-uri-structure 
+        (make-instance 'schema :value URIScheme)
+        (make-uri-authority 
+          (first parsed-userinfo))) 
     (second parsed-userinfo))
   )
 )
@@ -350,29 +355,16 @@
     (if (equal (first (second parsed-userinfo)) #\@)
       (let (
         (parsed-host (multiple-value-list (parse-host (cdr (second parsed-userinfo))))))
-        (values (make-instance 'uri-structure 
-        :schema (make-instance 'schema :value "mailto")
-        :authority ( make-instance 'authority
-          :userinfo (first parsed-userinfo)
-          :host (first parsed-host)
-          :port nil
-        )
-        :path nil
-        :query nil
-        :fragment nil) 
-        (second parsed-host))
-      )
-      ;else
-      (values (make-instance 'uri-structure 
-      :schema (make-instance 'schema :value "mailto")
-      :authority ( make-instance 'authority
-        :userinfo (first parsed-userinfo)
-        :host nil
-        :port nil
-      )
-      :path nil
-      :query nil
-      :fragment nil) 
+        (values (make-uri-structure 
+          (make-instance 'schema :value "mailto")
+          (make-uri-authority 
+            (first parsed-userinfo) 
+            (first parsed-host)))  
+        (second parsed-host)))
+      (values(make-uri-structure 
+          (make-instance 'schema :value "mailto")
+          (make-uri-authority 
+            (first parsed-userinfo)))   
       (second parsed-userinfo)))
   )
 )
@@ -416,7 +408,7 @@
         (let 
           ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
           (values (make-instance 'uri-structure :schema (first parsed-scheme) 
-                                        :authority nil
+                                        :authority (make-uri-authority)
                                         :path (first otherComp)
                                         :query (second otherComp)
                                         :fragment (third otherComp)) (fourth otherComp)))
