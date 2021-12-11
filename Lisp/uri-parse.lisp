@@ -169,7 +169,7 @@
 
 (defun parse-host (list)
   (multiple-value-bind (parsed remaining)
-      (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@))
+      (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@ #\Space))
       (cond ((null parsed) 
             (error 'uri-invalid-host))
           (T (values 
