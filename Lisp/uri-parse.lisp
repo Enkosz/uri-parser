@@ -159,7 +159,7 @@
 
 (defun parse-userinfo (list)
   (multiple-value-bind (parsed remaining)
-    (identificator list '(#\@) (coerce "/?#:" 'list))
+    (identificator list '(#\@) '(#\/ #\? #\# #\: #\Space))
     (cond ((null parsed) 
             (values nil remaining)
            )
