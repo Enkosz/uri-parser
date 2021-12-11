@@ -155,4 +155,82 @@
     nil
 )
 
+; TEST HOST
+(test "test-host-1"
+    (uri-parse "scheme://host")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-host-2"
+    (uri-parse "scheme://userinfo@host")
+    (prepare-uri
+        :scheme "scheme"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-host-3"
+    (uri-parse "scheme://host:123")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-host-4"
+    (uri-parse "scheme://userinfo@host:123")
+    (prepare-uri
+        :scheme "scheme"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-host-5"
+    (uri-parse "scheme://host/path")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+        :path "path"
+    )
+)
+(test "test-host-6"
+    (uri-parse "scheme://userinfo@host.com:123")
+    (prepare-uri
+        :scheme "scheme"
+        :userinfo "userinfo"
+        :host "host.com"
+        :port "123"
+    )
+)
+(test "test-host_1"
+    (uri-parse "scheme://userinfo@ho?st:123")
+    nil
+)
+(test "test-host_2"
+    (uri-parse "scheme://userinfo@ho@st:123")
+    nil
+)
+(test "test-host_3"
+    (uri-parse "scheme://userinfo@ho:st:123")
+    nil
+)
+(test "test-host_4"
+    (uri-parse "scheme://userinfo@ho/st:123")
+    nil
+)
+(test "test-host_5"
+    (uri-parse "scheme://userinfo@ho#st:123")
+    nil
+)
+(test "test-host_6"
+    (uri-parse "scheme://userinfo@ho st:123")
+    nil
+)
+
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
