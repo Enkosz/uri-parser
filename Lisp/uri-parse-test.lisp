@@ -10,8 +10,8 @@
     (equalp (uri-host value) (uri-host expected))
     (equalp (uri-port value) (uri-port expected))
     (equalp (uri-path value) (uri-path expected))
-    (eq (uri-query value) (uri-query expected))
-    (equalp (uri-path value) (uri-path expected)))
+    (equalp (uri-query value) (uri-query expected))
+    (equalp (uri-fragment value) (uri-fragment expected)))
         (setq passed (1+  passed))
     (and (setq failed (1+ failed))
         (format T "~%Test ~A failed --> Expected: ~A Found: ~A" name expected value)))
@@ -46,6 +46,7 @@
     (prepare-uri 
         :scheme "http"
         :host "google.com"
+        :port "80"
     )
 )
 (test "test-scheme-2"
@@ -53,6 +54,7 @@
     (prepare-uri 
         :scheme "h11ps"
         :host "google.com"
+        :port "80"
     )
 )
 (test "test-scheme-3"
@@ -60,6 +62,7 @@
     (prepare-uri 
         :scheme "_http_"
         :host "google.com"
+        :port "80"
     )
 )
 (test "test-scheme_1"
@@ -91,6 +94,65 @@
     nil
 )
 
-
+; TEST USERINFO
+(test "test-userinfo-1"
+    (uri-parse "http://userinfo@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-userinfo-2"
+    (uri-parse "http://user_info@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "user_info"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-userinfo-3"
+    (uri-parse "http://user123info@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "user123info"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-userinfo_1"
+    (uri-parse "http://user@info@host")
+    nil
+)
+(test "test-userinfo_2"
+    (uri-parse "http://userin:fo@host")
+    nil
+)
+(test "test-userinfo_3"
+    (uri-parse "http://userin/fo@host")
+    nil
+)
+(test "test-userinfo_4"
+    (uri-parse "http://userin?fo@host")
+    nil
+)
+(test "test-userinfo_5"
+    (uri-parse "http://userin#fo@host")
+    nil
+)
+(test "test-userinfo_6"
+    (uri-parse "http://userin fo@host")
+    nil
+)
+(test "test-userinfo_7"
+    (uri-parse "http://userinfo@")
+    nil
+)
+(test "test-userinfo_8"
+    (uri-parse "http://@")
+    nil
+)
 
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
