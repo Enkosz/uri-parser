@@ -6,6 +6,7 @@
 
 :- module(uri_parse, [uri_parse/2, uri_display/1, uri_display/2]).
 
+% uri_display
 uri_display(URIString) :-
     current_output(CurrentStream),
     uri_display(URIString, CurrentStream).
@@ -16,6 +17,9 @@ uri_display(URIString, Stream) :-
     format(Stream, 'Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w',
     [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
+%------------------------------------------------------------------------------
+
+% uri_parse
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
     uri_parse_(URIChars,
@@ -32,6 +36,8 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
 
+%------------------------------------------------------------------------------
+
 % ["fax" | "tel"] ':' userinfo 
 uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
@@ -39,11 +45,17 @@ uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragme
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
+
+
+%------------------------------------------------------------------------------
+
 % "news" ':' host 
 uri(components(scheme('news'), userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('news')),
     !,
     uri_host_aux(Host).
+
+%------------------------------------------------------------------------------
 
 % "mailto" ':' userinfo ['@'' host] 
 uri(components(scheme('mailto'), UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
@@ -59,6 +71,8 @@ uri(components(scheme('mailto'), UserInfo, host([]), port([]), path([]), query([
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
+%------------------------------------------------------------------------------
+
 % "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
 uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(scheme('zos')),
@@ -72,6 +86,8 @@ uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_query(Query),
     uri_fragment(Fragment),
     {uri_default_port(ActualPort, Port)}.
+
+%------------------------------------------------------------------------------
 
 % scheme ':' authorithy['/' [path] ['?' query] ['#' fragment]]
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
@@ -87,6 +103,8 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     {uri_default_port(ActualPort, Port)},
     !.
 
+%------------------------------------------------------------------------------
+
 % scheme ':' authorithy
 uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
@@ -96,6 +114,8 @@ uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([])))
     uri_port(ActualPort),
     {uri_default_port(ActualPort, Port)},
     !.
+    
+%------------------------------------------------------------------------------
 
 % scheme ':' ['/'] [path] ['?' query] ['#' fragment]
 uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
@@ -106,23 +126,20 @@ uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment))
     uri_fragment(Fragment),
     !.
 
+%------------------------------------------------------------------------------
+
+% scheme
 uri_scheme(scheme(Scheme)) --> 
     identificator(SchemeList, ['/', '?', '#', '@', ':', ' '], ascii),
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
-identificator(['%', '2', '0' | T], List, CharType) -->
-    [' '],
-    { valid_char(' ', List, CharType) },
-    identificator(T, List, CharType),
-    !.
-identificator([H | T], List, CharType) -->
-    [H],
-    { valid_char(H, List, CharType) },
-    identificator(T, List, CharType),
-    !.
-identificator([X | []], List, CharType) --> [X], { valid_char(X, List, CharType) }.
+current_scheme(scheme('tel')) :- !.
+current_scheme(scheme('fax')) :- !.
 
+%------------------------------------------------------------------------------
+ 
+% userinfo
 uri_userinfo(userinfo(UserInfo)) -->
     identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
     [@],
@@ -136,6 +153,9 @@ uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
     { atom_chars(UserInfo, UserInfoList) },
     !.
 
+%------------------------------------------------------------------------------
+
+% host
 uri_host_aux(host(Ip)) -->
     uri_ip(IpList),
     { atom_chars(Ip, IpList) },
@@ -160,6 +180,9 @@ uri_host(X) -->
 uri_host(X) -->
     identificator(X, ['.', '/', '?', '#', '@', ':', ' '], ascii).
 
+%------------------------------------------------------------------------------
+
+% port
 uri_port(port(Port)) -->
     [:],
     digits(PortList),
@@ -167,32 +190,13 @@ uri_port(port(Port)) -->
     !.
 uri_port(port([])) --> [].
 
-uri_fragment(fragment(Fragment)) -->
-    uri_fragment_aux(FragmentList),
-    !,
-    {flatten(FragmentList, FlattenFragment),
-    atom_chars(Fragment, FlattenFragment)}.
+uri_default_port(port([]), port('80')) :- !.
+uri_default_port(ActualPort, ActualPort) :- 
+    ActualPort \= port([]), !.
 
-uri_fragment(fragment([])) --> [], !.
+%------------------------------------------------------------------------------
 
-uri_fragment_aux(FragmentList) -->
-    [#],
-    identificator(FragmentList, [], ascii),
-    !.
-
-uri_query(query(Query)) -->
-    uri_query_aux(QueryList),
-    {flatten(QueryList, FlattenQuery),
-    atom_chars(Query, FlattenQuery)},
-    !.
-
-uri_query(query([])) --> [], !.
-
-uri_query_aux(QueryList) -->
-    [?],
-    identificator(QueryList, ['#'], ascii),
-    !.
-
+%path
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
     !,
@@ -251,21 +255,58 @@ uri_id8(Id8) -->
     identificator(Id8, [' '], alnum),
     !.
 
-triplets(TripletsChars) --> 
-    digit(A), digit(B), digit(C),
-    {
-        TripletsChars = [A, B, C],
-        number_chars(TripletsNumber, TripletsChars),
-        between(0, 255, TripletsNumber)
-    }.
+%------------------------------------------------------------------------------
 
-current_scheme(scheme('tel')) :- !.
-current_scheme(scheme('fax')) :- !.
+% query
+uri_query(query(Query)) -->
+    uri_query_aux(QueryList),
+    {flatten(QueryList, FlattenQuery),
+    atom_chars(Query, FlattenQuery)},
+    !.
 
-uri_default_port(port([]), port('80')) :- !.
-uri_default_port(ActualPort, ActualPort) :- 
-    ActualPort \= port([]), !.
+uri_query(query([])) --> [], !.
 
+uri_query_aux(QueryList) -->
+    [?],
+    identificator(QueryList, ['#'], ascii),
+    !.
+
+%------------------------------------------------------------------------------
+
+% fragment
+uri_fragment(fragment(Fragment)) -->
+    uri_fragment_aux(FragmentList),
+    !,
+    {flatten(FragmentList, FlattenFragment),
+    atom_chars(Fragment, FlattenFragment)}.
+
+uri_fragment(fragment([])) --> [], !.
+
+uri_fragment_aux(FragmentList) -->
+    [#],
+    identificator(FragmentList, [], ascii),
+    !.
+
+%------------------------------------------------------------------------------
+
+% identificator
+identificator(['%', '2', '0' | T], List, CharType) -->
+    [' '],
+    {valid_char(' ', List, CharType)},
+    identificator(T, List, CharType),
+    !.
+identificator([H | T], List, CharType) -->
+    [H],
+    {valid_char(H, List, CharType)},
+    identificator(T, List, CharType),
+    !.
+identificator([X | []], List, CharType) --> 
+    [X], 
+    {valid_char(X, List, CharType)}.
+
+%------------------------------------------------------------------------------
+
+% valid char
 valid_char(X, List, CharType) :-
     char_type(X, CharType),
     valid_char_aux(X, List).
@@ -275,6 +316,14 @@ valid_char_aux(_, []) :- !.
 valid_char_aux(X, [Invalid_char | Rest]) :-
     X \= Invalid_char,
     valid_char_aux(X, Rest).
+
+%------------------------------------------------------------------------------
+
+triplets(TripletsChars) --> 
+    digit(A), digit(B), digit(C),
+    {TripletsChars = [A, B, C],
+    number_chars(TripletsNumber, TripletsChars),
+    between(0, 255, TripletsNumber) }.
 
 digit(X) --> [X], { is_digit(X) }.
 
