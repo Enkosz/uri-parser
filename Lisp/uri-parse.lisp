@@ -184,7 +184,7 @@
               (make-instance 'userinfo :value (coerce parsed 'string)) 
               (cdr remaining))))))
 
-(defun parse-host (list)
+(defun parse-host-aux (list)
   (multiple-value-bind (parsed remaining)
       (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@ #\Space))
       (cond ((null parsed) 
@@ -195,6 +195,40 @@
      )
     )
 )
+
+; inter. ---> ip --> host
+
+(defun triplet (list &optional final)
+  (let ((parse (multiple-value-list (identificator list '(#\. eof #\: #\/) '(#\@ #\? #\#  #\Space)))))
+  (cond 
+    ((null (first parse)) (error 'ip-non-valido))
+    ((and final (eq (first (second parse)) #\.)) (error 'ip-non-valido))
+    ((and (not final) (not(eq (first (second parse)) #\.))) (error 'ip-non-valido))
+    (T (values (first parse) (second parse))))))
+
+(defun parse-ip (list)
+  (let* (
+    (firstTriplet (multiple-value-list (triplet list)))
+    (secondTriplet (multiple-value-list (triplet (cdr (second firstTriplet)))))
+    (thirdTriplet (multiple-value-list (triplet (cdr (second secondTriplet)))))
+    (fourhTriplet (multiple-value-list (triplet (cdr (second thirdTriplet)) T)))
+    (num1 (parse-integer (coerce (first firstTriplet) 'string)))
+    (num2 (parse-integer (coerce (first secondTriplet) 'string)))
+    (num3 (parse-integer (coerce (first thirdTriplet) 'string)))
+    (num4 (parse-integer (coerce (first fourhTriplet) 'string))))
+    (cond 
+      ((or (< num1 0) (> num1 255)
+          (< num2 0) (> num2 255)
+          (< num3 0) (> num3 255)
+          (< num4 0) (> num4 255)) (error 'ip-non-valido))
+      ((member (first (second fourhTriplet)) '(#\/ #\: eof)) 
+      (values (make-instance 'host :value (coerce 
+      (append (first firstTriplet) '(#\.) (first secondTriplet) '(#\.) (first thirdTriplet) '(#\.) (first fourhTriplet)) 'string)) (second fourhTriplet)))
+      (T (error 'ip-non-valido)))))
+
+(defun parse-host (list)
+  (handler-case (parse-ip list)
+      (error nil (parse-host-aux list))))
 
 (defun parse-port (list)
    (if (not (eq (first list) #\:))
@@ -231,6 +265,21 @@
      )
   )
 )
+
+#|(defun parse-path-zos (list)
+  (if (not (eq (first list) #\/))
+    (error 'uri-invalid-path-zos)
+    (multiple-value-bind (parsed remaining)
+    (parse-id44 list)
+    (cond ((null parsed) 
+            (values nil remaining)
+           )
+          (T (values 
+              (make-instance 'path :value (coerce parsed 'string)) 
+              remaining))
+     )
+  ))
+)|#
 
 (defun parse-query (list)
   (if (not (eq (first list) #\?))
@@ -349,7 +398,7 @@
   )
 )
 
-(defun parse-mailto (URiStringList)
+(defun parse-mailto (URIStringList)
 (let (
     (parsed-userinfo (multiple-value-list (parse-userinfo URIStringList '(eof)))))
     (if (equal (first (second parsed-userinfo)) #\@)
@@ -369,6 +418,22 @@
   )
 )
 
+#|(defun parse-zos (URIStringList)
+  (let* (
+    (parsed-authority (multiple-value-list (parse-authority URIStringList)))
+    (parsed-path (multiple-value-list (parse-path-zos (second parsed-authority))))
+    (parsed-query (multiple-value-list (parse-query (second parsed-path))))
+    (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
+    (list 
+      (first parsed-authority) 
+      (first parsed-path) 
+      (first parsed-query) 
+      (first parsed-fragment)
+      (second parsed-fragment)
+    )
+  )
+)|#
+
 (defun is-special-scheme (URIScheme)
   (or 
     (equalp URIScheme "news")
@@ -382,6 +447,7 @@
     ((equalp URIScheme "news") (parse-news URIStringList))
     ((or (equalp URIScheme "fax") (equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
     ((equalp URIScheme "mailto") (parse-mailto URIStringList))
+    ;((equalp URIScheme "zos") (parse-zos URIStringList))
   )
 )
 
