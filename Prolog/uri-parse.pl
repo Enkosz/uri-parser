@@ -7,9 +7,6 @@
 :- module(uri_parse, [uri_parse/2, uri_display/1, uri_display/2]).
 
 uri_display(URIString) :-
-    /*uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
-    format('Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w', 
-    [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).*/
     current_output(CurrentStream),
     uri_display(URIString, CurrentStream).
 
@@ -74,8 +71,7 @@ uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_path_zos(Path),
     uri_query(Query),
     uri_fragment(Fragment),
-    {uri_default_port(ActualPort, Port)},
-    !.
+    {uri_default_port(ActualPort, Port)}.
 
 % scheme ':' authorithy['/' [path] ['?' query] ['#' fragment]]
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
@@ -174,8 +170,8 @@ uri_port(port([])) --> [].
 uri_fragment(fragment(Fragment)) -->
     uri_fragment_aux(FragmentList),
     !,
-    {flatten(FragmentList, FlattenFragment)},
-    {atom_chars(Fragment, FlattenFragment)}.
+    {flatten(FragmentList, FlattenFragment),
+    atom_chars(Fragment, FlattenFragment)}.
 
 uri_fragment(fragment([])) --> [], !.
 
@@ -186,8 +182,9 @@ uri_fragment_aux(FragmentList) -->
 
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
-    {flatten(QueryList, FlattenQuery)},
-    {atom_chars(Query, FlattenQuery)}.
+    {flatten(QueryList, FlattenQuery),
+    atom_chars(Query, FlattenQuery)},
+    !.
 
 uri_query(query([])) --> [], !.
 
@@ -199,8 +196,8 @@ uri_query_aux(QueryList) -->
 uri_path(path(Path)) -->
     uri_path_aux(PathList),
     !,
-    {flatten(PathList, FlattenPath)},
-    {atom_chars(Path, FlattenPath)}.
+    {flatten(PathList, FlattenPath),
+    atom_chars(Path, FlattenPath)}.
 
 uri_path(path([])) --> [], !.
 
@@ -220,26 +217,30 @@ uri_path_zos(path(Path)) -->
     ['('],
     uri_id8(Id8),
     [')'],
-    {length(Id44, Id44Length), Id44Length =< 44},
-    {length(Id8, Id8Length), Id8Length =< 8},
-    {flatten([Id44, '(', Id8, ')'], FlattenPath)},
-    {atom_chars(Path, FlattenPath)},
+    {[C | _] = Id44,
+    char_type(C, alpha),
+    [Ch | _] = Id8,
+    char_type(Ch, alpha),
+    length(Id44, Id44Length), Id44Length =< 44,
+    length(Id8, Id8Length), Id8Length =< 8,
+    flatten([Id44, '(', Id8, ')'], FlattenPath),
+    atom_chars(Path, FlattenPath)},
     !.
 
 uri_path_zos(path(Path)) -->
     uri_id44(Id44),
-    {length(Id44, Id44Length), Id44Length =< 44},
-    {flatten(Id44, FlattenPath)},
-    {atom_chars(Path, FlattenPath)},
+    {[C | _] = Id44,
+    char_type(C, alpha),
+    length(Id44, Id44Length), Id44Length =< 44,
+    flatten(Id44, FlattenPath),
+    atom_chars(Path, FlattenPath)},
     !.
 
 uri_id44(Id44) -->
     identificator(A, ['.', ' '], alnum),
     [.],
     uri_id44(B),
-    {
-        flatten([[A | [.]], B], Id44)
-    },
+    {flatten([[A | [.]], B], Id44)},
     !.
 
 uri_id44(Id44) -->

@@ -65,9 +65,9 @@ test(zos_1) :- \+(uri_parse("zos://host", _)).
 test(zos_2) :- \+(uri_parse("zos://host/.i.d", _)).
 test(zos_3) :- \+(uri_parse("zos://host/.", _)).
 test(zos_4) :- \+(uri_parse("zos://host/", _)).
-test(zos_5) :- \+(uri_parse("zos://host/012345678901234567890123456789012345678901234(id)", _)).
-test(zos_6) :- \+(uri_parse("zos://host/path(012345678)", _)).
-test(zos_7) :- \+(uri_parse("zos://host/012345678901234567890123456789012345678901234(012345678)", _)).
+test(zos_5) :- \+(uri_parse("zos://host/a012345678901234567890123456789012345678901234(id)", _)).
+test(zos_6) :- \+(uri_parse("zos://host/path(a012345678)", _)).
+test(zos_7) :- \+(uri_parse("zos://host/a012345678901234567890123456789012345678901234(a012345678)", _)).
 test(zos_8) :- \+(uri_parse("zos://host/(id44)", _)).
 test(zos_9) :- \+(uri_parse("zos://host/pi@ppo(id44)", _)).
 test(zos_10) :- \+(uri_parse("zos://host/pip po(id44)", _)).
@@ -78,6 +78,10 @@ test(zos_14) :- \+(uri_parse("zos://host/pippo()", _)).
 test(zos_15) :- \+(uri_parse("zos://host/pippo( )", _)).
 test(zos_16) :- \+(uri_parse("zos://host/pippo(", _)).
 test(zos_17) :- \+(uri_parse("zos://host/pippo)", _)).
+test(zos_18) :- \+(uri_parse("zos://host/id.", _)).
+test(zos_19) :- \+(uri_parse("zos://host/id(1)", _)).
+test(zos_20) :- \+(uri_parse("zos://host/id(1id8)", _)).
+
 
 % TEST USERINFO
 test(userinfo1) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', '80', [], [], [])).
