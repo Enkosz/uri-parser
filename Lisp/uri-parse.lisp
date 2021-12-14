@@ -266,20 +266,46 @@
   )
 )
 
-#|(defun parse-path-zos (list)
-  (if (not (eq (first list) #\/))
-    (error 'uri-invalid-path-zos)
-    (multiple-value-bind (parsed remaining)
-    (parse-id44 list)
-    (cond ((null parsed) 
-            (values nil remaining)
-           )
-          (T (values 
-              (make-instance 'path :value (coerce parsed 'string)) 
-              remaining))
+(defun parse-id44 (list)
+  "id44 è del tipo /<id44>(resto"
+  (multiple-value-bind
+   (parsed remaining)
+   (identificator list '(#\( #\? #\# eof))
+   (cond ((null parsed) (error 'uri-invalid-id44))
+	 ((<= (list-length parsed) 44) (values (coerce parsed 'string) remaining)))
+   )
+  )
+
+(defun parse-id8 (list)
+  "id8 è del tipo (<id8>)"
+    (multiple-value-bind
+     (parsed remaining)
+     (identificator list '(#\)))
+     (cond ((null parsed) (error 'uri-invalid-id8))
+	   ((<= (list-length parsed) 8) (values (coerce parsed 'string) remaining))       
+	   )
      )
-  ))
-)|#
+    )
+
+  
+(defun parse-path-zos (list)
+   (if (not (eq (first list) #\/))
+     (error 'uri-invalid-path-zos)
+     (multiple-value-bind (id44 remaining)
+     (parse-id44 (rest list))
+     (cond ((null id44) 
+	     (values nil remaining)) ; se parsed non è null allora devo recuperare se esiste id8 (controllo anche la ()
+	   ((eq (first remaining) #\() ;se il primo carattere di rem è ( vuol dire che c'è id8
+	      (multiple-value-bind (id8 extra)
+				   (parse-id8 (cdr remaining))
+				   (cond ((null id8) (error 'invalid-zos-path))
+					        (T (values
+					            (make-instance
+						     'path :value (concatenate 'string id44 "(" id8 ")"))
+						    (cdr extra)))
+					)
+				   ))
+	    (T (values (make-instance 'path :value id44) remaining))))))
 
 (defun parse-query (list)
   (if (not (eq (first list) #\?))
@@ -418,21 +444,23 @@
   )
 )
 
-#|(defun parse-zos (URIStringList)
-  (let* (
-    (parsed-authority (multiple-value-list (parse-authority URIStringList)))
-    (parsed-path (multiple-value-list (parse-path-zos (second parsed-authority))))
-    (parsed-query (multiple-value-list (parse-query (second parsed-path))))
-    (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
-    (list 
-      (first parsed-authority) 
-      (first parsed-path) 
-      (first parsed-query) 
-      (first parsed-fragment)
-      (second parsed-fragment)
-    )
-  )
-)|#
+(defun parse-zos (URIStringList)
+  (if (and (eq (first UriStringList) #\/) (eq (second UriStringList) #\/))
+      (let* (
+	 (parsed-authority (multiple-value-list (parse-authority (cdr (cdr URIStringList)))))
+	 (parsed-path (multiple-value-list (parse-path-zos (second parsed-authority))))
+	 (parsed-query (multiple-value-list (parse-query (second parsed-path))))
+	 (parsed-fragment (multiple-value-list (parse-fragment (second parsed-query)))))
+	  (values (make-uri-structure 
+		   (make-instance 'schema :value "zos")
+		   (first parsed-authority)
+		   (first parsed-path)
+		   (first parsed-query)
+		   (first parsed-fragment)
+		   )  
+		  (second parsed-fragment)))
+    (error 'uri-zos-invalid)))
+
 
 (defun is-special-scheme (URIScheme)
   (or 
@@ -447,7 +475,7 @@
     ((equalp URIScheme "news") (parse-news URIStringList))
     ((or (equalp URIScheme "fax") (equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
     ((equalp URIScheme "mailto") (parse-mailto URIStringList))
-    ;((equalp URIScheme "zos") (parse-zos URIStringList))
+    ((equalp URIScheme "zos") (parse-zos URIStringList))
   )
 )
 
