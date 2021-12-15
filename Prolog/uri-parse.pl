@@ -28,7 +28,7 @@ uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Frag), Stream) :-
 %------------------------------------------------------------------------------
 
 % uri_parse
-uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
+uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Frag)) :-
     string_chars(URIString, URIChars),
     uri_parse_(URIChars,
                uri(components(
