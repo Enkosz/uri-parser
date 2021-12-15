@@ -13,18 +13,19 @@ uri_display(URIStruct) :-
 
 uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Frag), Stream) :-
     is_stream(Stream),
-    uri_parse(URIString,
-	      uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
-    format(Stream,
-	   'Scheme: ~w ~n
-	    Userinfo: ~w ~n
-	    Host: ~w ~n
-	    Port: ~w ~n
-	    Path: ~w ~n
-	    Query: ~w ~n
-	    Fragment: ~w',
-	   [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
+    format(Stream,'Scheme:      ~w ~n', [Scheme]),
+    format(Stream,'UserInfo:    ~w ~n', [UserInfo]),
+    format(Stream,'Host:        ~w ~n', [Host]),
+    format(Stream,'Port:        ~w ~n', [Port]),
+    format(Stream,'Path:        ~w ~n', [Path]),
+    format(Stream,'Query:       ~w ~n', [Query]),
+    format(Stream,'Fragment:    ~w', [Frag]),
+    !.
 
+uri_display(false, Stream) :-
+    is_stream(Stream),
+    format(Stream, 'Uri invalid'),
+    !.
 %------------------------------------------------------------------------------
 
 % uri_parse
@@ -38,7 +39,7 @@ uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Frag)) :-
 		       port(Port),
 		       path(Path), 
 		       query(Query), 
-		       fragment(Fragment)
+		       fragment(Frag)
 		   ))).
 
 uri_parse_(URIString, uri(URI)) :-
