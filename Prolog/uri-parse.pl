@@ -11,7 +11,7 @@ uri_display(URIStruct) :-
     current_output(CurrentStream),
     uri_display(URIStruct, CurrentStream).
 
-uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment), Stream) :-
+uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Frag), Stream) :-
     is_stream(Stream),
     uri_parse(URIString,
 	      uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
