@@ -7,13 +7,12 @@
 :- module(uri_parse, [uri_parse/2, uri_display/1, uri_display/2]).
 
 % uri_display
-uri_display(URIString) :-
+uri_display(URIStruct) :-
     current_output(CurrentStream),
-    uri_display(URIString, CurrentStream).
+    uri_display(URIStruct, CurrentStream).
 
-uri_display(URIString, Stream) :-
+uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment), Stream) :-
     is_stream(Stream),
-    uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
     format(Stream, 'Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w',
     [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
@@ -249,6 +248,11 @@ uri_id44(Id44) -->
 
 uri_id44(Id44) -->
     identificator(Id44, ['.', ' '], alnum),
+    !.
+
+uri_id44(['.'| T]) -->
+    ['.'],
+    uri_id44(T),
     !.
 
 uri_id8(Id8) -->
