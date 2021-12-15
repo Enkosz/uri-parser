@@ -13,9 +13,17 @@ uri_display(URIString) :-
 
 uri_display(URIString, Stream) :-
     is_stream(Stream),
-    uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
-    format(Stream, 'Scheme: ~w ~nUserinfo: ~w ~nHost: ~w ~nPort: ~w ~nPath: ~w ~nQuery: ~w ~nFragment: ~w',
-    [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
+    uri_parse(URIString,
+	      uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)),
+    format(Stream,
+	   'Scheme: ~w ~n
+	    Userinfo: ~w ~n
+	    Host: ~w ~n
+	    Port: ~w ~n
+	    Path: ~w ~n
+	    Query: ~w ~n
+	    Fragment: ~w',
+	   [Scheme, UserInfo, Host, Port, Path, Query, Fragment]).
 
 %------------------------------------------------------------------------------
 
@@ -23,15 +31,15 @@ uri_display(URIString, Stream) :-
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) :-
     string_chars(URIString, URIChars),
     uri_parse_(URIChars,
-        uri(components(
-            scheme(Scheme),
-            userinfo(UserInfo), 
-            host(Host),
-            port(Port),
-            path(Path), 
-            query(Query), 
-            fragment(Fragment)
-        ))).
+               uri(components(
+		       scheme(Scheme),
+		       userinfo(UserInfo), 
+		       host(Host),
+		       port(Port),
+		       path(Path), 
+		       query(Query), 
+		       fragment(Fragment)
+		   ))).
 
 uri_parse_(URIString, uri(URI)) :-
     phrase(uri(URI), URIString).
@@ -39,7 +47,8 @@ uri_parse_(URIString, uri(URI)) :-
 %------------------------------------------------------------------------------
 
 % ["fax" | "tel"] ':' userinfo 
-uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo, host([]), port([]),
+	       path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {current_scheme(Scheme)},
     !,
@@ -50,7 +59,9 @@ uri(components(Scheme, UserInfo, host([]), port([]), path([]), query([]), fragme
 %------------------------------------------------------------------------------
 
 % "news" ':' host 
-uri(components(scheme('news'), userinfo([]), Host, port([]), path([]), query([]), fragment([]))) -->
+uri(components(scheme('news'),
+	       userinfo([]), Host, port([]),
+	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('news')),
     !,
     uri_host_aux(Host).
@@ -58,7 +69,8 @@ uri(components(scheme('news'), userinfo([]), Host, port([]), path([]), query([])
 %------------------------------------------------------------------------------
 
 % "mailto" ':' userinfo ['@'' host] 
-uri(components(scheme('mailto'), UserInfo, Host, port([]), path([]), query([]), fragment([]))) -->
+uri(components(scheme('mailto'), UserInfo, Host, port([]),
+	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
     uri_userinfo_scheme_syntax(UserInfo),
     [@],
@@ -66,7 +78,8 @@ uri(components(scheme('mailto'), UserInfo, Host, port([]), path([]), query([]), 
     uri_host_aux(Host).
 
 % "mailto" ':' userinfo
-uri(components(scheme('mailto'), UserInfo, host([]), port([]), path([]), query([]), fragment([]))) -->
+uri(components(scheme('mailto'), UserInfo, host([]), port([]),
+	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
     !,
     uri_userinfo_scheme_syntax(UserInfo).
@@ -106,7 +119,8 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
 %------------------------------------------------------------------------------
 
 % scheme ':' authorithy
-uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([]))) -->
+uri(components(Scheme, UserInfo, Host, Port,
+	       path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     [/, /],
     uri_userinfo(UserInfo),
@@ -114,11 +128,12 @@ uri(components(Scheme, UserInfo, Host, Port, path([]), query([]), fragment([])))
     uri_port(ActualPort),
     {uri_default_port(ActualPort, Port)},
     !.
-    
+
 %------------------------------------------------------------------------------
 
 % scheme ':' ['/'] [path] ['?' query] ['#' fragment]
-uri(components(Scheme, userinfo([]), host([]), port([]), Path, Query, Fragment)) -->
+uri(components(Scheme, userinfo([]), host([]), port([]),
+	       Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     ([/]; []),
     uri_path(Path),
@@ -138,7 +153,7 @@ current_scheme(scheme('tel')) :- !.
 current_scheme(scheme('fax')) :- !.
 
 %------------------------------------------------------------------------------
- 
+
 % userinfo
 uri_userinfo(userinfo(UserInfo)) -->
     identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
@@ -201,7 +216,7 @@ uri_path(path(Path)) -->
     uri_path_aux(PathList),
     !,
     {flatten(PathList, FlattenPath),
-    atom_chars(Path, FlattenPath)}.
+     atom_chars(Path, FlattenPath)}.
 
 uri_path(path([])) --> [], !.
 
@@ -222,22 +237,22 @@ uri_path_zos(path(Path)) -->
     uri_id8(Id8),
     [')'],
     {[C | _] = Id44,
-    char_type(C, alpha),
-    [Ch | _] = Id8,
-    char_type(Ch, alpha),
-    length(Id44, Id44Length), Id44Length =< 44,
-    length(Id8, Id8Length), Id8Length =< 8,
-    flatten([Id44, '(', Id8, ')'], FlattenPath),
-    atom_chars(Path, FlattenPath)},
+     char_type(C, alpha),
+     [Ch | _] = Id8,
+     char_type(Ch, alpha),
+     length(Id44, Id44Length), Id44Length =< 44,
+     length(Id8, Id8Length), Id8Length =< 8,
+     flatten([Id44, '(', Id8, ')'], FlattenPath),
+     atom_chars(Path, FlattenPath)},
     !.
 
 uri_path_zos(path(Path)) -->
     uri_id44(Id44),
     {[C | _] = Id44,
-    char_type(C, alpha),
-    length(Id44, Id44Length), Id44Length =< 44,
-    flatten(Id44, FlattenPath),
-    atom_chars(Path, FlattenPath)},
+     char_type(C, alpha),
+     length(Id44, Id44Length), Id44Length =< 44,
+     flatten(Id44, FlattenPath),
+     atom_chars(Path, FlattenPath)},
     !.
 
 uri_id44(Id44) -->
@@ -261,7 +276,7 @@ uri_id8(Id8) -->
 uri_query(query(Query)) -->
     uri_query_aux(QueryList),
     {flatten(QueryList, FlattenQuery),
-    atom_chars(Query, FlattenQuery)},
+     atom_chars(Query, FlattenQuery)},
     !.
 
 uri_query(query([])) --> [], !.
@@ -278,7 +293,7 @@ uri_fragment(fragment(Fragment)) -->
     uri_fragment_aux(FragmentList),
     !,
     {flatten(FragmentList, FlattenFragment),
-    atom_chars(Fragment, FlattenFragment)}.
+     atom_chars(Fragment, FlattenFragment)}.
 
 uri_fragment(fragment([])) --> [], !.
 
@@ -322,8 +337,8 @@ valid_char_aux(X, [Invalid_char | Rest]) :-
 triplets(TripletsChars) --> 
     digit(A), digit(B), digit(C),
     {TripletsChars = [A, B, C],
-    number_chars(TripletsNumber, TripletsChars),
-    between(0, 255, TripletsNumber) }.
+     number_chars(TripletsNumber, TripletsChars),
+     between(0, 255, TripletsNumber) }.
 
 digit(X) --> [X], { is_digit(X) }.
 
