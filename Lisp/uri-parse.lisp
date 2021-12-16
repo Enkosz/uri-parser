@@ -428,34 +428,41 @@
   (let (
 	(parsed-userinfo (multiple-value-list
 			  (parse-userinfo URIStringList '(eof)))))
-    (values 
-     (make-uri-structure 
-      (make-instance 'schema :value URIScheme)
-      (make-uri-authority 
-       (first parsed-userinfo))) 
-     (second parsed-userinfo))
+    (if (null (first parsed-userinfo))
+      (error 'uri-invalid-telfax)
+      (values 
+      (make-uri-structure 
+        (make-instance 'schema :value URIScheme)
+        (make-uri-authority 
+        (first parsed-userinfo))) 
+      (second parsed-userinfo))
     )
   )
+)
 
 (defun parse-mailto (URIStringList)
   (let (
 	(parsed-userinfo (multiple-value-list
 			  (parse-userinfo URIStringList '(eof)))))
     (if (equal (first (second parsed-userinfo)) #\@)
-	(let (
+	    (let (
               (parsed-host (multiple-value-list
 			    (parse-host (cdr (second parsed-userinfo))))))
+        (if (null (first parsed-host))
+          (error 'uri-invalid-mailto)
           (values (make-uri-structure 
-		   (make-instance 'schema :value "mailto")
-		   (make-uri-authority 
-		    (first parsed-userinfo) 
-		    (first parsed-host)))  
-		  (second parsed-host)))
-      (values(make-uri-structure 
+		            (make-instance 'schema :value "mailto")
+		            (make-uri-authority 
+		              (first parsed-userinfo) 
+		              (first parsed-host)))  
+		        (second parsed-host))))
+      (if (null (first parsed-userinfo))
+        (error 'uri-invalid-mailto)
+        (values(make-uri-structure 
               (make-instance 'schema :value "mailto")
               (make-uri-authority 
                (first parsed-userinfo)))   
-	     (second parsed-userinfo)))
+	     (second parsed-userinfo))))
     )
   )
 
