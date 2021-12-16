@@ -704,30 +704,244 @@
         :host "ho123st"
     )
 )
-(test "test-news_1"
+(test "test-news_2"
     (uri-parse "news:ho/st")
     nil
 )
-(test "test-news_1"
+(test "test-news_3"
     (uri-parse "news:host/path")
     nil
 )
-(test "test-news_1"
+(test "test-news_4"
     (uri-parse "news:host/path?query")
     nil
 )
-(test "test-news_1"
+(test "test-news_5"
     (uri-parse "news:host/query?query#fragment")
     nil
 )
-(test "test-news_1"
+(test "test-news_6"
     (uri-parse "news:host:80")
     nil
 )
-(test "test-news_1"
+(test "test-news_7"
     (uri-parse "news:userinfo@host")
     nil
 )
+
+;   TEST SCHEMA ZOS
+(test "test-zos1"
+    (uri-parse "zos://host/id44(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "id44(id8)"
+    )
+)
+(test "test-zos2"
+    (uri-parse "zos://userinfo@host/id44(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "id44(id8)"
+    )
+)
+(test "test-zos3"
+    (uri-parse "zos://userinfo@host:4832/id44(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :userinfo "userinfo"
+        :host "host"
+        :port "4832"
+        :path "id44(id8)"
+    )
+)
+(test "test-zos4"
+    (uri-parse "zos://userinfo@host:4832/id44(id8)?query")
+    (prepare-uri
+        :scheme "zos"
+        :userinfo "userinfo"
+        :host "host"
+        :port "4832"
+        :path "id44(id8)"
+        :query "query"
+    )
+)
+(test "test-zos5"
+    (uri-parse "zos://userinfo@host:4832/id44(id8)?query#fragment")
+    (prepare-uri
+        :scheme "zos"
+        :userinfo "userinfo"
+        :host "host"
+        :port "4832"
+        :path "id44(id8)"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-zos6"
+    (uri-parse "zos://host/id.44(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "id.44(id8)"
+    )
+)
+(test "test-zos7"
+    (uri-parse "zos://host/i.d.4.4(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "i.d.4.4(id8)"
+    )
+)
+(test "test-zos8"
+    (uri-parse "zos://host/i.d.4.4")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "i.d.4.4"
+    )
+)
+(test "test-zos9"
+    (uri-parse "zos://host/id..prova")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "id..prova"
+    )
+)
+(test "test-zos10"
+    (uri-parse "zos://host/id..prova(id8)")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port "80"
+        :path "id..prova(id8)"
+    )
+)
+(test "test-zos_1"
+    (uri-parse "zos://host")
+    nil
+)
+(test "test-zos_2"
+    (uri-parse "zos://host/.i.d")
+    nil
+)
+(test "test-zos_3"
+    (uri-parse "zos://host/.")
+    nil
+)
+(test "test-zos_4"
+    (uri-parse "zos://host/")
+    nil
+)
+(test "test-zos_5"
+    (uri-parse "zos://host/a012345678901234567890123456789012345678901234(id)")
+    nil
+)
+(test "test-zos_6"
+    (uri-parse "zos://host/path(a012345678)")
+    nil
+)
+(test "test-zos_7"
+    (uri-parse "zos://host/a012345678901234567890123456789012345678901234(a012345678)")
+    nil
+)
+(test "test-zos_8"
+    (uri-parse "zos://host/(id44)")
+    nil
+)
+(test "test-zos_9"
+    (uri-parse "zos://host/pi@ppo(id44)")
+    nil
+)
+(test "test-zos_10"
+    (uri-parse "zos://host/pip po(id44)")
+    nil
+)
+(test "test-zos_11"
+    (uri-parse "zos://host/pippo.mar co(id44)")
+    nil
+)
+(test "test-zos_12"
+    (uri-parse "zos://host/pippo(id.44)")
+    nil
+)
+(test "test-zos_13"
+    (uri-parse "zos://host/pippo(id .44)")
+    nil
+)
+(test "test-zos_14"
+    (uri-parse "zos://host/pippo()")
+    nil
+)
+(test "test-zos_15"
+    (uri-parse "zos://host/pippo( )")
+    nil
+)
+(test "test-zos_16"
+    (uri-parse "zos://host/pippo(")
+    nil
+)
+(test "test-zos_17"
+    (uri-parse "zos://host/pippo)")
+    nil
+)
+(test "test-zos_18"
+    (uri-parse "zos://host/id.")
+    nil
+)
+(test "test-zos_19"
+    (uri-parse "zos://host/id(1)")
+    nil
+)
+(test "test-zos_20"
+    (uri-parse "zos://host/id(1id8)")
+    nil
+)
+(test "test-zos_21"
+    (uri-parse "zos://host/id..prova..")
+    nil
+)
+(test "test-zos_22"
+    (uri-parse "zos://host/..id..prova")
+    nil
+)
+(test "test-zos_23"
+    (uri-parse "zos://host/id..prova..(id8)")
+    nil
+)
+(test "test-zos_24"
+    (uri-parse "zos://host/..id..prova(id8)")
+    nil
+)
+(test "test-zos_25"
+    (uri-parse "zos://host/.i.d(id8)")
+    nil
+)
+(test "test-zos_26"
+    (uri-parse "zos://host/.(id8)")
+    nil
+)
+(test "test-zos_27"
+    (uri-parse "zos://host/id.(id8)")
+    nil
+)
+
+
+
+
+
+
+
 
 
 

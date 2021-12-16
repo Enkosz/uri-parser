@@ -62,7 +62,7 @@ test(zos6) :- uri_parse("zos://host/id.44(id8)", uri('zos', [], 'host', '80', 'i
 test(zos7) :- uri_parse("zos://host/i.d.4.4(id8)", uri('zos', [], 'host', '80', 'i.d.4.4(id8)', [], [])).
 test(zos8) :- uri_parse("zos://host/i.d.4.4", uri('zos', [], 'host', '80', 'i.d.4.4', [], [])).
 test(zos9) :- uri_parse("zos://host/id..prova", uri('zos', [], 'host', '80', 'id..prova', [], [])).
-test(zos9) :- uri_parse("zos://host/id..prova(id8)", uri('zos', [], 'host', '80', 'id..prova(id8)', [], [])).
+test(zos10) :- uri_parse("zos://host/id..prova(id8)", uri('zos', [], 'host', '80', 'id..prova(id8)', [], [])).
 test(zos_1) :- \+(uri_parse("zos://host", _)).
 test(zos_2) :- \+(uri_parse("zos://host/.i.d", _)).
 test(zos_3) :- \+(uri_parse("zos://host/.", _)).
@@ -85,11 +85,11 @@ test(zos_19) :- \+(uri_parse("zos://host/id(1)", _)).
 test(zos_20) :- \+(uri_parse("zos://host/id(1id8)", _)).
 test(zos_21) :- \+(uri_parse("zos://host/id..prova..", _)).
 test(zos_22) :- \+(uri_parse("zos://host/..id..prova", _)).
-test(zos_21) :- \+(uri_parse("zos://host/id..prova..(id8)", _)).
-test(zos_22) :- \+(uri_parse("zos://host/..id..prova(id8)", _)).
-test(zos_23) :- \+(uri_parse("zos://host/.i.d(id8)", _)).
-test(zos_24) :- \+(uri_parse("zos://host/.(id8)", _)).
-test(zos_25) :- \+(uri_parse("zos://host/id.(id8)", _)).
+test(zos_23) :- \+(uri_parse("zos://host/id..prova..(id8)", _)).
+test(zos_24) :- \+(uri_parse("zos://host/..id..prova(id8)", _)).
+test(zos_25) :- \+(uri_parse("zos://host/.i.d(id8)", _)).
+test(zos_26) :- \+(uri_parse("zos://host/.(id8)", _)).
+test(zos_27) :- \+(uri_parse("zos://host/id.(id8)", _)).
 
 
 % TEST USERINFO
