@@ -215,8 +215,6 @@
 		       )
   )
 
-					; inter. ---> ip --> host
-
 (defun triplet (list &optional final)
   (let ((parse (multiple-value-list (identificator list '(#\. eof #\: #\/) '(#\@ #\? #\#  #\Space)))))
     (cond 
@@ -341,7 +339,7 @@
      (cond ((null parsed) (error 'uri-invalid-fragment))
 	   (T (values
 	       (make-instance 'userinfo :value (coerce parsed 'string)) 
-	       (cdr remaining)))))))
+	        remaining))))))
 
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
 (defun parse-authority (URIStringList)
@@ -555,3 +553,25 @@
 	   (values nil c)
 	   ))
   )
+
+(defun uri-display (URIStruct &optional (Stream t))
+  (if (typep URIStruct 'uri-structure)
+    (format Stream 
+      (concatenate 'string
+        "Scheme:   ~S~%" 
+        "Userinfo: ~S~%"
+        "Host:     ~S~%"
+        "Port:     ~S~%"
+        "Path:     ~S~%"
+        "Query:    ~S~%"
+        "Fragment: ~S~%") 
+    (uri-scheme URIStruct) 
+    (uri-userinfo URIStruct)
+    (uri-host URIStruct)
+    (uri-port URIStruct)
+    (uri-path URIStruct)
+    (uri-query URIStruct)
+    (uri-fragment URIStruct))
+    (format Stream "Uri invalid")
+))
+
