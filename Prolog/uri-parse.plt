@@ -44,13 +44,13 @@ test(tel_4) :- \+(uri_parse("tel:userinfo/path", _)).
 test(news1) :- uri_parse("news:host", uri('news', [], 'host', [], [], [], [])).
 test(news2) :- uri_parse("news:host.subhost", uri('news', [], 'host.subhost', [], [], [], [])).
 test(news2) :- uri_parse("news:ho123st", uri('news', [], 'ho123st', [], [], [], [])).
-test(news_2) :- \+(uri_parse("news:ho st", _)).
-test(news_3) :- \+(uri_parse("news:ho/st", _)).
-test(news_4) :- \+(uri_parse("news:host/path", _)).
-test(news_5) :- \+(uri_parse("news:host/path?query", _)).
-test(news_6) :- \+(uri_parse("news:host/path?query#fragment", _)).
-test(news_7) :- \+(uri_parse("news:host:80", _)).
-test(news_8) :- \+(uri_parse("news:userinfo@host", _)).
+test(news_1) :- \+(uri_parse("news:ho st", _)).
+test(news_2) :- \+(uri_parse("news:ho/st", _)).
+test(news_3) :- \+(uri_parse("news:host/path", _)).
+test(news_4) :- \+(uri_parse("news:host/path?query", _)).
+test(news_5) :- \+(uri_parse("news:host/path?query#fragment", _)).
+test(news_6) :- \+(uri_parse("news:host:80", _)).
+test(news_7) :- \+(uri_parse("news:userinfo@host", _)).
 
 % TEST SCHEMA ZOS
 test(zos1) :- uri_parse("zos://host/id44(id8)", uri('zos', [], 'host', '80', 'id44(id8)', [], [])).
@@ -153,6 +153,7 @@ test(path4) :- uri_parse("scheme://host", uri('scheme', [], 'host', '80', [], []
 test(path5) :- uri_parse("scheme://host/path?query", uri('scheme', [], 'host', '80', 'path', 'query', [])).
 test(path6) :- uri_parse("scheme://host/pro va", uri('scheme', [], 'host', '80', 'pro%20va', [], [])).
 test(path7) :- uri_parse("scheme://host/pro.va", uri('scheme', [], 'host', '80', 'pro.va', [], [])).
+test(path7) :- uri_parse("scheme://host/path#fragment", uri('scheme', [], 'host', '80', 'path', [], 'fragment')).
 test(path_1) :- \+(uri_parse("scheme://host/path/", _)).
 test(path_2) :- \+(uri_parse("scheme://host/p:ath", _)).
 test(path_3) :- \+(uri_parse("scheme://host/p@ath", _)).
