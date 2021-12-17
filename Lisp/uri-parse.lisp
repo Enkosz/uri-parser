@@ -282,7 +282,7 @@
   (if (eq (first list) #\.) (error 'invalid-uri-id44)
     (multiple-value-bind
      (parsed remaining)
-     (identificator list '(#\( #\? #\# eof) '(#\@ #\Space #\)))
+     (identificator list '(#\( #\? #\# eof) '(#\@ #\Space #\) #\%))
      (cond ((null parsed) (error 'uri-invalid-id44))
 	   ((and (<= (list-length parsed) 44) (not (eq (first (last parsed)) #\.))) (values
 					  (coerce parsed 'string)
@@ -293,7 +293,11 @@
     (parsed remaining)
     (identificator list '(#\)) '(#\@ #\. #\Space #\? #\#))
     (cond ((null parsed) (error 'uri-invalid-id8))
-	  ((and (<= (list-length parsed) 8) (not (digit-char-p (first parsed)))) (values
+	  ((and 
+      (<= (list-length parsed) 8) 
+      (not (digit-char-p (first parsed)))
+      (every #'alphanumericp (coerce parsed 'string))
+      ) (values
 					(coerce parsed 'string)
 					remaining)))))
 
