@@ -279,24 +279,23 @@
 		    remaining)))))
 
 (defun parse-id44 (list)
-  "id44 è del tipo /<id44>(resto"
-  (multiple-value-bind
-   (parsed remaining)
-   (identificator list '(#\( #\? #\# eof))
-   (cond ((null parsed) (error 'uri-invalid-id44))
-	 ((<= (list-length parsed) 44) (values
-					(coerce parsed 'string)
-					remaining)))))
+  (if (eq (first list) #\.) (error 'invalid-uri-id44)
+    (multiple-value-bind
+     (parsed remaining)
+     (identificator list '(#\( #\? #\# eof) '(#\@ #\Space #\)))
+     (cond ((null parsed) (error 'uri-invalid-id44))
+	   ((and (<= (list-length parsed) 44) (not (eq (last parsed) #\.))) (values
+					  (coerce parsed 'string)
+					  remaining))))))
 
 (defun parse-id8 (list)
-  "id8 è del tipo (<id8>)"
-  (multiple-value-bind
-   (parsed remaining)
-   (identificator list '(#\)))
-   (cond ((null parsed) (error 'uri-invalid-id8))
-	 ((<= (list-length parsed) 8) (values
-				       (coerce parsed 'string)
-				       remaining)))))
+   (multiple-value-bind
+    (parsed remaining)
+    (identificator list '(#\)) '(#\@ #\. #\Space #\? #\#))
+    (cond ((null parsed) (error 'uri-invalid-id8))
+	  ((<= (list-length parsed) 8) (values
+					(coerce parsed 'string)
+					remaining)))))
 
 
 (defun parse-path-zos (list)
