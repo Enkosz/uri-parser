@@ -284,7 +284,7 @@
      (parsed remaining)
      (identificator list '(#\( #\? #\# eof) '(#\@ #\Space #\)))
      (cond ((null parsed) (error 'uri-invalid-id44))
-	   ((and (<= (list-length parsed) 44) (not (eq (last parsed) #\.))) (values
+	   ((and (<= (list-length parsed) 44) (not (eq (first (last parsed)) #\.))) (values
 					  (coerce parsed 'string)
 					  remaining))))))
 
@@ -293,7 +293,7 @@
     (parsed remaining)
     (identificator list '(#\)) '(#\@ #\. #\Space #\? #\#))
     (cond ((null parsed) (error 'uri-invalid-id8))
-	  ((<= (list-length parsed) 8) (values
+	  ((and (<= (list-length parsed) 8) (not (digit-char-p (first parsed)))) (values
 					(coerce parsed 'string)
 					remaining)))))
 

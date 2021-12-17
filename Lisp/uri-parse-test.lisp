@@ -936,20 +936,4 @@
     nil
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
