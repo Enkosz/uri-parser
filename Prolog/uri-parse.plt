@@ -21,7 +21,7 @@ test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'ho
 test(mailto_1) :- \+(uri_parse("mailto:", _)).
 test(mailto_2) :- \+(uri_parse("mailto:userinfo@", _)).
 test(mailto_3) :- \+(uri_parse("mailto:userinfo@host?query", _)).
-test(mailto_3) :- \+(uri_parse("mailto:userinfo@host/path", _)).
+test(mailto_4) :- \+(uri_parse("mailto:userinfo@host/path", _)).
 
 % TEST SCHEMA FAX
 test(fax1) :- uri_parse("fax:userinfo", uri('fax', 'userinfo', [], [], [], [], [])).
@@ -43,7 +43,7 @@ test(tel_4) :- \+(uri_parse("tel:userinfo/path", _)).
 % TEST SCHEMA NEWS
 test(news1) :- uri_parse("news:host", uri('news', [], 'host', [], [], [], [])).
 test(news2) :- uri_parse("news:host.subhost", uri('news', [], 'host.subhost', [], [], [], [])).
-test(news2) :- uri_parse("news:ho123st", uri('news', [], 'ho123st', [], [], [], [])).
+test(news3) :- uri_parse("news:ho123st", uri('news', [], 'ho123st', [], [], [], [])).
 test(news_1) :- \+(uri_parse("news:ho st", _)).
 test(news_2) :- \+(uri_parse("news:ho/st", _)).
 test(news_3) :- \+(uri_parse("news:host/path", _)).
@@ -153,7 +153,7 @@ test(path4) :- uri_parse("scheme://host", uri('scheme', [], 'host', '80', [], []
 test(path5) :- uri_parse("scheme://host/path?query", uri('scheme', [], 'host', '80', 'path', 'query', [])).
 test(path6) :- uri_parse("scheme://host/pro va", uri('scheme', [], 'host', '80', 'pro%20va', [], [])).
 test(path7) :- uri_parse("scheme://host/pro.va", uri('scheme', [], 'host', '80', 'pro.va', [], [])).
-test(path7) :- uri_parse("scheme://host/path#fragment", uri('scheme', [], 'host', '80', 'path', [], 'fragment')).
+test(path8) :- uri_parse("scheme://host/path#fragment", uri('scheme', [], 'host', '80', 'path', [], 'fragment')).
 test(path_1) :- \+(uri_parse("scheme://host/path/", _)).
 test(path_2) :- \+(uri_parse("scheme://host/p:ath", _)).
 test(path_3) :- \+(uri_parse("scheme://host/p@ath", _)).
@@ -184,6 +184,7 @@ test(fragment1) :- uri_parse("scheme://host/#frag", uri('scheme', [], 'host', '8
 test(fragment2) :- uri_parse("scheme://host/path?query#frag", uri('scheme', [], 'host', '80', 'path', 'query', 'frag')).
 test(fragment3) :- uri_parse("scheme://host/?query#frag", uri('scheme', [], 'host', '80', [], 'query', 'frag')).
 test(fragment4) :- uri_parse("scheme://host", uri('scheme', [], 'host', '80', [], [], [])).
+test(fragment5) :- uri_parse("scheme://host/#fr ag", uri('scheme', [], 'host', '80', [], [], 'fr%20ag')).
 test(fragment_1) :- \+(uri_parse("scheme://host/#", _)).
 test(fragment_2) :- \+(uri_parse("scheme://host#", _)).
 

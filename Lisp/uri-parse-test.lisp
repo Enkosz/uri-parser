@@ -384,6 +384,14 @@
     )
 )
 (test "test-path4"
+    (uri-parse "scheme://host")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-path5"
     (uri-parse "scheme://host/path?query")
     (prepare-uri
         :scheme "scheme"
@@ -394,6 +402,15 @@
     )
 )
 (test "test-path6"
+    (uri-parse "scheme://host/pro va")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+        :path "pro%20va"
+    )
+)
+(test "test-path7"
     (uri-parse "scheme://host/pro.va")
     (prepare-uri
         :scheme "scheme"
@@ -402,39 +419,49 @@
         :path "pro.va"
     )
 )
+(test "test-path6"
+    (uri-parse "scheme://host/path#fragment")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+        :path "path"
+        :fragment "fragment"
+    )
+)
 (test "test-path_1"
     (uri-parse "scheme://host/path/")
     nil
 )
-(test "test-path_1"
+(test "test-path_2"
     (uri-parse "scheme://host/p:ath")
     nil
 )
-(test "test-path_1"
+(test "test-path_3"
     (uri-parse "scheme://host/p@ath")
     nil
 )
-(test "test-path_1"
+(test "test-path_4"
     (uri-parse "scheme://host//path")
     nil
 )
-(test "test-path_1"
+(test "test-path_5"
     (uri-parse "scheme://host/@path")
     nil
 )
-(test "test-path_1"
+(test "test-path_6"
     (uri-parse "scheme://host/:path")
     nil
 )
-(test "test-path_1"
+(test "test-path_7"
     (uri-parse "scheme://host/path@")
     nil
 )
-(test "test-path_1"
+(test "test-path_8"
     (uri-parse "scheme://host/path:")
     nil
 )
-(test "test-path_1"
+(test "test-path_9"
     (uri-parse "scheme://host/path//com")
     nil
 )
@@ -447,6 +474,15 @@
         :host "host"
         :port "80"
         :query "query"
+    )
+)
+(test "test-query1"
+    (uri-parse "scheme://host/?qu ery")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+        :query "qu%20ery"
     )
 )
 (test "test-query3"
@@ -573,6 +609,15 @@
         :port "80"
     )
 )
+(test "test-fragment5"
+    (uri-parse "scheme://host/#fr ag")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host"
+        :port "80"
+        :fragment "fr%20ag"
+    )
+)
 (test "test-fragment_1"
     (uri-parse "scheme://host/#")
     nil
@@ -673,6 +718,10 @@
     (uri-parse "tel:")
     nil
 )
+(test "test-tel_2"
+    (uri-parse "tel:user info")
+    nil
+)
 (test "test-tel_3"
     (uri-parse "tel:userinfo@host")
     nil
@@ -703,6 +752,10 @@
         :scheme "news"
         :host "ho123st"
     )
+)
+(test "test-news_1"
+    (uri-parse "news:ho st")
+    nil
 )
 (test "test-news_2"
     (uri-parse "news:ho/st")
@@ -935,5 +988,1618 @@
     (uri-parse "zos://host/id.(id8)")
     nil
 )
+
+; TEST INTEGRATION ---- PRIMO TIPO DI URI
+(test "test-primo-tipo1"
+    (uri-parse "http://userinfo@host.subhost:123/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo2"
+    (uri-parse "http://userinfo@host.subhost:123/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo3"
+    (uri-parse "http://userinfo@host.subhost:123/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo4"
+    (uri-parse "http://userinfo@host.subhost:123/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo5"
+    (uri-parse "http://userinfo@host.subhost:123/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo6"
+    (uri-parse "http://userinfo@host.subhost:123/path?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo7"
+    (uri-parse "http://userinfo@host.subhost:123/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo8"
+    (uri-parse "http://userinfo@host.subhost:123/path")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+    )
+)
+(test "test-primo-tipo9"
+    (uri-parse "http://userinfo@host.subhost:123/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo10"
+    (uri-parse "http://userinfo@host.subhost:123/?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo11"
+    (uri-parse "http://userinfo@host.subhost:123/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo12"
+    (uri-parse "http://userinfo@host.subhost:123/")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+    )
+)
+(test "test-primo-tipo13"
+    (uri-parse "http://userinfo@host.subhost:123")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "123"
+    )
+)
+(test "test-primo-tipo14"
+    (uri-parse "http://userinfo@host.subhost/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo15"
+    (uri-parse "http://userinfo@host.subhost/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo16"
+    (uri-parse "http://userinfo@host.subhost/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo17"
+    (uri-parse "http://userinfo@host.subhost/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo18"
+    (uri-parse "http://userinfo@host.subhost/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo19"
+    (uri-parse "http://userinfo@host.subhost/path?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo20"
+    (uri-parse "http://userinfo@host.subhost/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo21"
+    (uri-parse "http://userinfo@host.subhost/path")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+    )
+)
+(test "test-primo-tipo22"
+    (uri-parse "http://userinfo@host.subhost/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo23"
+    (uri-parse "http://userinfo@host.subhost/?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo24"
+    (uri-parse "http://userinfo@host.subhost/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo25"
+    (uri-parse "http://userinfo@host.subhost/")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+    )
+)
+(test "test-primo-tipo26"
+    (uri-parse "http://userinfo@host.subhost")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host.subhost"
+        :port "80"
+    )
+)
+(test "test-primo-tipo27"
+    (uri-parse "http://host.subhost:123/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo28"
+    (uri-parse "http://host.subhost:123/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo29"
+    (uri-parse "http://host.subhost:123/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo30"
+    (uri-parse "http://host.subhost:123/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo31"
+    (uri-parse "http://host.subhost:123/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo32"
+    (uri-parse "http://host.subhost:123/path?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo33"
+    (uri-parse "http://host.subhost:123/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo34"
+    (uri-parse "http://host.subhost:123/path")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :path "path"
+    )
+)
+(test "test-primo-tipo35"
+    (uri-parse "http://host.subhost:123/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo36"
+    (uri-parse "http://host.subhost:123/?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo37"
+    (uri-parse "http://host.subhost:123/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo38"
+    (uri-parse "http://host.subhost:123/")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+    )
+)
+(test "test-primo-tipo39"
+    (uri-parse "http://host.subhost:123")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "123"
+    )
+)
+(test "test-primo-tipo40"
+    (uri-parse "http://host.subhost/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo41"
+    (uri-parse "http://host.subhost/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo42"
+    (uri-parse "http://host.subhost/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo43"
+    (uri-parse "http://host.subhost/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo44"
+    (uri-parse "http://host.subhost/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo45"
+    (uri-parse "http://host.subhost/path?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo46"
+    (uri-parse "http://host.subhost/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo47"
+    (uri-parse "http://host.subhost/path")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :path "path"
+    )
+)
+(test "test-primo-tipo48"
+    (uri-parse "http://host.subhost/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo49"
+    (uri-parse "http://host.subhost/?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo50"
+    (uri-parse "http://host.subhost/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo51"
+    (uri-parse "http://host.subhost/")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+    )
+)
+(test "test-primo-tipo52"
+    (uri-parse "http://host.subhost")
+    (prepare-uri
+        :scheme "http"
+        :host "host.subhost"
+        :port "80"
+    )
+)
+
+
+
+
+(test "test-primo-tipo53"
+    (uri-parse "http://userinfo@host:123/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo54"
+    (uri-parse "http://userinfo@host:123/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo55"
+    (uri-parse "http://userinfo@host:123/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo56"
+    (uri-parse "http://userinfo@host:123/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo57"
+    (uri-parse "http://userinfo@host:123/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo58"
+    (uri-parse "http://userinfo@host:123/path?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo59"
+    (uri-parse "http://userinfo@host:123/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo60"
+    (uri-parse "http://userinfo@host:123/path")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :path "path"
+    )
+)
+(test "test-primo-tipo61"
+    (uri-parse "http://userinfo@host:123/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo62"
+    (uri-parse "http://userinfo@host:123/?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo63"
+    (uri-parse "http://userinfo@host:123/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo64"
+    (uri-parse "http://userinfo@host:123/")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-primo-tipo65"
+    (uri-parse "http://userinfo@host:123")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-primo-tipo66"
+    (uri-parse "http://userinfo@host/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo67"
+    (uri-parse "http://userinfo@host/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo68"
+    (uri-parse "http://userinfo@host/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo69"
+    (uri-parse "http://userinfo@host/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo70"
+    (uri-parse "http://userinfo@host/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo71"
+    (uri-parse "http://userinfo@host/path?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo72"
+    (uri-parse "http://userinfo@host/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo73"
+    (uri-parse "http://userinfo@host/path")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :path "path"
+    )
+)
+(test "test-primo-tipo74"
+    (uri-parse "http://userinfo@host/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo75"
+    (uri-parse "http://userinfo@host/?query")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo76"
+    (uri-parse "http://userinfo@host/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo77"
+    (uri-parse "http://userinfo@host/")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-primo-tipo78"
+    (uri-parse "http://userinfo@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userinfo"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-primo-tipo79"
+    (uri-parse "http://host:123/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo80"
+    (uri-parse "http://host:123/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo81"
+    (uri-parse "http://host:123/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo82"
+    (uri-parse "http://host:123/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo83"
+    (uri-parse "http://host:123/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo84"
+    (uri-parse "http://host:123/path?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo85"
+    (uri-parse "http://host:123/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo86"
+    (uri-parse "http://host:123/path")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :path "path"
+    )
+)
+(test "test-primo-tipo87"
+    (uri-parse "http://host:123/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo88"
+    (uri-parse "http://host:123/?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo89"
+    (uri-parse "http://host:123/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo90"
+    (uri-parse "http://host:123/")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-primo-tipo91"
+    (uri-parse "http://host:123")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "123"
+    )
+)
+(test "test-primo-tipo92"
+    (uri-parse "http://host/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo93"
+    (uri-parse "http://host/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-primo-tipo94"
+    (uri-parse "http://host/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo95"
+    (uri-parse "http://host/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path/subpath"
+    )
+)
+(test "test-primo-tipo96"
+    (uri-parse "http://host/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo97"
+    (uri-parse "http://host/path?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-primo-tipo98"
+    (uri-parse "http://host/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo99"
+    (uri-parse "http://host/path")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :path "path"
+    )
+)
+(test "test-primo-tipo100"
+    (uri-parse "http://host/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo101"
+    (uri-parse "http://host/?query")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :query "query"
+    )
+)
+
+(test "test-primo-tipo102"
+    (uri-parse "http://host/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+        :fragment "fragment"
+    )
+)
+(test "test-primo-tipo103"
+    (uri-parse "http://host/")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-primo-tipo104"
+    (uri-parse "http://host")
+    (prepare-uri
+        :scheme "http"
+        :host "host"
+        :port "80"
+    )
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http://")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path/subpath?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path/subpath?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path/subpath#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path/subpath")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///path")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http:///")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http://")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http://host?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http://host?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http://host#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path/subpath?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path/subpath?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path/subpath#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path/subpath")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/path")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host/")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "://host")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path/subpath?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path/subpath?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path/subpath#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path/subpath")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/path")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/?query#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/?query")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/#fragment")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host/")
+    nil
+)
+(test "test-primo-tipo_1"
+    (uri-parse "http//host")
+    nil
+)
+
+; INTEGRATION TEST ---- secondo tipo di uri
+(test "test-secondo-tipo1"
+    (uri-parse "http:/path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo2"
+    (uri-parse "http:/path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo3"
+    (uri-parse "http:/path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo4"
+    (uri-parse "http:/path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+    )
+)
+(test "test-secondo-tipo5"
+    (uri-parse "http:/path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo6"
+    (uri-parse "http:/path?query")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo7"
+    (uri-parse "http:/path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo8"
+    (uri-parse "http:/path")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+    )
+)
+(test "test-secondo-tipo9"
+    (uri-parse "http:/?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo10"
+    (uri-parse "http:/#fragment")
+    (prepare-uri
+        :scheme "http"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo11"
+    (uri-parse "http:/?query")
+    (prepare-uri
+        :scheme "http"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo12"
+    (uri-parse "http:/")
+    (prepare-uri
+        :scheme "http"
+    )
+)
+(test "test-secondo-tipo13"
+    (uri-parse "http:path/subpath?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo14"
+    (uri-parse "http:path/subpath?query")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo15"
+    (uri-parse "http:path/subpath#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo16"
+    (uri-parse "http:path/subpath")
+    (prepare-uri
+        :scheme "http"
+        :path "path/subpath"
+    )
+)
+(test "test-secondo-tipo17"
+    (uri-parse "http:path?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo18"
+    (uri-parse "http:path?query")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo19"
+    (uri-parse "http:path#fragment")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo20"
+    (uri-parse "http:path")
+    (prepare-uri
+        :scheme "http"
+        :path "path"
+    )
+)
+(test "test-secondo-tipo21"
+    (uri-parse "http:?query#fragment")
+    (prepare-uri
+        :scheme "http"
+        :query "query"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo22"
+    (uri-parse "http:#fragment")
+    (prepare-uri
+        :scheme "http"
+        :fragment "fragment"
+    )
+)
+(test "test-secondo-tipo23"
+    (uri-parse "http:?query")
+    (prepare-uri
+        :scheme "http"
+        :query "query"
+    )
+)
+(test "test-secondo-tipo24"
+    (uri-parse "http:")
+    (prepare-uri
+        :scheme "http"
+    )
+)
+
+(test "test-secondo-tipo_1"
+    (uri-parse "http/path/subpath?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_2"
+    (uri-parse "http/path/subpath?query")
+    nil
+)
+(test "test-secondo-tipo_3"
+    (uri-parse "http/path/subpath#fragment")
+    nil
+)
+(test "test-secondo-tipo_4"
+    (uri-parse "http/path/subpath")
+    nil
+)
+(test "test-secondo-tipo_5"
+    (uri-parse "http/path?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_6"
+    (uri-parse "http/path?query")
+    nil
+)
+(test "test-secondo-tipo_7"
+    (uri-parse "http/path#fragment")
+    nil
+)
+(test "test-secondo-tipo_8"
+    (uri-parse "http/path")
+    nil
+)
+(test "test-secondo-tipo_9"
+    (uri-parse "http/?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_10"
+    (uri-parse "http/#fragment")
+    nil
+)
+(test "test-secondo-tipo_11"
+    (uri-parse "http/?query")
+    nil
+)
+(test "test-secondo-tipo_12"
+    (uri-parse "http/")
+    nil
+)
+(test "test-secondo-tipo_13"
+    (uri-parse "httppath/subpath?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_14"
+    (uri-parse "httppath/subpath?query")
+    nil
+)
+(test "test-secondo-tipo_15"
+    (uri-parse "httppath/subpath#fragment")
+    nil
+)
+(test "test-secondo-tipo_16"
+    (uri-parse "httppath/subpath")
+    nil
+)
+(test "test-secondo-tipo_17"
+    (uri-parse "httppath?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_18"
+    (uri-parse "httppath?query")
+    nil
+)
+(test "test-secondo-tipo_19"
+    (uri-parse "httppath#fragment")
+    nil
+)
+(test "test-secondo-tipo_20"
+    (uri-parse "httppath")
+    nil
+)
+(test "test-secondo-tipo_21"
+    (uri-parse "http?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_22"
+    (uri-parse "http#fragment")
+    nil
+)
+(test "test-secondo-tipo_23"
+    (uri-parse "http?query")
+    nil
+)
+(test "test-secondo-tipo_24"
+    (uri-parse "http")
+    nil
+)
+(test "test-secondo-tipo_25"
+    (uri-parse ":/path/subpath?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_26"
+    (uri-parse ":/path/subpath?query")
+    nil
+)
+(test "test-secondo-tipo_27"
+    (uri-parse ":/path/subpath#fragment")
+    nil
+)
+(test "test-secondo-tipo_28"
+    (uri-parse ":/path/subpath")
+    nil
+)
+(test "test-secondo-tipo_29"
+    (uri-parse ":/path?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_30"
+    (uri-parse ":/path?query")
+    nil
+)
+(test "test-secondo-tipo_31"
+    (uri-parse ":/path#fragment")
+    nil
+)
+(test "test-secondo-tipo_32"
+    (uri-parse ":/path")
+    nil
+)
+(test "test-secondo-tipo_33"
+    (uri-parse ":/?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_34"
+    (uri-parse ":/#fragment")
+    nil
+)
+(test "test-secondo-tipo_35"
+    (uri-parse ":/?query")
+    nil
+)
+(test "test-secondo-tipo_36"
+    (uri-parse ":/")
+    nil
+)
+(test "test-secondo-tipo_37"
+    (uri-parse ":path/subpath?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_38"
+    (uri-parse ":path/subpath?query")
+    nil
+)
+(test "test-secondo-tipo_39"
+    (uri-parse ":path/subpath#fragment")
+    nil
+)
+(test "test-secondo-tipo_40"
+    (uri-parse ":path/subpath")
+    nil
+)
+(test "test-secondo-tipo_41"
+    (uri-parse ":path?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_42"
+    (uri-parse ":path?query")
+    nil
+)
+(test "test-secondo-tipo_43"
+    (uri-parse ":path#fragment")
+    nil
+)
+(test "test-secondo-tipo_44"
+    (uri-parse ":path")
+    nil
+)
+(test "test-secondo-tipo_45"
+    (uri-parse ":?query#fragment")
+    nil
+)
+(test "test-secondo-tipo_46"
+    (uri-parse ":#fragment")
+    nil
+)
+(test "test-secondo-tipo_47"
+    (uri-parse ":?query")
+    nil
+)
+(test "test-secondo-tipo_48"
+    (uri-parse ":")
+    nil
+)
+
+
+
+
 
 (format t "~%Run ~D tests: passed ~D, failed ~D" tot passed failed)
