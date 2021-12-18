@@ -178,8 +178,16 @@
             (let ((secondParse (multiple-value-list (identificator-special (cdr (second parse)) delimitator delimitatorIdentificator bannedIdentificator))))
               (values (append (first parse) (list delimitator) (first secondParse)) (second secondParse)))  
 	  (values-list parse))))
-   )
   )
+)
+
+(defun space-encoding (URIList)
+  (cond 
+    ((null URIList) nil)
+    ((eq (car URIList) #\Space) (append '(#\% #\2 #\0) (space-encoding(cdr URIList))))
+    (T (cons (car URIList) (space-encoding(cdr URIList))))
+  )
+)
 
 (defun parse-scheme (list)
   (multiple-value-bind (parsed remaining)
@@ -275,7 +283,7 @@
    (parsed remaining)
    (parse-path-aux list)
    (cond ((null parsed) (values nil remaining))
-	 (T (values (make-instance 'path :value (coerce parsed 'string)) 
+	 (T (values (make-instance 'path :value (coerce (space-encoding parsed) 'string)) 
 		    remaining)))))
 
 (defun parse-id44 (list)
@@ -329,7 +337,7 @@
      (identificator (cdr list) '(#\# eof))
      (cond ((null parsed) (error 'uri-invalid-query))
 	   (T (values
-	       (make-instance 'userinfo :value (coerce parsed 'string)) 
+	       (make-instance 'userinfo :value (coerce (space-encoding parsed) 'string)) 
 	       remaining))
 	   ))))
 
@@ -341,7 +349,7 @@
      (identificator (cdr list) '(eof))
      (cond ((null parsed) (error 'uri-invalid-fragment))
 	   (T (values
-	       (make-instance 'userinfo :value (coerce parsed 'string)) 
+	       (make-instance 'userinfo :value (coerce (space-encoding parsed) 'string)) 
 	        remaining))))))
 
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
@@ -543,8 +551,8 @@
     )
   )
 
-					; Utility interna, aggiunge EOF alla fine della lista come delimitatore
-					; Richiama una funzione che gestisce i vari tipi di URI
+; Utility interna, aggiunge EOF alla fine della lista come delimitatore
+; Richiama una funzione che gestisce i vari tipi di URI
 (defun uri-parse_ (URIStringList)
   (let 
       ((parsed_uri (multiple-value-list (parse-uri-type (append URIStringList '(eof))))))
@@ -555,7 +563,7 @@
     )
   )
 
-					; Funzione principale, converta la stringa in Input come una lista di caratteri
+; Funzione principale, converta la stringa in Input come una lista di caratteri
 (defun uri-parse (URIString)
   (handler-case (uri-parse_ (coerce URIString 'list))
     (error (c)
