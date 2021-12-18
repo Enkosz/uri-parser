@@ -427,3 +427,5 @@ test(secondoTipo_47) :- \+(uri_parse(":?query", _)).
 test(secondoTipo_48) :- \+(uri_parse(":", _)).
 
 :- end_tests(uri_parse).
+
+:- run_tests.
