@@ -41,7 +41,7 @@
 )
 
 ; TEST SCHEMA
-(test "test-scheme-1"
+(test "test-scheme1"
     (uri-parse "http://google.com")
     (prepare-uri 
         :scheme "http"
@@ -49,7 +49,7 @@
         :port "80"
     )
 )
-(test "test-scheme-2"
+(test "test-scheme2"
     (uri-parse "h11ps://google.com")
     (prepare-uri 
         :scheme "h11ps"
@@ -57,7 +57,7 @@
         :port "80"
     )
 )
-(test "test-scheme-3"
+(test "test-scheme3"
     (uri-parse "_http_://google.com")
     (prepare-uri 
         :scheme "_http_"
@@ -95,7 +95,7 @@
 )
 
 ; TEST USERINFO
-(test "test-userinfo-1"
+(test "test-userinfo1"
     (uri-parse "http://userinfo@host")
     (prepare-uri
         :scheme "http"
@@ -104,7 +104,7 @@
         :port "80"
     )
 )
-(test "test-userinfo-2"
+(test "test-userinfo2"
     (uri-parse "http://user_info@host")
     (prepare-uri
         :scheme "http"
@@ -113,7 +113,7 @@
         :port "80"
     )
 )
-(test "test-userinfo-3"
+(test "test-userinfo3"
     (uri-parse "http://user123info@host")
     (prepare-uri
         :scheme "http"
@@ -156,7 +156,7 @@
 )
 
 ; TEST HOST
-(test "test-host-1"
+(test "test-host1"
     (uri-parse "scheme://host")
     (prepare-uri
         :scheme "scheme"
@@ -164,7 +164,7 @@
         :port "80"
     )
 )
-(test "test-host-2"
+(test "test-host2"
     (uri-parse "scheme://userinfo@host")
     (prepare-uri
         :scheme "scheme"
@@ -173,7 +173,7 @@
         :port "80"
     )
 )
-(test "test-host-3"
+(test "test-host3"
     (uri-parse "scheme://host:123")
     (prepare-uri
         :scheme "scheme"
@@ -181,7 +181,7 @@
         :port "123"
     )
 )
-(test "test-host-4"
+(test "test-host4"
     (uri-parse "scheme://userinfo@host:123")
     (prepare-uri
         :scheme "scheme"
@@ -190,7 +190,7 @@
         :port "123"
     )
 )
-(test "test-host-5"
+(test "test-host5"
     (uri-parse "scheme://host/path")
     (prepare-uri
         :scheme "scheme"
@@ -199,7 +199,7 @@
         :path "path"
     )
 )
-(test "test-host-6"
+(test "test-host6"
     (uri-parse "scheme://userinfo@host.com:123")
     (prepare-uri
         :scheme "scheme"
@@ -208,6 +208,73 @@
         :port "123"
     )
 )
+(test "test-host7"
+    (uri-parse "scheme://123.123.123.123")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123.123"
+        :port "80"
+    )
+)
+(test "test-host8"
+    (uri-parse "scheme://123.123.123.123.123")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123.123.123"
+        :port "80"
+    )
+)
+(test "test-host9"
+    (uri-parse "scheme://123.123.123.1233")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123.1233"
+        :port "80"
+    )
+)
+(test "test-host10"
+    (uri-parse "scheme://257.257.257.257")
+    (prepare-uri
+        :scheme "scheme"
+        :host "257.257.257.257"
+        :port "80"
+    )
+)
+(test "test-host11"
+    (uri-parse "scheme://123.123.123")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123"
+        :port "80"
+    )
+)
+(test "test-host12"
+    (uri-parse "scheme://userinfo@123.123.123.123")
+    (prepare-uri
+        :scheme "scheme"
+        :userinfo "userinfo"
+        :host "123.123.123.123"
+        :port "80"
+    )
+)
+(test "test-host13"
+    (uri-parse "scheme://123.123.123.123:321")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123.123"
+        :port "321"
+    )
+)
+(test "test-host14"
+    (uri-parse "scheme://123.123.123.123/path")
+    (prepare-uri
+        :scheme "scheme"
+        :host "123.123.123.123"
+        :port "80"
+        :path "path"
+    )
+)
+
 (test "test-host_1"
     (uri-parse "scheme://userinfo@ho?st:123")
     nil
