@@ -101,15 +101,10 @@ uri(components(scheme('mailto'), userInfo([]), host([]), port([]),
 uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(scheme('zos')),
     !,
-    [/, /],
-    uri_userinfo(UserInfo),
-    uri_host_aux(Host),
-    uri_port(ActualPort),
-    [/],
-    uri_path_zos(Path),
-    uri_query(Query),
-    uri_fragment(Fragment),
-    {uri_default_port(ActualPort, Port)}.
+    uri_authority(components(UserInfo, Host, Port)),
+    uri_subdomain(components(Path, Query, Fragment)),
+    {checkPath(Path)}.
+
 
 %------------------------------------------------------------------------------
 
@@ -238,7 +233,7 @@ uri_path_aux(PathList) -->
     identificator(PathList, ['/', '?', '#', '@', ':'], ascii),
     !.
 
-uri_path_zos(path(Path)) -->
+uri_path_zos -->
     uri_id44(Id44),
     ['('],
     uri_id8(Id8),
@@ -248,21 +243,17 @@ uri_path_zos(path(Path)) -->
      [Ch | _] = Id8,
      char_type(Ch, alpha),
      length(Id44, Id44Length), Id44Length =< 44,
-     length(Id8, Id8Length), Id8Length =< 8,
-     flatten([Id44, '(', Id8, ')'], FlattenPath),
-     atom_chars(Path, FlattenPath)},
+     length(Id8, Id8Length), Id8Length =< 8},
     !.
 
-uri_path_zos(path(Path)) -->
+uri_path_zos -->
     uri_id44(Id44),
     {[C | _] = Id44,
      char_type(C, alpha),
-     length(Id44, Id44Length), Id44Length =< 44,
-     flatten(Id44, FlattenPath),
-     atom_chars(Path, FlattenPath)},
+     length(Id44, Id44Length), Id44Length =< 44},
     !.
 
-uri_path_zos(path([])) -->
+uri_path_zos -->
     [],
     !.
 
@@ -285,6 +276,14 @@ uri_id44(['.'| T]) -->
 uri_id8(Id8) -->
     identificator(Id8, [' '], alnum),
     !.
+
+checkPath(path(AtomPath)) :-
+    atom(AtomPath),
+    atom_chars(AtomPath, CharsPath),
+    phrase(uri_path_zos,  CharsPath),
+    !.
+
+checkPath(path([])) :- !.
 
 %------------------------------------------------------------------------------
 

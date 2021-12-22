@@ -168,10 +168,10 @@ test(zos7) :- uri_parse("zos://host/i.d.4.4(id8)", uri('zos', [], 'host', '80', 
 test(zos8) :- uri_parse("zos://host/i.d.4.4", uri('zos', [], 'host', '80', 'i.d.4.4', [], [])).
 test(zos9) :- uri_parse("zos://host/id..prova", uri('zos', [], 'host', '80', 'id..prova', [], [])).
 test(zos10) :- uri_parse("zos://host/id..prova(id8)", uri('zos', [], 'host', '80', 'id..prova(id8)', [], [])).
-test(zos_1) :- \+(uri_parse("zos://host", _)).
+test(zos_1) :- uri_parse("zos://host", _).
 test(zos_2) :- \+(uri_parse("zos://host/.i.d", _)).
 test(zos_3) :- \+(uri_parse("zos://host/.", _)).
-test(zos_4) :- \+(uri_parse("zos://host/", _)).
+test(zos_4) :- uri_parse("zos://host/", _).
 test(zos_5) :- \+(uri_parse("zos://host/a012345678901234567890123456789012345678901234(id)", _)).
 test(zos_6) :- \+(uri_parse("zos://host/path(a012345678)", _)).
 test(zos_7) :- \+(uri_parse("zos://host/a012345678901234567890123456789012345678901234(a012345678)", _)).
