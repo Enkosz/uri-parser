@@ -64,8 +64,14 @@ uri(components(scheme('news'),
 	       userinfo([]), Host, port([]),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('news')),
-    !,
-    uri_host_aux(Host).
+    uri_host_aux(Host),
+    !.
+
+uri(components(scheme('news'),
+	       userinfo([]), host([]), port([]),
+	       path([]), query([]), fragment([]))) -->
+    uri_scheme(scheme('news')),
+    !.
 
 %------------------------------------------------------------------------------
 
@@ -75,8 +81,8 @@ uri(components(scheme('mailto'), UserInfo, Host, port([]),
     uri_scheme(scheme('mailto')),
     uri_userinfo_scheme_syntax(UserInfo),
     [@],
-    !,
-    uri_host_aux(Host).
+    uri_host_aux(Host), 
+    !.
 
 % "mailto" ':' userinfo
 uri(components(scheme('mailto'), UserInfo, host([]), port([]),
@@ -84,6 +90,10 @@ uri(components(scheme('mailto'), UserInfo, host([]), port([]),
     uri_scheme(scheme('mailto')),
     !,
     uri_userinfo_scheme_syntax(UserInfo).
+
+uri(components(scheme('mailto'), userInfo([]), host([]), port([]),
+	       path([]), query([]), fragment([]))) -->
+           [], !.
 
 %------------------------------------------------------------------------------
 
@@ -103,44 +113,37 @@ uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
 
 %------------------------------------------------------------------------------
 
-% scheme ':' authorithy['/' [path] ['?' query] ['#' fragment]]
+% URI
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
+    uri_authority(components(UserInfo, Host, Port)),
+    uri_subdomain(components(Path, Query, Fragment)),
+    !.
+
+%------------------------------------------------------------------------------
+
+uri_authority(components(UserInfo, Host, Port)) -->
     [/, /],
     uri_userinfo(UserInfo),
     uri_host_aux(Host),
     uri_port(ActualPort),
+    {uri_default_port(ActualPort, Port)},
+    !.
+
+uri_authority(components(userinfo([]), host([]), port([]))) -->
+    [], !.
+
+%------------------------------------------------------------------------------
+
+uri_subdomain(components(Path, Query, Fragment)) -->
     [/],
     uri_path(Path),
     uri_query(Query),
     uri_fragment(Fragment),
-    {uri_default_port(ActualPort, Port)},
     !.
 
-%------------------------------------------------------------------------------
-
-% scheme ':' authorithy
-uri(components(Scheme, UserInfo, Host, Port,
-	       path([]), query([]), fragment([]))) -->
-    uri_scheme(Scheme),
-    [/, /],
-    uri_userinfo(UserInfo),
-    uri_host_aux(Host),
-    uri_port(ActualPort),
-    {uri_default_port(ActualPort, Port)},
-    !.
-
-%------------------------------------------------------------------------------
-
-% scheme ':' ['/'] [path] ['?' query] ['#' fragment]
-uri(components(Scheme, userinfo([]), host([]), port([]),
-	       Path, Query, Fragment)) -->
-    uri_scheme(Scheme),
-    ([/]; []),
-    uri_path(Path),
-    uri_query(Query),
-    uri_fragment(Fragment),
-    !.
+uri_subdomain(components(path([]), query([]), fragment([]))) -->
+    [], !.
 
 %------------------------------------------------------------------------------
 
@@ -168,6 +171,9 @@ uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
     identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
     { atom_chars(UserInfo, UserInfoList) },
     !.
+
+uri_userinfo_scheme_syntax(userinfo([])) -->
+    [], !.
 
 %------------------------------------------------------------------------------
 
@@ -254,6 +260,10 @@ uri_path_zos(path(Path)) -->
      length(Id44, Id44Length), Id44Length =< 44,
      flatten(Id44, FlattenPath),
      atom_chars(Path, FlattenPath)},
+    !.
+
+uri_path_zos(path([])) -->
+    [],
     !.
 
 uri_id44(Id44) -->
