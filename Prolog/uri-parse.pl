@@ -203,11 +203,11 @@ uri_host(X) -->
 uri_port(port(Port)) -->
     [:],
     digits(PortList),
-    {atom_chars(Port, PortList)},
+    {number_chars(Port, PortList)},
     !.
 uri_port(port([])) --> [].
 
-uri_default_port(port([]), port('80')) :- !.
+uri_default_port(port([]), port(80)) :- !.
 uri_default_port(ActualPort, ActualPort) :- 
     ActualPort \= port([]), !.
 
