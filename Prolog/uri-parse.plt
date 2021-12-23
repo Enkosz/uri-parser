@@ -358,18 +358,18 @@ test(primoTipo_43) :- \+(uri_parse("http//host", _)).
 
 
 % INTEGRATION TEST ---- secondo tipo di uri
-test(secondoTipo1) :- uri_parse("http:/path/subpath?query#fragment", uri('http', [], [], [], 'path/subpath', 'query', 'fragment')).
-test(secondoTipo2) :- uri_parse("http:/path/subpath?query", uri('http', [], [], [], 'path/subpath', 'query', [])).
-test(secondoTipo3) :- uri_parse("http:/path/subpath#fragment", uri('http', [], [], [], 'path/subpath', [], 'fragment')).
-test(secondoTipo4) :- uri_parse("http:/path/subpath", uri('http', [], [], [], 'path/subpath', [], [])).
-test(secondoTipo5) :- uri_parse("http:/path?query#fragment", uri('http', [], [], [], 'path', 'query', 'fragment')).
-test(secondoTipo6) :- uri_parse("http:/path?query", uri('http', [], [], [], 'path', 'query', [])).
-test(secondoTipo7) :- uri_parse("http:/path#fragment", uri('http', [], [], [], 'path', [], 'fragment')).
-test(secondoTipo8) :- uri_parse("http:/path", uri('http', [], [], [], 'path', [], [])).
-test(secondoTipo9) :- uri_parse("http:/?query#fragment", uri('http', [], [], [], [], 'query', 'fragment')).
-test(secondoTipo10) :- uri_parse("http:/#fragment", uri('http', [], [], [], [], [], 'fragment')).
-test(secondoTipo11) :- uri_parse("http:/?query", uri('http', [], [], [], [], 'query', [])).
-test(secondoTipo12) :- uri_parse("http:/", uri('http', [], [], [], [], [], [])).
+test(secondoTipo1) :- uri_parse("http:/path/subpath?query#fragment", uri('http', [], [], 80, 'path/subpath', 'query', 'fragment')).
+test(secondoTipo2) :- uri_parse("http:/path/subpath?query", uri('http', [], [], 80, 'path/subpath', 'query', [])).
+test(secondoTipo3) :- uri_parse("http:/path/subpath#fragment", uri('http', [], [], 80, 'path/subpath', [], 'fragment')).
+test(secondoTipo4) :- uri_parse("http:/path/subpath", uri('http', [], [], 80, 'path/subpath', [], [])).
+test(secondoTipo5) :- uri_parse("http:/path?query#fragment", uri('http', [], [], 80, 'path', 'query', 'fragment')).
+test(secondoTipo6) :- uri_parse("http:/path?query", uri('http', [], [], 80, 'path', 'query', [])).
+test(secondoTipo7) :- uri_parse("http:/path#fragment", uri('http', [], [], 80, 'path', [], 'fragment')).
+test(secondoTipo8) :- uri_parse("http:/path", uri('http', [], [], 80, 'path', [], [])).
+test(secondoTipo9) :- uri_parse("http:/?query#fragment", uri('http', [], [], 80, [], 'query', 'fragment')).
+test(secondoTipo10) :- uri_parse("http:/#fragment", uri('http', [], [], 80, [], [], 'fragment')).
+test(secondoTipo11) :- uri_parse("http:/?query", uri('http', [], [], 80, [], 'query', [])).
+test(secondoTipo12) :- uri_parse("http:/", uri('http', [], [], 80, [], [], [])).
 
 /*test(secondoTipo13) :- \+(uri_parse("http:path/subpath?query#fragment", _)).
 test(secondoTipo14) :- \+(uri_parse("http:path/subpath?query", _)).

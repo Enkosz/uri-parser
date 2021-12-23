@@ -47,7 +47,7 @@ uri_parse_(URIString, uri(URI)) :-
 
 %------------------------------------------------------------------------------
 
-% ["fax" | "tel"] ':' userinfo 
+% ["fax" | "tel"] ':' [userinfo] 
 uri(components(Scheme, UserInfo, host([]), port([]),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
@@ -59,7 +59,7 @@ uri(components(Scheme, UserInfo, host([]), port([]),
 
 %------------------------------------------------------------------------------
 
-% "news" ':' host 
+% "news" ':' [host] 
 uri(components(scheme('news'),
 	       userinfo([]), Host, port([]),
 	       path([]), query([]), fragment([]))) -->
@@ -75,7 +75,7 @@ uri(components(scheme('news'),
 
 %------------------------------------------------------------------------------
 
-% "mailto" ':' userinfo ['@'' host] 
+% "mailto" ':' [userinfo ['@'' host]]
 uri(components(scheme('mailto'), UserInfo, Host, port([]),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
@@ -84,7 +84,7 @@ uri(components(scheme('mailto'), UserInfo, Host, port([]),
     uri_host_aux(Host), 
     !.
 
-% "mailto" ':' userinfo
+% "mailto" ':' [userinfo]
 uri(components(scheme('mailto'), UserInfo, host([]), port([]),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
@@ -97,7 +97,7 @@ uri(components(scheme('mailto'), userInfo([]), host([]), port([]),
 
 %------------------------------------------------------------------------------
 
-% "zos" ':' [userinfo '@'] host [: port] '/' path_zos [? query] [# fragment]
+% zos
 uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(scheme('zos')),
     !,
@@ -117,6 +117,7 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
 
 %------------------------------------------------------------------------------
 
+% Uri authority
 uri_authority(components(UserInfo, Host, Port)) -->
     [/, /],
     uri_userinfo(UserInfo),
@@ -125,7 +126,7 @@ uri_authority(components(UserInfo, Host, Port)) -->
     {uri_default_port(ActualPort, Port)},
     !.
 
-uri_authority(components(userinfo([]), host([]), port([]))) -->
+uri_authority(components(userinfo([]), host([]), port(80))) -->
     [], !.
 
 %------------------------------------------------------------------------------
