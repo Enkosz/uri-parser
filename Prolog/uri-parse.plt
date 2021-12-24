@@ -19,7 +19,7 @@ test(schema_7) :- \+(uri_parse(":://google.com", _)).
 test(userinfo1) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', 80, [], [], [])).
 test(userinfo2) :- uri_parse("http://user_info@host", uri('http', 'user_info', 'host', 80, [], [], [])).
 test(userinfo3) :- uri_parse("http://user123info@host", uri('http', 'user123info', 'host', 80, [], [], [])).
-test(userinfo4) :- uri_parse("http://user.@host", uri('http', 'user.', 'host', 80, [], [], []))
+test(userinfo4) :- uri_parse("http://user.@host", uri('http', 'user.', 'host', 80, [], [], [])).
 test(userinfo_1) :- \+(uri_parse("http://user@info@host", _)).
 test(userinfo_2) :- \+(uri_parse("http://userin:fo@host", _)).
 test(userinfo_3) :- \+(uri_parse("http://userin/fo@host", _)).
@@ -201,239 +201,239 @@ test(zos_25) :- \+(uri_parse("zos://host/.i.d(id8)", _)).
 
 
 % TEST INTEGRATION ---- URI
-test(URI1) :- uri_parse("http://userinfo@host.subhost:123/path/subpath?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', 'query', 'fragment')).
-test(URI2) :- uri_parse("http://userinfo@host.subhost:123/path/subpath?query", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', 'query', [])).
-test(URI3) :- uri_parse("http://userinfo@host.subhost:123/path/subpath#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', [], 'fragment')).
-test(URI4) :- uri_parse("http://userinfo@host.subhost:123/path/subpath", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', [], [])).
-test(URI5) :- uri_parse("http://userinfo@host.subhost:123/path?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path', 'query', 'fragment')).
-test(URI6) :- uri_parse("http://userinfo@host.subhost:123/path?query", uri('http', 'userinfo', 'host.subhost', 123, 'path', 'query', [])).
-test(URI7) :- uri_parse("http://userinfo@host.subhost:123/path#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path', [], 'fragment')).
-test(URI8) :- uri_parse("http://userinfo@host.subhost:123/path", uri('http', 'userinfo', 'host.subhost', 123, 'path', [], [])).
-test(URI9) :- uri_parse("http://userinfo@host.subhost:123/?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, [], 'query', 'fragment')).
-test(URI10) :- uri_parse("http://userinfo@host.subhost:123/?query", uri('http', 'userinfo', 'host.subhost', 123, [], 'query', [])).
-test(URI11) :- uri_parse("http://userinfo@host.subhost:123/#fragment", uri('http', 'userinfo', 'host.subhost', 123, [], [], 'fragment')).
-test(URI12) :- uri_parse("http://userinfo@host.subhost:123/", uri('http', 'userinfo', 'host.subhost', 123, [], [], [])).
-test(URI13) :- uri_parse("http://userinfo@host.subhost:123", uri('http', 'userinfo', 'host.subhost', 123, [], [], [])).
+test(uri1) :- uri_parse("http://userinfo@host.subhost:123/path/subpath?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', 'query', 'fragment')).
+test(uri2) :- uri_parse("http://userinfo@host.subhost:123/path/subpath?query", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', 'query', [])).
+test(uri3) :- uri_parse("http://userinfo@host.subhost:123/path/subpath#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', [], 'fragment')).
+test(uri4) :- uri_parse("http://userinfo@host.subhost:123/path/subpath", uri('http', 'userinfo', 'host.subhost', 123, 'path/subpath', [], [])).
+test(uri5) :- uri_parse("http://userinfo@host.subhost:123/path?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path', 'query', 'fragment')).
+test(uri6) :- uri_parse("http://userinfo@host.subhost:123/path?query", uri('http', 'userinfo', 'host.subhost', 123, 'path', 'query', [])).
+test(uri7) :- uri_parse("http://userinfo@host.subhost:123/path#fragment", uri('http', 'userinfo', 'host.subhost', 123, 'path', [], 'fragment')).
+test(uri8) :- uri_parse("http://userinfo@host.subhost:123/path", uri('http', 'userinfo', 'host.subhost', 123, 'path', [], [])).
+test(uri9) :- uri_parse("http://userinfo@host.subhost:123/?query#fragment", uri('http', 'userinfo', 'host.subhost', 123, [], 'query', 'fragment')).
+test(uri10) :- uri_parse("http://userinfo@host.subhost:123/?query", uri('http', 'userinfo', 'host.subhost', 123, [], 'query', [])).
+test(uri11) :- uri_parse("http://userinfo@host.subhost:123/#fragment", uri('http', 'userinfo', 'host.subhost', 123, [], [], 'fragment')).
+test(uri12) :- uri_parse("http://userinfo@host.subhost:123/", uri('http', 'userinfo', 'host.subhost', 123, [], [], [])).
+test(uri13) :- uri_parse("http://userinfo@host.subhost:123", uri('http', 'userinfo', 'host.subhost', 123, [], [], [])).
 
-test(URI14) :- uri_parse("http://userinfo@host.subhost/path/subpath?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', 'query', 'fragment')).
-test(URI15) :- uri_parse("http://userinfo@host.subhost/path/subpath?query", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', 'query', [])).
-test(URI16) :- uri_parse("http://userinfo@host.subhost/path/subpath#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', [], 'fragment')).
-test(URI17) :- uri_parse("http://userinfo@host.subhost/path/subpath", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', [], [])).
-test(URI18) :- uri_parse("http://userinfo@host.subhost/path?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path', 'query', 'fragment')).
-test(URI19) :- uri_parse("http://userinfo@host.subhost/path?query", uri('http', 'userinfo', 'host.subhost', 80, 'path', 'query', [])).
-test(URI20) :- uri_parse("http://userinfo@host.subhost/path#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path', [], 'fragment')).
-test(URI21) :- uri_parse("http://userinfo@host.subhost/path", uri('http', 'userinfo', 'host.subhost', 80, 'path', [], [])).
-test(URI22) :- uri_parse("http://userinfo@host.subhost/?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, [], 'query', 'fragment')).
-test(URI23) :- uri_parse("http://userinfo@host.subhost/?query", uri('http', 'userinfo', 'host.subhost', 80, [], 'query', [])).
-test(URI24) :- uri_parse("http://userinfo@host.subhost/#fragment", uri('http', 'userinfo', 'host.subhost', 80, [], [], 'fragment')).
-test(URI25) :- uri_parse("http://userinfo@host.subhost/", uri('http', 'userinfo', 'host.subhost', 80, [], [], [])).
-test(URI26) :- uri_parse("http://userinfo@host.subhost", uri('http', 'userinfo', 'host.subhost', 80, [], [], [])).
+test(uri14) :- uri_parse("http://userinfo@host.subhost/path/subpath?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', 'query', 'fragment')).
+test(uri15) :- uri_parse("http://userinfo@host.subhost/path/subpath?query", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', 'query', [])).
+test(uri16) :- uri_parse("http://userinfo@host.subhost/path/subpath#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', [], 'fragment')).
+test(uri17) :- uri_parse("http://userinfo@host.subhost/path/subpath", uri('http', 'userinfo', 'host.subhost', 80, 'path/subpath', [], [])).
+test(uri18) :- uri_parse("http://userinfo@host.subhost/path?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path', 'query', 'fragment')).
+test(uri19) :- uri_parse("http://userinfo@host.subhost/path?query", uri('http', 'userinfo', 'host.subhost', 80, 'path', 'query', [])).
+test(uri20) :- uri_parse("http://userinfo@host.subhost/path#fragment", uri('http', 'userinfo', 'host.subhost', 80, 'path', [], 'fragment')).
+test(uri21) :- uri_parse("http://userinfo@host.subhost/path", uri('http', 'userinfo', 'host.subhost', 80, 'path', [], [])).
+test(uri22) :- uri_parse("http://userinfo@host.subhost/?query#fragment", uri('http', 'userinfo', 'host.subhost', 80, [], 'query', 'fragment')).
+test(uri23) :- uri_parse("http://userinfo@host.subhost/?query", uri('http', 'userinfo', 'host.subhost', 80, [], 'query', [])).
+test(uri24) :- uri_parse("http://userinfo@host.subhost/#fragment", uri('http', 'userinfo', 'host.subhost', 80, [], [], 'fragment')).
+test(uri25) :- uri_parse("http://userinfo@host.subhost/", uri('http', 'userinfo', 'host.subhost', 80, [], [], [])).
+test(uri26) :- uri_parse("http://userinfo@host.subhost", uri('http', 'userinfo', 'host.subhost', 80, [], [], [])).
 
-test(URI27) :- uri_parse("http://host.subhost:123/path/subpath?query#fragment", uri('http', [], 'host.subhost', 123, 'path/subpath', 'query', 'fragment')).
-test(URI28) :- uri_parse("http://host.subhost:123/path/subpath?query", uri('http', [], 'host.subhost', 123, 'path/subpath', 'query', [])).
-test(URI29) :- uri_parse("http://host.subhost:123/path/subpath#fragment", uri('http', [], 'host.subhost', 123, 'path/subpath', [], 'fragment')).
-test(URI30) :- uri_parse("http://host.subhost:123/path/subpath", uri('http', [], 'host.subhost', 123, 'path/subpath', [], [])).
-test(URI31) :- uri_parse("http://host.subhost:123/path?query#fragment", uri('http', [], 'host.subhost', 123, 'path', 'query', 'fragment')).
-test(URI32) :- uri_parse("http://host.subhost:123/path?query", uri('http', [], 'host.subhost', 123, 'path', 'query', [])).
-test(URI33) :- uri_parse("http://host.subhost:123/path#fragment", uri('http', [], 'host.subhost', 123, 'path', [], 'fragment')).
-test(URI34) :- uri_parse("http://host.subhost:123/path", uri('http', [], 'host.subhost', 123, 'path', [], [])).
-test(URI35) :- uri_parse("http://host.subhost:123/?query#fragment", uri('http', [], 'host.subhost', 123, [], 'query', 'fragment')).
-test(URI36) :- uri_parse("http://host.subhost:123/?query", uri('http', [], 'host.subhost', 123, [], 'query', [])).
-test(URI37) :- uri_parse("http://host.subhost:123/#fragment", uri('http', [], 'host.subhost', 123, [], [], 'fragment')).
-test(URI38) :- uri_parse("http://host.subhost:123/", uri('http', [], 'host.subhost', 123, [], [], [])).
-test(URI39) :- uri_parse("http://host.subhost:123", uri('http', [], 'host.subhost', 123, [], [], [])).
+test(uri27) :- uri_parse("http://host.subhost:123/path/subpath?query#fragment", uri('http', [], 'host.subhost', 123, 'path/subpath', 'query', 'fragment')).
+test(uri28) :- uri_parse("http://host.subhost:123/path/subpath?query", uri('http', [], 'host.subhost', 123, 'path/subpath', 'query', [])).
+test(uri29) :- uri_parse("http://host.subhost:123/path/subpath#fragment", uri('http', [], 'host.subhost', 123, 'path/subpath', [], 'fragment')).
+test(uri30) :- uri_parse("http://host.subhost:123/path/subpath", uri('http', [], 'host.subhost', 123, 'path/subpath', [], [])).
+test(uri31) :- uri_parse("http://host.subhost:123/path?query#fragment", uri('http', [], 'host.subhost', 123, 'path', 'query', 'fragment')).
+test(uri32) :- uri_parse("http://host.subhost:123/path?query", uri('http', [], 'host.subhost', 123, 'path', 'query', [])).
+test(uri33) :- uri_parse("http://host.subhost:123/path#fragment", uri('http', [], 'host.subhost', 123, 'path', [], 'fragment')).
+test(uri34) :- uri_parse("http://host.subhost:123/path", uri('http', [], 'host.subhost', 123, 'path', [], [])).
+test(uri35) :- uri_parse("http://host.subhost:123/?query#fragment", uri('http', [], 'host.subhost', 123, [], 'query', 'fragment')).
+test(uri36) :- uri_parse("http://host.subhost:123/?query", uri('http', [], 'host.subhost', 123, [], 'query', [])).
+test(uri37) :- uri_parse("http://host.subhost:123/#fragment", uri('http', [], 'host.subhost', 123, [], [], 'fragment')).
+test(uri38) :- uri_parse("http://host.subhost:123/", uri('http', [], 'host.subhost', 123, [], [], [])).
+test(uri39) :- uri_parse("http://host.subhost:123", uri('http', [], 'host.subhost', 123, [], [], [])).
 
-test(URI40) :- uri_parse("http://host.subhost/path/subpath?query#fragment", uri('http', [], 'host.subhost', 80, 'path/subpath', 'query', 'fragment')).
-test(URI41) :- uri_parse("http://host.subhost/path/subpath?query", uri('http', [], 'host.subhost', 80, 'path/subpath', 'query', [])).
-test(URI42) :- uri_parse("http://host.subhost/path/subpath#fragment", uri('http', [], 'host.subhost', 80, 'path/subpath', [], 'fragment')).
-test(URI43) :- uri_parse("http://host.subhost/path/subpath", uri('http', [], 'host.subhost', 80, 'path/subpath', [], [])).
-test(URI44) :- uri_parse("http://host.subhost/path?query#fragment", uri('http', [], 'host.subhost', 80, 'path', 'query', 'fragment')).
-test(URI45) :- uri_parse("http://host.subhost/path?query", uri('http', [], 'host.subhost', 80, 'path', 'query', [])).
-test(URI46) :- uri_parse("http://host.subhost/path#fragment", uri('http', [], 'host.subhost', 80, 'path', [], 'fragment')).
-test(URI47) :- uri_parse("http://host.subhost/path", uri('http', [], 'host.subhost', 80, 'path', [], [])).
-test(URI48) :- uri_parse("http://host.subhost/?query#fragment", uri('http', [], 'host.subhost', 80, [], 'query', 'fragment')).
-test(URI49) :- uri_parse("http://host.subhost/?query", uri('http', [], 'host.subhost', 80, [], 'query', [])).
-test(URI50) :- uri_parse("http://host.subhost/#fragment", uri('http', [], 'host.subhost', 80, [], [], 'fragment')).
-test(URI51) :- uri_parse("http://host.subhost/", uri('http', [], 'host.subhost', 80, [], [], [])).
-test(URI52) :- uri_parse("http://host.subhost", uri('http', [], 'host.subhost', 80, [], [], [])).
+test(uri40) :- uri_parse("http://host.subhost/path/subpath?query#fragment", uri('http', [], 'host.subhost', 80, 'path/subpath', 'query', 'fragment')).
+test(uri41) :- uri_parse("http://host.subhost/path/subpath?query", uri('http', [], 'host.subhost', 80, 'path/subpath', 'query', [])).
+test(uri42) :- uri_parse("http://host.subhost/path/subpath#fragment", uri('http', [], 'host.subhost', 80, 'path/subpath', [], 'fragment')).
+test(uri43) :- uri_parse("http://host.subhost/path/subpath", uri('http', [], 'host.subhost', 80, 'path/subpath', [], [])).
+test(uri44) :- uri_parse("http://host.subhost/path?query#fragment", uri('http', [], 'host.subhost', 80, 'path', 'query', 'fragment')).
+test(uri45) :- uri_parse("http://host.subhost/path?query", uri('http', [], 'host.subhost', 80, 'path', 'query', [])).
+test(uri46) :- uri_parse("http://host.subhost/path#fragment", uri('http', [], 'host.subhost', 80, 'path', [], 'fragment')).
+test(uri47) :- uri_parse("http://host.subhost/path", uri('http', [], 'host.subhost', 80, 'path', [], [])).
+test(uri48) :- uri_parse("http://host.subhost/?query#fragment", uri('http', [], 'host.subhost', 80, [], 'query', 'fragment')).
+test(uri49) :- uri_parse("http://host.subhost/?query", uri('http', [], 'host.subhost', 80, [], 'query', [])).
+test(uri50) :- uri_parse("http://host.subhost/#fragment", uri('http', [], 'host.subhost', 80, [], [], 'fragment')).
+test(uri51) :- uri_parse("http://host.subhost/", uri('http', [], 'host.subhost', 80, [], [], [])).
+test(uri52) :- uri_parse("http://host.subhost", uri('http', [], 'host.subhost', 80, [], [], [])).
 
-test(URI53) :- uri_parse("http://userinfo@host:123/path/subpath?query#fragment", uri('http', 'userinfo', 'host', 123, 'path/subpath', 'query', 'fragment')).
-test(URI54) :- uri_parse("http://userinfo@host:123/path/subpath?query", uri('http', 'userinfo', 'host', 123, 'path/subpath', 'query', [])).
-test(URI55) :- uri_parse("http://userinfo@host:123/path/subpath#fragment", uri('http', 'userinfo', 'host', 123, 'path/subpath', [], 'fragment')).
-test(URI56) :- uri_parse("http://userinfo@host:123/path/subpath", uri('http', 'userinfo', 'host', 123, 'path/subpath', [], [])).
-test(URI57) :- uri_parse("http://userinfo@host:123/path?query#fragment", uri('http', 'userinfo', 'host', 123, 'path', 'query', 'fragment')).
-test(URI58) :- uri_parse("http://userinfo@host:123/path?query", uri('http', 'userinfo', 'host', 123, 'path', 'query', [])).
-test(URI59) :- uri_parse("http://userinfo@host:123/path#fragment", uri('http', 'userinfo', 'host', 123, 'path', [], 'fragment')).
-test(URI60) :- uri_parse("http://userinfo@host:123/path", uri('http', 'userinfo', 'host', 123, 'path', [], [])).
-test(URI61) :- uri_parse("http://userinfo@host:123/?query#fragment", uri('http', 'userinfo', 'host', 123, [], 'query', 'fragment')).
-test(URI62) :- uri_parse("http://userinfo@host:123/?query", uri('http', 'userinfo', 'host', 123, [], 'query', [])).
-test(URI63) :- uri_parse("http://userinfo@host:123/#fragment", uri('http', 'userinfo', 'host', 123, [], [], 'fragment')).
-test(URI64) :- uri_parse("http://userinfo@host:123/", uri('http', 'userinfo', 'host', 123, [], [], [])).
-test(URI65) :- uri_parse("http://userinfo@host:123", uri('http', 'userinfo', 'host', 123, [], [], [])).
+test(uri53) :- uri_parse("http://userinfo@host:123/path/subpath?query#fragment", uri('http', 'userinfo', 'host', 123, 'path/subpath', 'query', 'fragment')).
+test(uri54) :- uri_parse("http://userinfo@host:123/path/subpath?query", uri('http', 'userinfo', 'host', 123, 'path/subpath', 'query', [])).
+test(uri55) :- uri_parse("http://userinfo@host:123/path/subpath#fragment", uri('http', 'userinfo', 'host', 123, 'path/subpath', [], 'fragment')).
+test(uri56) :- uri_parse("http://userinfo@host:123/path/subpath", uri('http', 'userinfo', 'host', 123, 'path/subpath', [], [])).
+test(uri57) :- uri_parse("http://userinfo@host:123/path?query#fragment", uri('http', 'userinfo', 'host', 123, 'path', 'query', 'fragment')).
+test(uri58) :- uri_parse("http://userinfo@host:123/path?query", uri('http', 'userinfo', 'host', 123, 'path', 'query', [])).
+test(uri59) :- uri_parse("http://userinfo@host:123/path#fragment", uri('http', 'userinfo', 'host', 123, 'path', [], 'fragment')).
+test(uri60) :- uri_parse("http://userinfo@host:123/path", uri('http', 'userinfo', 'host', 123, 'path', [], [])).
+test(uri61) :- uri_parse("http://userinfo@host:123/?query#fragment", uri('http', 'userinfo', 'host', 123, [], 'query', 'fragment')).
+test(uri62) :- uri_parse("http://userinfo@host:123/?query", uri('http', 'userinfo', 'host', 123, [], 'query', [])).
+test(uri63) :- uri_parse("http://userinfo@host:123/#fragment", uri('http', 'userinfo', 'host', 123, [], [], 'fragment')).
+test(uri64) :- uri_parse("http://userinfo@host:123/", uri('http', 'userinfo', 'host', 123, [], [], [])).
+test(uri65) :- uri_parse("http://userinfo@host:123", uri('http', 'userinfo', 'host', 123, [], [], [])).
 
-test(URI66) :- uri_parse("http://userinfo@host/path/subpath?query#fragment", uri('http', 'userinfo', 'host', 80, 'path/subpath', 'query', 'fragment')).
-test(URI67) :- uri_parse("http://userinfo@host/path/subpath?query", uri('http', 'userinfo', 'host', 80, 'path/subpath', 'query', [])).
-test(URI68) :- uri_parse("http://userinfo@host/path/subpath#fragment", uri('http', 'userinfo', 'host', 80, 'path/subpath', [], 'fragment')).
-test(URI69) :- uri_parse("http://userinfo@host/path/subpath", uri('http', 'userinfo', 'host', 80, 'path/subpath', [], [])).
-test(URI70) :- uri_parse("http://userinfo@host/path?query#fragment", uri('http', 'userinfo', 'host', 80, 'path', 'query', 'fragment')).
-test(URI71) :- uri_parse("http://userinfo@host/path?query", uri('http', 'userinfo', 'host', 80, 'path', 'query', [])).
-test(URI72) :- uri_parse("http://userinfo@host/path#fragment", uri('http', 'userinfo', 'host', 80, 'path', [], 'fragment')).
-test(URI73) :- uri_parse("http://userinfo@host/path", uri('http', 'userinfo', 'host', 80, 'path', [], [])).
-test(URI74) :- uri_parse("http://userinfo@host/?query#fragment", uri('http', 'userinfo', 'host', 80, [], 'query', 'fragment')).
-test(URI75) :- uri_parse("http://userinfo@host/?query", uri('http', 'userinfo', 'host', 80, [], 'query', [])).
-test(URI76) :- uri_parse("http://userinfo@host/#fragment", uri('http', 'userinfo', 'host', 80, [], [], 'fragment')).
-test(URI77) :- uri_parse("http://userinfo@host/", uri('http', 'userinfo', 'host', 80, [], [], [])).
-test(URI78) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', 80, [], [], [])).
+test(uri66) :- uri_parse("http://userinfo@host/path/subpath?query#fragment", uri('http', 'userinfo', 'host', 80, 'path/subpath', 'query', 'fragment')).
+test(uri67) :- uri_parse("http://userinfo@host/path/subpath?query", uri('http', 'userinfo', 'host', 80, 'path/subpath', 'query', [])).
+test(uri68) :- uri_parse("http://userinfo@host/path/subpath#fragment", uri('http', 'userinfo', 'host', 80, 'path/subpath', [], 'fragment')).
+test(uri69) :- uri_parse("http://userinfo@host/path/subpath", uri('http', 'userinfo', 'host', 80, 'path/subpath', [], [])).
+test(uri70) :- uri_parse("http://userinfo@host/path?query#fragment", uri('http', 'userinfo', 'host', 80, 'path', 'query', 'fragment')).
+test(uri71) :- uri_parse("http://userinfo@host/path?query", uri('http', 'userinfo', 'host', 80, 'path', 'query', [])).
+test(uri72) :- uri_parse("http://userinfo@host/path#fragment", uri('http', 'userinfo', 'host', 80, 'path', [], 'fragment')).
+test(uri73) :- uri_parse("http://userinfo@host/path", uri('http', 'userinfo', 'host', 80, 'path', [], [])).
+test(uri74) :- uri_parse("http://userinfo@host/?query#fragment", uri('http', 'userinfo', 'host', 80, [], 'query', 'fragment')).
+test(uri75) :- uri_parse("http://userinfo@host/?query", uri('http', 'userinfo', 'host', 80, [], 'query', [])).
+test(uri76) :- uri_parse("http://userinfo@host/#fragment", uri('http', 'userinfo', 'host', 80, [], [], 'fragment')).
+test(uri77) :- uri_parse("http://userinfo@host/", uri('http', 'userinfo', 'host', 80, [], [], [])).
+test(uri78) :- uri_parse("http://userinfo@host", uri('http', 'userinfo', 'host', 80, [], [], [])).
 
-test(URI79) :- uri_parse("http://host:123/path/subpath?query#fragment", uri('http', [], 'host', 123, 'path/subpath', 'query', 'fragment')).
-test(URI80) :- uri_parse("http://host:123/path/subpath?query", uri('http', [], 'host', 123, 'path/subpath', 'query', [])).
-test(URI81) :- uri_parse("http://host:123/path/subpath#fragment", uri('http', [], 'host', 123, 'path/subpath', [], 'fragment')).
-test(URI82) :- uri_parse("http://host:123/path/subpath", uri('http', [], 'host', 123, 'path/subpath', [], [])).
-test(URI83) :- uri_parse("http://host:123/path?query#fragment", uri('http', [], 'host', 123, 'path', 'query', 'fragment')).
-test(URI84) :- uri_parse("http://host:123/path?query", uri('http', [], 'host', 123, 'path', 'query', [])).
-test(URI85) :- uri_parse("http://host:123/path#fragment", uri('http', [], 'host', 123, 'path', [], 'fragment')).
-test(URI86) :- uri_parse("http://host:123/path", uri('http', [], 'host', 123, 'path', [], [])).
-test(URI87) :- uri_parse("http://host:123/?query#fragment", uri('http', [], 'host', 123, [], 'query', 'fragment')).
-test(URI88) :- uri_parse("http://host:123/?query", uri('http', [], 'host', 123, [], 'query', [])).
-test(URI89) :- uri_parse("http://host:123/#fragment", uri('http', [], 'host', 123, [], [], 'fragment')).
-test(URI90) :- uri_parse("http://host:123/", uri('http', [], 'host', 123, [], [], [])).
-test(URI91) :- uri_parse("http://host:123", uri('http', [], 'host', 123, [], [], [])).
+test(uri79) :- uri_parse("http://host:123/path/subpath?query#fragment", uri('http', [], 'host', 123, 'path/subpath', 'query', 'fragment')).
+test(uri80) :- uri_parse("http://host:123/path/subpath?query", uri('http', [], 'host', 123, 'path/subpath', 'query', [])).
+test(uri81) :- uri_parse("http://host:123/path/subpath#fragment", uri('http', [], 'host', 123, 'path/subpath', [], 'fragment')).
+test(uri82) :- uri_parse("http://host:123/path/subpath", uri('http', [], 'host', 123, 'path/subpath', [], [])).
+test(uri83) :- uri_parse("http://host:123/path?query#fragment", uri('http', [], 'host', 123, 'path', 'query', 'fragment')).
+test(uri84) :- uri_parse("http://host:123/path?query", uri('http', [], 'host', 123, 'path', 'query', [])).
+test(uri85) :- uri_parse("http://host:123/path#fragment", uri('http', [], 'host', 123, 'path', [], 'fragment')).
+test(uri86) :- uri_parse("http://host:123/path", uri('http', [], 'host', 123, 'path', [], [])).
+test(uri87) :- uri_parse("http://host:123/?query#fragment", uri('http', [], 'host', 123, [], 'query', 'fragment')).
+test(uri88) :- uri_parse("http://host:123/?query", uri('http', [], 'host', 123, [], 'query', [])).
+test(uri89) :- uri_parse("http://host:123/#fragment", uri('http', [], 'host', 123, [], [], 'fragment')).
+test(uri90) :- uri_parse("http://host:123/", uri('http', [], 'host', 123, [], [], [])).
+test(uri91) :- uri_parse("http://host:123", uri('http', [], 'host', 123, [], [], [])).
 
-test(URI92) :- uri_parse("http://host/path/subpath?query#fragment", uri('http', [], 'host', 80, 'path/subpath', 'query', 'fragment')).
-test(URI93) :- uri_parse("http://host/path/subpath?query", uri('http', [], 'host', 80, 'path/subpath', 'query', [])).
-test(URI94) :- uri_parse("http://host/path/subpath#fragment", uri('http', [], 'host', 80, 'path/subpath', [], 'fragment')).
-test(URI95) :- uri_parse("http://host/path/subpath", uri('http', [], 'host', 80, 'path/subpath', [], [])).
-test(URI96) :- uri_parse("http://host/path?query#fragment", uri('http', [], 'host', 80, 'path', 'query', 'fragment')).
-test(URI97) :- uri_parse("http://host/path?query", uri('http', [], 'host', 80, 'path', 'query', [])).
-test(URI98) :- uri_parse("http://host/path#fragment", uri('http', [], 'host', 80, 'path', [], 'fragment')).
-test(URI99) :- uri_parse("http://host/path", uri('http', [], 'host', 80, 'path', [], [])).
-test(URI100) :- uri_parse("http://host/?query#fragment", uri('http', [], 'host', 80, [], 'query', 'fragment')).
-test(URI101) :- uri_parse("http://host/?query", uri('http', [], 'host', 80, [], 'query', [])).
-test(URI102) :- uri_parse("http://host/#fragment", uri('http', [], 'host', 80, [], [], 'fragment')).
-test(URI103) :- uri_parse("http://host/", uri('http', [], 'host', 80, [], [], [])).
-test(URI104) :- uri_parse("http://host", uri('http', [], 'host', 80, [], [], [])).
+test(uri92) :- uri_parse("http://host/path/subpath?query#fragment", uri('http', [], 'host', 80, 'path/subpath', 'query', 'fragment')).
+test(uri93) :- uri_parse("http://host/path/subpath?query", uri('http', [], 'host', 80, 'path/subpath', 'query', [])).
+test(uri94) :- uri_parse("http://host/path/subpath#fragment", uri('http', [], 'host', 80, 'path/subpath', [], 'fragment')).
+test(uri95) :- uri_parse("http://host/path/subpath", uri('http', [], 'host', 80, 'path/subpath', [], [])).
+test(uri96) :- uri_parse("http://host/path?query#fragment", uri('http', [], 'host', 80, 'path', 'query', 'fragment')).
+test(uri97) :- uri_parse("http://host/path?query", uri('http', [], 'host', 80, 'path', 'query', [])).
+test(uri98) :- uri_parse("http://host/path#fragment", uri('http', [], 'host', 80, 'path', [], 'fragment')).
+test(uri99) :- uri_parse("http://host/path", uri('http', [], 'host', 80, 'path', [], [])).
+test(uri100) :- uri_parse("http://host/?query#fragment", uri('http', [], 'host', 80, [], 'query', 'fragment')).
+test(uri101) :- uri_parse("http://host/?query", uri('http', [], 'host', 80, [], 'query', [])).
+test(uri102) :- uri_parse("http://host/#fragment", uri('http', [], 'host', 80, [], [], 'fragment')).
+test(uri103) :- uri_parse("http://host/", uri('http', [], 'host', 80, [], [], [])).
+test(uri104) :- uri_parse("http://host", uri('http', [], 'host', 80, [], [], [])).
 
-test(URI105) :- uri_parse("http:/path/subpath?query#fragment", uri('http', [], [], 80, 'path/subpath', 'query', 'fragment')).
-test(URI106) :- uri_parse("http:/path/subpath?query", uri('http', [], [], 80, 'path/subpath', 'query', [])).
-test(URI107) :- uri_parse("http:/path/subpath#fragment", uri('http', [], [], 80, 'path/subpath', [], 'fragment')).
-test(URI108) :- uri_parse("http:/path/subpath", uri('http', [], [], 80, 'path/subpath', [], [])).
-test(URI109) :- uri_parse("http:/path?query#fragment", uri('http', [], [], 80, 'path', 'query', 'fragment')).
-test(URI110) :- uri_parse("http:/path?query", uri('http', [], [], 80, 'path', 'query', [])).
-test(URI111) :- uri_parse("http:/path#fragment", uri('http', [], [], 80, 'path', [], 'fragment')).
-test(URI112) :- uri_parse("http:/path", uri('http', [], [], 80, 'path', [], [])).
-test(URI113) :- uri_parse("http:/?query#fragment", uri('http', [], [], 80, [], 'query', 'fragment')).
-test(URI114) :- uri_parse("http:/#fragment", uri('http', [], [], 80, [], [], 'fragment')).
-test(URI115) :- uri_parse("http:/?query", uri('http', [], [], 80, [], 'query', [])).
-test(URI116) :- uri_parse("http:/", uri('http', [], [], 80, [], [], [])).
-test(URI117) :- (uri_parse("http:", uri()).
+test(uri105) :- uri_parse("http:/path/subpath?query#fragment", uri('http', [], [], 80, 'path/subpath', 'query', 'fragment')).
+test(uri106) :- uri_parse("http:/path/subpath?query", uri('http', [], [], 80, 'path/subpath', 'query', [])).
+test(uri107) :- uri_parse("http:/path/subpath#fragment", uri('http', [], [], 80, 'path/subpath', [], 'fragment')).
+test(uri108) :- uri_parse("http:/path/subpath", uri('http', [], [], 80, 'path/subpath', [], [])).
+test(uri109) :- uri_parse("http:/path?query#fragment", uri('http', [], [], 80, 'path', 'query', 'fragment')).
+test(uri110) :- uri_parse("http:/path?query", uri('http', [], [], 80, 'path', 'query', [])).
+test(uri111) :- uri_parse("http:/path#fragment", uri('http', [], [], 80, 'path', [], 'fragment')).
+test(uri112) :- uri_parse("http:/path", uri('http', [], [], 80, 'path', [], [])).
+test(uri113) :- uri_parse("http:/?query#fragment", uri('http', [], [], 80, [], 'query', 'fragment')).
+test(uri114) :- uri_parse("http:/#fragment", uri('http', [], [], 80, [], [], 'fragment')).
+test(uri115) :- uri_parse("http:/?query", uri('http', [], [], 80, [], 'query', [])).
+test(uri116) :- uri_parse("http:/", uri('http', [], [], 80, [], [], [])).
+test(uri117) :- (uri_parse("http:", uri('http', [], [], 80, [], [], []))).
 
-test(URI_1) :- \+(uri_parse("http://", _)).
-test(URI_2) :- \+(uri_parse("http:///path/subpath?query#fragment", _)).
-test(URI_3) :- \+(uri_parse("http:///path/subpath?query", _)).
-test(URI_4) :- \+(uri_parse("http:///path/subpath#fragment", _)).
-test(URI_5) :- \+(uri_parse("http:///path/subpath", _)).
-test(URI_6) :- \+(uri_parse("http:///path?query#fragment", _)).
-test(URI_7) :- \+(uri_parse("http:///path?query", _)).
-test(URI_8) :- \+(uri_parse("http:///path#fragment", _)).
-test(URI_9) :- \+(uri_parse("http:///path", _)).
-test(URI_10) :- \+(uri_parse("http:///?query#fragment", _)).
-test(URI_11) :- \+(uri_parse("http:///?query", _)).
-test(URI_12) :- \+(uri_parse("http:///#fragment", _)).
-test(URI_13) :- \+(uri_parse("http:///", _)).
-test(URI_14) :- \+(uri_parse("http://", _)).
-test(URI_15) :- \+(uri_parse("http://host?query#fragment", _)).
-test(URI_16) :- \+(uri_parse("http://host?query", _)).
-test(URI_17) :- \+(uri_parse("http://host#fragment", _)).
-test(URI_18) :- \+(uri_parse("://host/path/subpath?query#fragment", _)).
-test(URI_19) :- \+(uri_parse("://host/path/subpath?query", _)).
-test(URI_20) :- \+(uri_parse("://host/path/subpath#fragment", _)).
-test(URI_21) :- \+(uri_parse("://host/path/subpath", _)).
-test(URI_22) :- \+(uri_parse("://host/path?query#fragment", _)).
-test(URI_23) :- \+(uri_parse("://host/path?query", _)).
-test(URI_24) :- \+(uri_parse("://host/path#fragment", _)).
-test(URI_25) :- \+(uri_parse("://host/path", _)).
-test(URI_26) :- \+(uri_parse("://host/?query#fragment", _)).
-test(URI_27) :- \+(uri_parse("://host/?query", _)).
-test(URI_28) :- \+(uri_parse("://host/#fragment", _)).
-test(URI_29) :- \+(uri_parse("://host/", _)).
-test(URI_30) :- \+(uri_parse("://host", _)).
-test(URI_31) :- \+(uri_parse("http//host/path/subpath?query#fragment", _)).
-test(URI_32) :- \+(uri_parse("http//host/path/subpath?query", _)).
-test(URI_33) :- \+(uri_parse("http//host/path/subpath#fragment", _)).
-test(URI_34) :- \+(uri_parse("http//host/path/subpath", _)).
-test(URI_35) :- \+(uri_parse("http//host/path?query#fragment", _)).
-test(URI_36) :- \+(uri_parse("http//host/path?query", _)).
-test(URI_37) :- \+(uri_parse("http//host/path#fragment", _)).
-test(URI_38) :- \+(uri_parse("http//host/path", _)).
-test(URI_39) :- \+(uri_parse("http//host/?query#fragment", _)).
-test(URI_40) :- \+(uri_parse("http//host/?query", _)).
-test(URI_41) :- \+(uri_parse("http//host/#fragment", _)).
-test(URI_42) :- \+(uri_parse("http//host/", _)).
-test(URI_43) :- \+(uri_parse("http//host", _)).
+test(uri_1) :- \+(uri_parse("http://", _)).
+test(uri_2) :- \+(uri_parse("http:///path/subpath?query#fragment", _)).
+test(uri_3) :- \+(uri_parse("http:///path/subpath?query", _)).
+test(uri_4) :- \+(uri_parse("http:///path/subpath#fragment", _)).
+test(uri_5) :- \+(uri_parse("http:///path/subpath", _)).
+test(uri_6) :- \+(uri_parse("http:///path?query#fragment", _)).
+test(uri_7) :- \+(uri_parse("http:///path?query", _)).
+test(uri_8) :- \+(uri_parse("http:///path#fragment", _)).
+test(uri_9) :- \+(uri_parse("http:///path", _)).
+test(uri_10) :- \+(uri_parse("http:///?query#fragment", _)).
+test(uri_11) :- \+(uri_parse("http:///?query", _)).
+test(uri_12) :- \+(uri_parse("http:///#fragment", _)).
+test(uri_13) :- \+(uri_parse("http:///", _)).
+test(uri_14) :- \+(uri_parse("http://", _)).
+test(uri_15) :- \+(uri_parse("http://host?query#fragment", _)).
+test(uri_16) :- \+(uri_parse("http://host?query", _)).
+test(uri_17) :- \+(uri_parse("http://host#fragment", _)).
+test(uri_18) :- \+(uri_parse("://host/path/subpath?query#fragment", _)).
+test(uri_19) :- \+(uri_parse("://host/path/subpath?query", _)).
+test(uri_20) :- \+(uri_parse("://host/path/subpath#fragment", _)).
+test(uri_21) :- \+(uri_parse("://host/path/subpath", _)).
+test(uri_22) :- \+(uri_parse("://host/path?query#fragment", _)).
+test(uri_23) :- \+(uri_parse("://host/path?query", _)).
+test(uri_24) :- \+(uri_parse("://host/path#fragment", _)).
+test(uri_25) :- \+(uri_parse("://host/path", _)).
+test(uri_26) :- \+(uri_parse("://host/?query#fragment", _)).
+test(uri_27) :- \+(uri_parse("://host/?query", _)).
+test(uri_28) :- \+(uri_parse("://host/#fragment", _)).
+test(uri_29) :- \+(uri_parse("://host/", _)).
+test(uri_30) :- \+(uri_parse("://host", _)).
+test(uri_31) :- \+(uri_parse("http//host/path/subpath?query#fragment", _)).
+test(uri_32) :- \+(uri_parse("http//host/path/subpath?query", _)).
+test(uri_33) :- \+(uri_parse("http//host/path/subpath#fragment", _)).
+test(uri_34) :- \+(uri_parse("http//host/path/subpath", _)).
+test(uri_35) :- \+(uri_parse("http//host/path?query#fragment", _)).
+test(uri_36) :- \+(uri_parse("http//host/path?query", _)).
+test(uri_37) :- \+(uri_parse("http//host/path#fragment", _)).
+test(uri_38) :- \+(uri_parse("http//host/path", _)).
+test(uri_39) :- \+(uri_parse("http//host/?query#fragment", _)).
+test(uri_40) :- \+(uri_parse("http//host/?query", _)).
+test(uri_41) :- \+(uri_parse("http//host/#fragment", _)).
+test(uri_42) :- \+(uri_parse("http//host/", _)).
+test(uri_43) :- \+(uri_parse("http//host", _)).
 
-test(URI_44) :- \+(uri_parse("http:path/subpath?query#fragment", _)).
-test(URI_45) :- \+(uri_parse("http:path/subpath?query", _)).
-test(URI_46) :- \+(uri_parse("http:path/subpath#fragment", _)).
-test(URI_47) :- \+(uri_parse("http:path/subpath", _)).
-test(URI_48) :- \+(uri_parse("http:path?query#fragment", _)).
-test(URI_49) :- \+(uri_parse("http:path?query", _)).
-test(URI_50) :- \+(uri_parse("http:path#fragment", _)).
-test(URI_51) :- \+(uri_parse("http:path", _)).
-test(URI_52) :- \+(uri_parse("http:?query#fragment", _)).
-test(URI_53) :- \+(uri_parse("http:#fragment", _)).
-test(URI_54) :- \+(uri_parse("http:?query", _)).
+test(uri_44) :- \+(uri_parse("http:path/subpath?query#fragment", _)).
+test(uri_45) :- \+(uri_parse("http:path/subpath?query", _)).
+test(uri_46) :- \+(uri_parse("http:path/subpath#fragment", _)).
+test(uri_47) :- \+(uri_parse("http:path/subpath", _)).
+test(uri_48) :- \+(uri_parse("http:path?query#fragment", _)).
+test(uri_49) :- \+(uri_parse("http:path?query", _)).
+test(uri_50) :- \+(uri_parse("http:path#fragment", _)).
+test(uri_51) :- \+(uri_parse("http:path", _)).
+test(uri_52) :- \+(uri_parse("http:?query#fragment", _)).
+test(uri_53) :- \+(uri_parse("http:#fragment", _)).
+test(uri_54) :- \+(uri_parse("http:?query", _)).
 
-test(URI_55) :- \+(uri_parse("http/path/subpath?query#fragment", _)).
-test(URI_57) :- \+(uri_parse("http/path/subpath?query", _)).
-test(URI_58) :- \+(uri_parse("http/path/subpath#fragment", _)).
-test(URI_59) :- \+(uri_parse("http/path/subpath", _)).
-test(URI_60) :- \+(uri_parse("http/path?query#fragment", _)).
-test(URI_61) :- \+(uri_parse("http/path?query", _)).
-test(URI_62) :- \+(uri_parse("http/path#fragment", _)).
-test(URI_63) :- \+(uri_parse("http/path", _)).
-test(URI_64) :- \+(uri_parse("http/?query#fragment", _)).
-test(URI_65) :- \+(uri_parse("http/#fragment", _)).
-test(URI_66) :- \+(uri_parse("http/?query", _)).
-test(URI_67) :- \+(uri_parse("http/", _)).
+test(uri_55) :- \+(uri_parse("http/path/subpath?query#fragment", _)).
+test(uri_57) :- \+(uri_parse("http/path/subpath?query", _)).
+test(uri_58) :- \+(uri_parse("http/path/subpath#fragment", _)).
+test(uri_59) :- \+(uri_parse("http/path/subpath", _)).
+test(uri_60) :- \+(uri_parse("http/path?query#fragment", _)).
+test(uri_61) :- \+(uri_parse("http/path?query", _)).
+test(uri_62) :- \+(uri_parse("http/path#fragment", _)).
+test(uri_63) :- \+(uri_parse("http/path", _)).
+test(uri_64) :- \+(uri_parse("http/?query#fragment", _)).
+test(uri_65) :- \+(uri_parse("http/#fragment", _)).
+test(uri_66) :- \+(uri_parse("http/?query", _)).
+test(uri_67) :- \+(uri_parse("http/", _)).
 
-test(URI_68) :- \+(uri_parse("httppath/subpath?query#fragment", _)).
-test(URI_69) :- \+(uri_parse("httppath/subpath?query", _)).
-test(URI_70) :- \+(uri_parse("httppath/subpath#fragment", _)).
-test(URI_71) :- \+(uri_parse("httppath/subpath", _)).
-test(URI_72) :- \+(uri_parse("httppath?query#fragment", _)).
-test(URI_73) :- \+(uri_parse("httppath?query", _)).
-test(URI_74) :- \+(uri_parse("httppath#fragment", _)).
-test(URI_75) :- \+(uri_parse("httppath", _)).
-test(URI_76) :- \+(uri_parse("http?query#fragment", _)).
-test(URI_77) :- \+(uri_parse("http#fragment", _)).
-test(URI_78) :- \+(uri_parse("http?query", _)).
-test(URI_79) :- \+(uri_parse("http", _)).
+test(uri_68) :- \+(uri_parse("httppath/subpath?query#fragment", _)).
+test(uri_69) :- \+(uri_parse("httppath/subpath?query", _)).
+test(uri_70) :- \+(uri_parse("httppath/subpath#fragment", _)).
+test(uri_71) :- \+(uri_parse("httppath/subpath", _)).
+test(uri_72) :- \+(uri_parse("httppath?query#fragment", _)).
+test(uri_73) :- \+(uri_parse("httppath?query", _)).
+test(uri_74) :- \+(uri_parse("httppath#fragment", _)).
+test(uri_75) :- \+(uri_parse("httppath", _)).
+test(uri_76) :- \+(uri_parse("http?query#fragment", _)).
+test(uri_77) :- \+(uri_parse("http#fragment", _)).
+test(uri_78) :- \+(uri_parse("http?query", _)).
+test(uri_79) :- \+(uri_parse("http", _)).
 
-test(URI_80) :- \+(uri_parse(":/path/subpath?query#fragment", _)).
-test(URI_81) :- \+(uri_parse(":/path/subpath?query", _)).
-test(URI_82) :- \+(uri_parse(":/path/subpath#fragment", _)).
-test(URI_83) :- \+(uri_parse(":/path/subpath", _)).
-test(URI_84) :- \+(uri_parse(":/path?query#fragment", _)).
-test(URI_85) :- \+(uri_parse(":/path?query", _)).
-test(URI_86) :- \+(uri_parse(":/path#fragment", _)).
-test(URI_87) :- \+(uri_parse(":/path", _)).
-test(URI_88) :- \+(uri_parse(":/?query#fragment", _)).
-test(URI_89) :- \+(uri_parse(":/#fragment", _)).
-test(URI_90) :- \+(uri_parse(":/?query", _)).
-test(URI_91) :- \+(uri_parse(":/", _)).
+test(uri_80) :- \+(uri_parse(":/path/subpath?query#fragment", _)).
+test(uri_81) :- \+(uri_parse(":/path/subpath?query", _)).
+test(uri_82) :- \+(uri_parse(":/path/subpath#fragment", _)).
+test(uri_83) :- \+(uri_parse(":/path/subpath", _)).
+test(uri_84) :- \+(uri_parse(":/path?query#fragment", _)).
+test(uri_85) :- \+(uri_parse(":/path?query", _)).
+test(uri_86) :- \+(uri_parse(":/path#fragment", _)).
+test(uri_87) :- \+(uri_parse(":/path", _)).
+test(uri_88) :- \+(uri_parse(":/?query#fragment", _)).
+test(uri_89) :- \+(uri_parse(":/#fragment", _)).
+test(uri_90) :- \+(uri_parse(":/?query", _)).
+test(uri_91) :- \+(uri_parse(":/", _)).
 
-test(URI_92) :- \+(uri_parse(":path/subpath?query#fragment", _)).
-test(URI_93) :- \+(uri_parse(":path/subpath?query", _)).
-test(URI_94) :- \+(uri_parse(":path/subpath#fragment", _)).
-test(URI_95) :- \+(uri_parse(":path/subpath", _)).
-test(URI_96) :- \+(uri_parse(":path?query#fragment", _)).
-test(URI_97) :- \+(uri_parse(":path?query", _)).
-test(URI_98) :- \+(uri_parse(":path#fragment", _)).
-test(URI_99) :- \+(uri_parse(":path", _)).
-test(URI_100) :- \+(uri_parse(":?query#fragment", _)).
-test(URI_101) :- \+(uri_parse(":#fragment", _)).
-test(URI_102) :- \+(uri_parse(":?query", _)).
-test(URI_103) :- \+(uri_parse(":", _)).
+test(uri_92) :- \+(uri_parse(":path/subpath?query#fragment", _)).
+test(uri_93) :- \+(uri_parse(":path/subpath?query", _)).
+test(uri_94) :- \+(uri_parse(":path/subpath#fragment", _)).
+test(uri_95) :- \+(uri_parse(":path/subpath", _)).
+test(uri_96) :- \+(uri_parse(":path?query#fragment", _)).
+test(uri_97) :- \+(uri_parse(":path?query", _)).
+test(uri_98) :- \+(uri_parse(":path#fragment", _)).
+test(uri_99) :- \+(uri_parse(":path", _)).
+test(uri_100) :- \+(uri_parse(":?query#fragment", _)).
+test(uri_101) :- \+(uri_parse(":#fragment", _)).
+test(uri_102) :- \+(uri_parse(":?query", _)).
+test(uri_103) :- \+(uri_parse(":", _)).
 
 :- end_tests(uri_parse).
 
