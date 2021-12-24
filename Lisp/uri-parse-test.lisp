@@ -122,6 +122,15 @@
         :port 80
     )
 )
+(test "test-userinfo4"
+    (uri-parse "http://user.@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "user."
+        :host "host"
+        :port 80
+    )
+)
 (test "test-userinfo_1"
     (uri-parse "http://user@info@host")
     nil
@@ -710,7 +719,7 @@
         :host "host"
     )
 )
-(test "test-mailto4"
+(test "test-mailto3"
     (uri-parse "mailto:")
     (prepare-uri
         :scheme "mailto"
@@ -791,15 +800,15 @@
         :scheme "tel"
     )
 )
-(test "test-tel_2"
+(test "test-tel_1"
     (uri-parse "tel:user info")
     nil
 )
-(test "test-tel_3"
+(test "test-tel_2"
     (uri-parse "tel:userinfo@host")
     nil
 )
-(test "test-tel_4"
+(test "test-tel_3"
     (uri-parse "tel:userinfo/path")
     nil
 )
@@ -959,111 +968,119 @@
         :path "id..prova(id8)"
     )
 )
-(test "test-zos_1"
+(test "test-zos11"
     (uri-parse "zos://host")
-    nil
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port 80
+    )
 )
-(test "test-zos_2"
+(test "test-zos12"
+    (uri-parse "zos://host/")
+    (prepare-uri
+        :scheme "zos"
+        :host "host"
+        :port 80
+    )
+)
+(test "test-zos_1"
     (uri-parse "zos://host/.i.d")
     nil
 )
-(test "test-zos_3"
+(test "test-zos_2"
     (uri-parse "zos://host/.")
     nil
 )
-(test "test-zos_4"
-    (uri-parse "zos://host/")
-    nil
-)
-(test "test-zos_5"
+(test "test-zos_3"
     (uri-parse "zos://host/a012345678901234567890123456789012345678901234(id)")
     nil
 )
-(test "test-zos_6"
+(test "test-zos_4"
     (uri-parse "zos://host/path(a012345678)")
     nil
 )
-(test "test-zos_7"
+(test "test-zos_5"
     (uri-parse "zos://host/a012345678901234567890123456789012345678901234(a012345678)")
     nil
 )
-(test "test-zos_8"
+(test "test-zos_6"
     (uri-parse "zos://host/(id44)")
     nil
 )
-(test "test-zos_9"
+(test "test-zos_7"
     (uri-parse "zos://host/pi@ppo(id44)")
     nil
 )
-(test "test-zos_10"
+(test "test-zos_8"
     (uri-parse "zos://host/pip po(id44)")
     nil
 )
-(test "test-zos_11"
+(test "test-zos_9"
     (uri-parse "zos://host/pippo.mar co(id44)")
     nil
 )
-(test "test-zos_12"
+(test "test-zos_10"
     (uri-parse "zos://host/pippo(id.44)")
     nil
 )
-(test "test-zos_13"
+(test "test-zos_11"
     (uri-parse "zos://host/pippo(id .44)")
     nil
 )
-(test "test-zos_14"
+(test "test-zos_12"
     (uri-parse "zos://host/pippo()")
     nil
 )
-(test "test-zos_15"
+(test "test-zos_13"
     (uri-parse "zos://host/pippo( )")
     nil
 )
-(test "test-zos_16"
+(test "test-zos_14"
     (uri-parse "zos://host/pippo(")
     nil
 )
-(test "test-zos_17"
+(test "test-zos_15"
     (uri-parse "zos://host/pippo)")
     nil
 )
-(test "test-zos_18"
+(test "test-zos_16"
     (uri-parse "zos://host/id.")
     nil
 )
-(test "test-zos_19"
+(test "test-zos_17"
     (uri-parse "zos://host/id(1)")
     nil
 )
-(test "test-zos_20"
+(test "test-zos_18"
     (uri-parse "zos://host/id(1id8)")
     nil
 )
-(test "test-zos_21"
+(test "test-zos_19"
     (uri-parse "zos://host/id..prova..")
     nil
 )
-(test "test-zos_22"
+(test "test-zos_20"
     (uri-parse "zos://host/..id..prova")
     nil
 )
-(test "test-zos_23"
+(test "test-zos_21"
     (uri-parse "zos://host/id..prova..(id8)")
     nil
 )
-(test "test-zos_24"
+(test "test-zos_22"
     (uri-parse "zos://host/..id..prova(id8)")
     nil
 )
-(test "test-zos_25"
+(test "test-zos_23"
     (uri-parse "zos://host/.i.d(id8)")
     nil
 )
-(test "test-zos_26"
+(test "test-zos_24"
     (uri-parse "zos://host/.(id8)")
     nil
 )
-(test "test-zos_27"
+(test "test-zos_25"
     (uri-parse "zos://host/id.(id8)")
     nil
 )
@@ -2458,195 +2475,195 @@
 )
 
 
-(test "test_uri_1"
+(test "test_uri_55"
     (uri-parse "http/path/subpath?query#fragment")
     nil
 )
-(test "test_uri_2"
+(test "test_uri_56"
     (uri-parse "http/path/subpath?query")
     nil
 )
-(test "test_uri_3"
+(test "test_uri_57"
     (uri-parse "http/path/subpath#fragment")
     nil
 )
-(test "test_uri_4"
+(test "test_uri_58"
     (uri-parse "http/path/subpath")
     nil
 )
-(test "test_uri_5"
+(test "test_uri_59"
     (uri-parse "http/path?query#fragment")
     nil
 )
-(test "test_uri_6"
+(test "test_uri_60"
     (uri-parse "http/path?query")
     nil
 )
-(test "test_uri_7"
+(test "test_uri_61"
     (uri-parse "http/path#fragment")
     nil
 )
-(test "test_uri_8"
+(test "test_uri_62"
     (uri-parse "http/path")
     nil
 )
-(test "test_uri_9"
+(test "test_uri_63"
     (uri-parse "http/?query#fragment")
     nil
 )
-(test "test_uri_10"
+(test "test_uri_64"
     (uri-parse "http/#fragment")
     nil
 )
-(test "test_uri_11"
+(test "test_uri_65"
     (uri-parse "http/?query")
     nil
 )
-(test "test_uri_12"
+(test "test_uri_66"
     (uri-parse "http/")
     nil
 )
-(test "test_uri_13"
+(test "test_uri_67"
     (uri-parse "httppath/subpath?query#fragment")
     nil
 )
-(test "test_uri_14"
+(test "test_uri_68"
     (uri-parse "httppath/subpath?query")
     nil
 )
-(test "test_uri_15"
+(test "test_uri_69"
     (uri-parse "httppath/subpath#fragment")
     nil
 )
-(test "test_uri_16"
+(test "test_uri_70"
     (uri-parse "httppath/subpath")
     nil
 )
-(test "test_uri_17"
+(test "test_uri_71"
     (uri-parse "httppath?query#fragment")
     nil
 )
-(test "test_uri_18"
+(test "test_uri_72"
     (uri-parse "httppath?query")
     nil
 )
-(test "test_uri_19"
+(test "test_uri_73"
     (uri-parse "httppath#fragment")
     nil
 )
-(test "test_uri_20"
+(test "test_uri_74"
     (uri-parse "httppath")
     nil
 )
-(test "test_uri_21"
+(test "test_uri_75"
     (uri-parse "http?query#fragment")
     nil
 )
-(test "test_uri_22"
+(test "test_uri_76"
     (uri-parse "http#fragment")
     nil
 )
-(test "test_uri_23"
+(test "test_uri_77"
     (uri-parse "http?query")
     nil
 )
-(test "test_uri_24"
+(test "test_uri_78"
     (uri-parse "http")
     nil
 )
-(test "test_uri_25"
+(test "test_uri_79"
     (uri-parse ":/path/subpath?query#fragment")
     nil
 )
-(test "test_uri_26"
+(test "test_uri_80"
     (uri-parse ":/path/subpath?query")
     nil
 )
-(test "test_uri_27"
+(test "test_uri_81"
     (uri-parse ":/path/subpath#fragment")
     nil
 )
-(test "test_uri_28"
+(test "test_uri_82"
     (uri-parse ":/path/subpath")
     nil
 )
-(test "test_uri_29"
+(test "test_uri_83"
     (uri-parse ":/path?query#fragment")
     nil
 )
-(test "test_uri_30"
+(test "test_uri_84"
     (uri-parse ":/path?query")
     nil
 )
-(test "test_uri_31"
+(test "test_uri_85"
     (uri-parse ":/path#fragment")
     nil
 )
-(test "test_uri_32"
+(test "test_uri_86"
     (uri-parse ":/path")
     nil
 )
-(test "test_uri_33"
+(test "test_uri_87"
     (uri-parse ":/?query#fragment")
     nil
 )
-(test "test_uri_34"
+(test "test_uri_88"
     (uri-parse ":/#fragment")
     nil
 )
-(test "test_uri_35"
+(test "test_uri_89"
     (uri-parse ":/?query")
     nil
 )
-(test "test_uri_36"
+(test "test_uri_90"
     (uri-parse ":/")
     nil
 )
-(test "test_uri_37"
+(test "test_uri_91"
     (uri-parse ":path/subpath?query#fragment")
     nil
 )
-(test "test_uri_38"
+(test "test_uri_92"
     (uri-parse ":path/subpath?query")
     nil
 )
-(test "test_uri_39"
+(test "test_uri_93"
     (uri-parse ":path/subpath#fragment")
     nil
 )
-(test "test_uri_40"
+(test "test_uri_94"
     (uri-parse ":path/subpath")
     nil
 )
-(test "test_uri_41"
+(test "test_uri_95"
     (uri-parse ":path?query#fragment")
     nil
 )
-(test "test_uri_42"
+(test "test_uri_96"
     (uri-parse ":path?query")
     nil
 )
-(test "test_uri_43"
+(test "test_uri_97"
     (uri-parse ":path#fragment")
     nil
 )
-(test "test_uri_44"
+(test "test_uri_98"
     (uri-parse ":path")
     nil
 )
-(test "test_uri_45"
+(test "test_uri_99"
     (uri-parse ":?query#fragment")
     nil
 )
-(test "test_uri_46"
+(test "test_uri_100"
     (uri-parse ":#fragment")
     nil
 )
-(test "test_uri_47"
+(test "test_uri_101"
     (uri-parse ":?query")
     nil
 )
-(test "test_uri_48"
+(test "test_uri_102"
     (uri-parse ":")
     nil
 )
