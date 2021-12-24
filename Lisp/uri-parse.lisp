@@ -311,9 +311,12 @@
 
 
 (defun parse-path-zos (list)
-  (if (not (eq (first list) #\/))
-      (error 'uri-invalid-path-zos)
-    (multiple-value-bind
+  (cond 
+    ((eq (first list) 'eof) (values (make-instance 'path :value nil) list))
+    ((not (eq (first list) #\/))
+      (error 'uri-invalid-path-zos))
+    ((and (eq (first list) #\/)(eq (second list) 'eof)) (values (make-instance 'path :value nil) (cdr list)))
+    (T (multiple-value-bind
      (id44 remaining)
      (parse-id44 (rest list))
      (cond ((null id44) 
@@ -327,7 +330,7 @@
 		       (make-instance
 			'path :value (concatenate 'string id44 "(" id8 ")"))
 		       (cdr extra))))))
-	   (T (values (make-instance 'path :value id44) remaining))))))
+	   (T (values (make-instance 'path :value id44) remaining)))))))
 
 (defun parse-query (list)
   (if (not (eq (first list) #\?))
