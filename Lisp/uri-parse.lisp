@@ -141,7 +141,7 @@
 		 :host host
 		 :port port))
 ; Funzione di supporto per la creazione di una istanza di uri-structure
-(defun make-uri-structure (Scheme &optional authority path query fragment)
+(defun make-uri-structure (Scheme &optional (authority (make-uri-authority)) path query fragment)
   (make-instance 'uri-structure 
 		 :schema Scheme
 		 :authority authority
@@ -258,14 +258,14 @@
 (defun parse-port (list)
   (if (not (eq (first list) #\:))
       (values 
-       (make-instance 'port :value "80") 
+       (make-instance 'port :value 80) 
        list)
     (multiple-value-bind (parsed remaining)
 			 (identificator (cdr list) '(#\/ eof))
 			 (cond ((null parsed) 
 				(error 'uri-invalid-port))
 			       ((every #'digit-char-p (coerce parsed 'string)) (values 
-										(make-instance 'port :value (coerce parsed 'string)) 
+										(make-instance 'port :value (parse-integer(coerce parsed 'string)))
 										remaining))
 			       (T (error 'uri-invalid-port))
 			       )
@@ -354,21 +354,28 @@
 
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
 (defun parse-authority (URIStringList)
-  (let* (
-	 (parsed-userinfo (multiple-value-list
-			   (parse-userinfo URIStringList)))
-	 (parsed-host (multiple-value-list
-		       (parse-host (second parsed-userinfo))))
-	 (parsed-port (multiple-value-list
-		       (parse-port (second parsed-host)))))
+  (if (and (eq (first URIStringList) #\/) 
+           (eq (second URIStringList) #\/))
+    (let* (
+      (URIList (cdr (cdr URIStringList)))
+      (parsed-userinfo (multiple-value-list
+          (parse-userinfo URIList)))
+      (parsed-host (multiple-value-list
+            (parse-host (second parsed-userinfo))))
+      (parsed-port (multiple-value-list
+            (parse-port (second parsed-host)))))
+      (values 
+        (make-instance 'authority 
+          :userinfo (first parsed-userinfo) 
+          :host (first parsed-host) 
+          :port (first parsed-port)) 
+        (second parsed-port)))
     (values 
-     (make-instance 'authority 
-		    :userinfo (first parsed-userinfo) 
-		    :host (first parsed-host) 
-		    :port (first parsed-port)) 
-     (second parsed-port))
-    )
-  )
+        (make-instance 'authority 
+          :userinfo nil 
+          :host nil 
+          :port (make-instance 'port :value 80)) 
+        URIStringList)))
 
 (defun slash (list)
   (cond
@@ -378,7 +385,7 @@
    )
   )
 
-; scheme ‘:’ authority [‘/’ [path] [‘?’ query] [‘#’ fragment]]
+; scheme ‘:’ [authority] [‘/’ [path] [‘?’ query] [‘#’ fragment]]
 (defun parse-default-uri (URIStringList)
   (let* (
 	 (parsed-authority (multiple-value-list
@@ -399,39 +406,16 @@
     )
   )
 
-(defun second-slash (list)
-  (if (eq (first list) #\/) (cdr list)
-    list))
-
-					; scheme ‘:’ [‘/’] [path] [‘?’ query] [‘#’ fragment]
-					; TODO Gestire il slash opzionale
-(defun parse-resource-uri (URIStringList)
-  (let* (
-	 (parsed-path (multiple-value-list
-		       (parse-path URIStringList)))
-	 (parsed-query (multiple-value-list
-			(parse-query (second parsed-path))))
-	 (parsed-fragment (multiple-value-list
-			   (parse-fragment (second parsed-query)))))
-    (list  
-     (first parsed-path) 
-     (first parsed-query) 
-     (first parsed-fragment)
-     (second parsed-fragment)
-     )
-    )
-  )
-
 (defun parse-news (URIStringList)
-  (let (
-	(parsed-host (multiple-value-list (parse-host URIStringList))))
-    (values 
-     (make-uri-structure 
-      (make-instance 'schema :value "news")
-      (make-uri-authority 
-       nil 
-       (first parsed-host))) 
-     (second parsed-host))
+    (let (
+    (parsed-host (multiple-value-list (parse-host URIStringList))))
+      (values 
+      (make-uri-structure 
+        (make-instance 'schema :value "news")
+        (make-uri-authority 
+        nil 
+        (first parsed-host))) 
+      (second parsed-host))
     )
   )
 
@@ -478,10 +462,9 @@
   )
 
 (defun parse-zos (URIStringList)
-  (if (and (eq (first UriStringList) #\/) (eq (second UriStringList) #\/))
       (let* (
 	     (parsed-authority (multiple-value-list
-				(parse-authority (cdr (cdr URIStringList)))))
+				(parse-authority URIStringList)))
 	     (parsed-path (multiple-value-list
 			   (parse-path-zos (second parsed-authority))))
 	     (parsed-query (multiple-value-list
@@ -495,9 +478,7 @@
 		 (first parsed-query)
 		 (first parsed-fragment)
 		 )  
-		(second parsed-fragment)))
-    (error 'uri-zos-invalid)))
-
+		(second parsed-fragment))))
 
 (defun is-special-scheme (URIScheme)
   (or 
@@ -509,6 +490,9 @@
 
 (defun parse-special-schema-uri (URIStringList URIScheme)
   (cond
+   ((eq (first UriStringList) 'eof) (values (make-uri-structure 
+                                        (make-instance 'schema :value URIScheme)) 
+                                        URIStringList))
    ((equalp URIScheme "news") (parse-news URIStringList))
    ((or (equalp URIScheme "fax")
 	(equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
@@ -526,26 +510,14 @@
       (parse-special-schema-uri
        (second parsed-scheme) (value (first parsed-scheme)))
       )
-     ((and
-       (eq (first (second parsed-scheme)) #\/)
-       (eq (second (second parsed-scheme)) #\/))
+     (T
       (let 
-          ((otherComp (parse-default-uri (cdr (cdr (second parsed-scheme))))))
+          ((otherComp (parse-default-uri (second parsed-scheme))))
         (values (make-instance 'uri-structure :schema (first parsed-scheme) 
                                :authority (first otherComp)
                                :path (second otherComp)
                                :query (third otherComp)
                                :fragment (fourth otherComp)) (fifth otherComp)))
-      )
-     
-     (T 
-      (let 
-          ((otherComp (parse-resource-uri (second-slash (second parsed-scheme)))))
-        (values (make-instance 'uri-structure :schema (first parsed-scheme) 
-                               :authority (make-uri-authority)
-                               :path (first otherComp)
-                               :query (second otherComp)
-                               :fragment (third otherComp)) (fourth otherComp)))
       )
      )
     )
