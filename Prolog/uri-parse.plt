@@ -27,7 +27,6 @@ test(schema_9) :- \+(uri_parse("s?:", _)).
 test(schema_10) :- \+(uri_parse("s#:", _)). 
 test(schema_11) :- \+(uri_parse("s@:", _)). 
 test(schema_12) :- \+(uri_parse("s::", _)). 
-
 test(schema_13) :- \+(uri_parse(":", _)).                                   
 test(schema_14) :- \+(uri_parse("ù:", _)).                                          
 

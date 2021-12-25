@@ -493,6 +493,15 @@
 
 (defun parse-special-schema-uri (URIStringList URIScheme)
   (cond
+  ((and
+    (eq (first UriStringList) 'eof)
+    (equalp URIScheme "zos")) (values (make-uri-structure 
+                                        (make-instance 'schema :value URIScheme)
+                                        (make-uri-authority
+                                          nil
+                                          nil
+                                          (make-instance 'port :value 80))) 
+                                        URIStringList))
    ((eq (first UriStringList) 'eof) (values (make-uri-structure 
                                         (make-instance 'schema :value URIScheme)) 
                                         URIStringList))
