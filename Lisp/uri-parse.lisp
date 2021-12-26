@@ -312,10 +312,10 @@
 
 (defun parse-path-zos (list)
   (cond 
-    ((eq (first list) 'eof) (values (make-instance 'path :value nil) list))
+    ;((eq (first list) 'eof) (values (make-instance 'path :value nil) list))
     ((not (eq (first list) #\/))
       (error 'uri-invalid-path-zos))
-    ((and (eq (first list) #\/)(eq (second list) 'eof)) (values (make-instance 'path :value nil) (cdr list)))
+    ;((and (eq (first list) #\/)(eq (second list) 'eof)) (values (make-instance 'path :value nil) (cdr list)))
     (T (multiple-value-bind
      (id44 remaining)
      (parse-id44 (rest list))
@@ -495,13 +495,7 @@
   (cond
   ((and
     (eq (first UriStringList) 'eof)
-    (equalp URIScheme "zos")) (values (make-uri-structure 
-                                        (make-instance 'schema :value URIScheme)
-                                        (make-uri-authority
-                                          nil
-                                          nil
-                                          (make-instance 'port :value 80))) 
-                                        URIStringList))
+    (equalp URIScheme "zos")) (error 'uri-invalid-path-zos)) 
    ((eq (first UriStringList) 'eof) (values (make-uri-structure 
                                         (make-instance 'schema :value URIScheme)) 
                                         URIStringList))

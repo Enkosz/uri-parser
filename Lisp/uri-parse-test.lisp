@@ -1119,19 +1119,11 @@
 )
 (test "test-zos11"
     (uri-parse "zos://host/")
-    (prepare-uri
-        :scheme "zos"
-        :host "host"
-        :port 80
-    )
+    nil
 )
 (test "test-zos12"
     (uri-parse "zos://host")
-    (prepare-uri
-        :scheme "zos"
-        :host "host"
-        :port 80
-    )
+    nil
 )
 (test "test-zos13"
     (uri-parse "zos:/id44(id8)")
@@ -1218,17 +1210,11 @@
 )
 (test "test-zos23"
     (uri-parse "zos:/")
-    (prepare-uri
-        :scheme "zos"
-        :port 80
-    )
+    nil
 )
 (test "test-zos24"
     (uri-parse "zos:")
-    (prepare-uri
-        :scheme "zos"
-        :port 80
-    )
+    nil
 )
 (test "test-zos_1"
     (uri-parse "zos://host/.i.d")
@@ -1433,9 +1419,9 @@
 
 
 (test "test_uri_zos1"
-    (uri-parse "http://userinfo@host.subhost:123/id44?query#fragment")
+    (uri-parse "zos://userinfo@host.subhost:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1445,9 +1431,9 @@
     )
 )
 (test "test_uri_zos2"
-    (uri-parse "http://userinfo@host.subhost:123/id44?query")
+    (uri-parse "zos://userinfo@host.subhost:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1456,9 +1442,9 @@
     )
 )
 (test "test_uri_zos3"
-    (uri-parse "http://userinfo@host.subhost:123/id44#fragment")
+    (uri-parse "zos://userinfo@host.subhost:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1467,9 +1453,9 @@
     )
 )
 (test "test_uri_zos4"
-    (uri-parse "http://userinfo@host.subhost:123/id44")
+    (uri-parse "zos://userinfo@host.subhost:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1477,9 +1463,9 @@
     )
 )
 (test "test_uri_zos5"
-    (uri-parse "http://userinfo@host.subhost:123/id44?query#fragment")
+    (uri-parse "zos://userinfo@host.subhost:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1489,9 +1475,9 @@
     )
 )
 (test "test_uri_zos6"
-    (uri-parse "http://userinfo@host.subhost:123/id44?query")
+    (uri-parse "zos://userinfo@host.subhost:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1500,9 +1486,9 @@
     )
 )
 (test "test_uri_zos7"
-    (uri-parse "http://userinfo@host.subhost:123/id44#fragment")
+    (uri-parse "zos://userinfo@host.subhost:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1511,9 +1497,9 @@
     )
 )
 (test "test_uri_zos8"
-    (uri-parse "http://userinfo@host.subhost:123/id44")
+    (uri-parse "zos://userinfo@host.subhost:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 123
@@ -1521,59 +1507,30 @@
     )
 )
 (test "test_uri_zos9"
-    (uri-parse "http://userinfo@host.subhost:123/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 123
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host.subhost:123/?query#fragment")
+    nil
 )
 (test "test_uri_zos10"
-    (uri-parse "http://userinfo@host.subhost:123/?query")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 123
-        :query "query"
-    )
+    (uri-parse "zos://userinfo@host.subhost:123/?query")
+    nil
 )
 
 (test "test_uri_zos11"
-    (uri-parse "http://userinfo@host.subhost:123/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 123
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host.subhost:123/#fragment")
+    nil
 )
 (test "test_uri_zos12"
-    (uri-parse "http://userinfo@host.subhost:123/")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 123
-    )
+    (uri-parse "zos://userinfo@host.subhost:123/")
+    nil
 )
 (test "test_uri_zos13"
-    (uri-parse "http://userinfo@host.subhost:123")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 123
-    )
+    (uri-parse "zos://userinfo@host.subhost:123")
+    nil
 )
 (test "test_uri_zos14"
-    (uri-parse "http://userinfo@host.subhost/id44?query#fragment")
+    (uri-parse "zos://userinfo@host.subhost/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1583,9 +1540,9 @@
     )
 )
 (test "test_uri_zos15"
-    (uri-parse "http://userinfo@host.subhost/id44?query")
+    (uri-parse "zos://userinfo@host.subhost/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1594,9 +1551,9 @@
     )
 )
 (test "test_uri_zos16"
-    (uri-parse "http://userinfo@host.subhost/id44#fragment")
+    (uri-parse "zos://userinfo@host.subhost/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1605,9 +1562,9 @@
     )
 )
 (test "test_uri_zos17"
-    (uri-parse "http://userinfo@host.subhost/id44")
+    (uri-parse "zos://userinfo@host.subhost/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1615,9 +1572,9 @@
     )
 )
 (test "test_uri_zos18"
-    (uri-parse "http://userinfo@host.subhost/id44?query#fragment")
+    (uri-parse "zos://userinfo@host.subhost/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1627,9 +1584,9 @@
     )
 )
 (test "test_uri_zos19"
-    (uri-parse "http://userinfo@host.subhost/id44?query")
+    (uri-parse "zos://userinfo@host.subhost/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1638,9 +1595,9 @@
     )
 )
 (test "test_uri_zos20"
-    (uri-parse "http://userinfo@host.subhost/id44#fragment")
+    (uri-parse "zos://userinfo@host.subhost/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1649,9 +1606,9 @@
     )
 )
 (test "test_uri_zos21"
-    (uri-parse "http://userinfo@host.subhost/id44")
+    (uri-parse "zos://userinfo@host.subhost/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host.subhost"
         :port 80
@@ -1659,59 +1616,30 @@
     )
 )
 (test "test_uri_zos22"
-    (uri-parse "http://userinfo@host.subhost/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 80
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host.subhost/?query#fragment")
+    nil
 )
 (test "test_uri_zos23"
-    (uri-parse "http://userinfo@host.subhost/?query")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 80
-        :query "query"
-    )
+    (uri-parse "zos://userinfo@host.subhost/?query")
+    nil
 )
 
 (test "test_uri_zos24"
-    (uri-parse "http://userinfo@host.subhost/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 80
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host.subhost/#fragment")
+    nil
 )
 (test "test_uri_zos25"
-    (uri-parse "http://userinfo@host.subhost/")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 80
-    )
+    (uri-parse "zos://userinfo@host.subhost/")
+    nil
 )
 (test "test_uri_zos26"
-    (uri-parse "http://userinfo@host.subhost")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host.subhost"
-        :port 80
-    )
+    (uri-parse "zos://userinfo@host.subhost")
+    nil
 )
 (test "test_uri_zos27"
-    (uri-parse "http://host.subhost:123/id44?query#fragment")
+    (uri-parse "zos://host.subhost:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1720,9 +1648,9 @@
     )
 )
 (test "test_uri_zos28"
-    (uri-parse "http://host.subhost:123/id44?query")
+    (uri-parse "zos://host.subhost:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1730,9 +1658,9 @@
     )
 )
 (test "test_uri_zos29"
-    (uri-parse "http://host.subhost:123/id44#fragment")
+    (uri-parse "zos://host.subhost:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1740,18 +1668,18 @@
     )
 )
 (test "test_uri_zos30"
-    (uri-parse "http://host.subhost:123/id44")
+    (uri-parse "zos://host.subhost:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
     )
 )
 (test "test_uri_zos31"
-    (uri-parse "http://host.subhost:123/id44?query#fragment")
+    (uri-parse "zos://host.subhost:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1760,9 +1688,9 @@
     )
 )
 (test "test_uri_zos32"
-    (uri-parse "http://host.subhost:123/id44?query")
+    (uri-parse "zos://host.subhost:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1770,9 +1698,9 @@
     )
 )
 (test "test_uri_zos33"
-    (uri-parse "http://host.subhost:123/id44#fragment")
+    (uri-parse "zos://host.subhost:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
@@ -1780,63 +1708,39 @@
     )
 )
 (test "test_uri_zos34"
-    (uri-parse "http://host.subhost:123/id44")
+    (uri-parse "zos://host.subhost:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 123
         :path "id44"
     )
 )
 (test "test_uri_zos35"
-    (uri-parse "http://host.subhost:123/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 123
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host.subhost:123/?query#fragment")
+    nil
 )
 (test "test_uri_zos36"
-    (uri-parse "http://host.subhost:123/?query")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 123
-        :query "query"
-    )
+    (uri-parse "zos://host.subhost:123/?query")
+    nil
 )
 
 (test "test_uri_zos37"
-    (uri-parse "http://host.subhost:123/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 123
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host.subhost:123/#fragment")
+    nil
 )
 (test "test_uri_zos38"
-    (uri-parse "http://host.subhost:123/")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 123
-    )
+    (uri-parse "zos://host.subhost:123/")
+    nil
 )
 (test "test_uri_zos39"
-    (uri-parse "http://host.subhost:123")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 123
-    )
+    (uri-parse "zos://host.subhost:123")
+    nil
 )
 (test "test_uri_zos40"
-    (uri-parse "http://host.subhost/id44?query#fragment")
+    (uri-parse "zos://host.subhost/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1845,9 +1749,9 @@
     )
 )
 (test "test_uri_zos41"
-    (uri-parse "http://host.subhost/id44?query")
+    (uri-parse "zos://host.subhost/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1855,9 +1759,9 @@
     )
 )
 (test "test_uri_zos42"
-    (uri-parse "http://host.subhost/id44#fragment")
+    (uri-parse "zos://host.subhost/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1865,18 +1769,18 @@
     )
 )
 (test "test_uri_zos43"
-    (uri-parse "http://host.subhost/id44")
+    (uri-parse "zos://host.subhost/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos44"
-    (uri-parse "http://host.subhost/id44?query#fragment")
+    (uri-parse "zos://host.subhost/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1885,9 +1789,9 @@
     )
 )
 (test "test_uri_zos45"
-    (uri-parse "http://host.subhost/id44?query")
+    (uri-parse "zos://host.subhost/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1895,9 +1799,9 @@
     )
 )
 (test "test_uri_zos46"
-    (uri-parse "http://host.subhost/id44#fragment")
+    (uri-parse "zos://host.subhost/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
@@ -1905,67 +1809,43 @@
     )
 )
 (test "test_uri_zos47"
-    (uri-parse "http://host.subhost/id44")
+    (uri-parse "zos://host.subhost/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host.subhost"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos48"
-    (uri-parse "http://host.subhost/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 80
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host.subhost/?query#fragment")
+    nil
 )
 (test "test_uri_zos49"
-    (uri-parse "http://host.subhost/?query")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 80
-        :query "query"
-    )
+    (uri-parse "zos://host.subhost/?query")
+    nil
 )
 
 (test "test_uri_zos50"
-    (uri-parse "http://host.subhost/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 80
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host.subhost/#fragment")
+    nil
 )
 (test "test_uri_zos51"
-    (uri-parse "http://host.subhost/")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 80
-    )
+    (uri-parse "zos://host.subhost/")
+    nil
 )
 (test "test_uri_zos52"
-    (uri-parse "http://host.subhost")
-    (prepare-uri
-        :scheme "http"
-        :host "host.subhost"
-        :port 80
-    )
+    (uri-parse "zos://host.subhost")
+    nil
 )
 
 
 
 
 (test "test_uri_zos53"
-    (uri-parse "http://userinfo@host:123/id44?query#fragment")
+    (uri-parse "zos://userinfo@host:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -1975,9 +1855,9 @@
     )
 )
 (test "test_uri_zos54"
-    (uri-parse "http://userinfo@host:123/id44?query")
+    (uri-parse "zos://userinfo@host:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -1986,9 +1866,9 @@
     )
 )
 (test "test_uri_zos55"
-    (uri-parse "http://userinfo@host:123/id44#fragment")
+    (uri-parse "zos://userinfo@host:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -1997,9 +1877,9 @@
     )
 )
 (test "test_uri_zos56"
-    (uri-parse "http://userinfo@host:123/id44")
+    (uri-parse "zos://userinfo@host:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -2007,9 +1887,9 @@
     )
 )
 (test "test_uri_zos57"
-    (uri-parse "http://userinfo@host:123/id44?query#fragment")
+    (uri-parse "zos://userinfo@host:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -2019,9 +1899,9 @@
     )
 )
 (test "test_uri_zos58"
-    (uri-parse "http://userinfo@host:123/id44?query")
+    (uri-parse "zos://userinfo@host:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -2030,9 +1910,9 @@
     )
 )
 (test "test_uri_zos59"
-    (uri-parse "http://userinfo@host:123/id44#fragment")
+    (uri-parse "zos://userinfo@host:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -2041,9 +1921,9 @@
     )
 )
 (test "test_uri_zos60"
-    (uri-parse "http://userinfo@host:123/id44")
+    (uri-parse "zos://userinfo@host:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 123
@@ -2051,59 +1931,30 @@
     )
 )
 (test "test_uri_zos61"
-    (uri-parse "http://userinfo@host:123/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 123
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host:123/?query#fragment")
+    nil
 )
 (test "test_uri_zos62"
-    (uri-parse "http://userinfo@host:123/?query")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 123
-        :query "query"
-    )
+    (uri-parse "zos://userinfo@host:123/?query")
+    nil
 )
 
 (test "test_uri_zos63"
-    (uri-parse "http://userinfo@host:123/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 123
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host:123/#fragment")
+    nil
 )
 (test "test_uri_zos64"
-    (uri-parse "http://userinfo@host:123/")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 123
-    )
+    (uri-parse "zos://userinfo@host:123/")
+    nil
 )
 (test "test_uri_zos65"
-    (uri-parse "http://userinfo@host:123")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 123
-    )
+    (uri-parse "zos://userinfo@host:123")
+    nil
 )
 (test "test_uri_zos66"
-    (uri-parse "http://userinfo@host/id44?query#fragment")
+    (uri-parse "zos://userinfo@host/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2113,9 +1964,9 @@
     )
 )
 (test "test_uri_zos67"
-    (uri-parse "http://userinfo@host/id44?query")
+    (uri-parse "zos://userinfo@host/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2124,9 +1975,9 @@
     )
 )
 (test "test_uri_zos68"
-    (uri-parse "http://userinfo@host/id44#fragment")
+    (uri-parse "zos://userinfo@host/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2135,9 +1986,9 @@
     )
 )
 (test "test_uri_zos69"
-    (uri-parse "http://userinfo@host/id44")
+    (uri-parse "zos://userinfo@host/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2145,9 +1996,9 @@
     )
 )
 (test "test_uri_zos70"
-    (uri-parse "http://userinfo@host/id44?query#fragment")
+    (uri-parse "zos://userinfo@host/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2157,9 +2008,9 @@
     )
 )
 (test "test_uri_zos71"
-    (uri-parse "http://userinfo@host/id44?query")
+    (uri-parse "zos://userinfo@host/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2168,9 +2019,9 @@
     )
 )
 (test "test_uri_zos72"
-    (uri-parse "http://userinfo@host/id44#fragment")
+    (uri-parse "zos://userinfo@host/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2179,9 +2030,9 @@
     )
 )
 (test "test_uri_zos73"
-    (uri-parse "http://userinfo@host/id44")
+    (uri-parse "zos://userinfo@host/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :userinfo "userinfo"
         :host "host"
         :port 80
@@ -2189,59 +2040,30 @@
     )
 )
 (test "test_uri_zos74"
-    (uri-parse "http://userinfo@host/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 80
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host/?query#fragment")
+    nil
 )
 (test "test_uri_zos75"
-    (uri-parse "http://userinfo@host/?query")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 80
-        :query "query"
-    )
+    (uri-parse "zos://userinfo@host/?query")
+    nil
 )
 
 (test "test_uri_zos76"
-    (uri-parse "http://userinfo@host/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 80
-        :fragment "fragment"
-    )
+    (uri-parse "zos://userinfo@host/#fragment")
+    nil
 )
 (test "test_uri_zos77"
-    (uri-parse "http://userinfo@host/")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 80
-    )
+    (uri-parse "zos://userinfo@host/")
+    nil
 )
 (test "test_uri_zos78"
-    (uri-parse "http://userinfo@host")
-    (prepare-uri
-        :scheme "http"
-        :userinfo "userinfo"
-        :host "host"
-        :port 80
-    )
+    (uri-parse "zos://userinfo@host")
+    nil
 )
 (test "test_uri_zos79"
-    (uri-parse "http://host:123/id44?query#fragment")
+    (uri-parse "zos://host:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2250,9 +2072,9 @@
     )
 )
 (test "test_uri_zos80"
-    (uri-parse "http://host:123/id44?query")
+    (uri-parse "zos://host:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2260,9 +2082,9 @@
     )
 )
 (test "test_uri_zos81"
-    (uri-parse "http://host:123/id44#fragment")
+    (uri-parse "zos://host:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2270,18 +2092,18 @@
     )
 )
 (test "test_uri_zos82"
-    (uri-parse "http://host:123/id44")
+    (uri-parse "zos://host:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
     )
 )
 (test "test_uri_zos83"
-    (uri-parse "http://host:123/id44?query#fragment")
+    (uri-parse "zos://host:123/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2290,9 +2112,9 @@
     )
 )
 (test "test_uri_zos84"
-    (uri-parse "http://host:123/id44?query")
+    (uri-parse "zos://host:123/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2300,9 +2122,9 @@
     )
 )
 (test "test_uri_zos85"
-    (uri-parse "http://host:123/id44#fragment")
+    (uri-parse "zos://host:123/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
@@ -2310,63 +2132,39 @@
     )
 )
 (test "test_uri_zos86"
-    (uri-parse "http://host:123/id44")
+    (uri-parse "zos://host:123/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 123
         :path "id44"
     )
 )
 (test "test_uri_zos87"
-    (uri-parse "http://host:123/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 123
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host:123/?query#fragment")
+    nil
 )
 (test "test_uri_zos88"
-    (uri-parse "http://host:123/?query")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 123
-        :query "query"
-    )
+    (uri-parse "zos://host:123/?query")
+    nil
 )
 
 (test "test_uri_zos89"
-    (uri-parse "http://host:123/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 123
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host:123/#fragment")
+    nil
 )
 (test "test_uri_zos90"
-    (uri-parse "http://host:123/")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 123
-    )
+    (uri-parse "zos://host:123/")
+    nil
 )
 (test "test_uri_zos91"
-    (uri-parse "http://host:123")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 123
-    )
+    (uri-parse "zos://host:123")
+    nil
 )
 (test "test_uri_zos92"
-    (uri-parse "http://host/id44?query#fragment")
+    (uri-parse "zos://host/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2375,9 +2173,9 @@
     )
 )
 (test "test_uri_zos93"
-    (uri-parse "http://host/id44?query")
+    (uri-parse "zos://host/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2385,9 +2183,9 @@
     )
 )
 (test "test_uri_zos94"
-    (uri-parse "http://host/id44#fragment")
+    (uri-parse "zos://host/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2395,18 +2193,18 @@
     )
 )
 (test "test_uri_zos95"
-    (uri-parse "http://host/id44")
+    (uri-parse "zos://host/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos96"
-    (uri-parse "http://host/id44?query#fragment")
+    (uri-parse "zos://host/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2415,9 +2213,9 @@
     )
 )
 (test "test_uri_zos97"
-    (uri-parse "http://host/id44?query")
+    (uri-parse "zos://host/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2425,9 +2223,9 @@
     )
 )
 (test "test_uri_zos98"
-    (uri-parse "http://host/id44#fragment")
+    (uri-parse "zos://host/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
@@ -2435,63 +2233,39 @@
     )
 )
 (test "test_uri_zos99"
-    (uri-parse "http://host/id44")
+    (uri-parse "zos://host/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :host "host"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos100"
-    (uri-parse "http://host/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 80
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host/?query#fragment")
+    nil
 )
 (test "test_uri_zos101"
-    (uri-parse "http://host/?query")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 80
-        :query "query"
-    )
+    (uri-parse "zos://host/?query")
+    nil
 )
 
 (test "test_uri_zos102"
-    (uri-parse "http://host/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 80
-        :fragment "fragment"
-    )
+    (uri-parse "zos://host/#fragment")
+    nil
 )
 (test "test_uri_zos103"
-    (uri-parse "http://host/")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 80
-    )
+    (uri-parse "zos://host/")
+    nil
 )
 (test "test_uri_zos104"
-    (uri-parse "http://host")
-    (prepare-uri
-        :scheme "http"
-        :host "host"
-        :port 80
-    )
+    (uri-parse "zos://host")
+    nil
 )
 (test "test_uri_zos105"
-    (uri-parse "http:/id44?query#fragment")
+    (uri-parse "zos:/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :query "query"
@@ -2499,35 +2273,35 @@
     )
 )
 (test "test_uri_zos106"
-    (uri-parse "http:/id44?query")
+    (uri-parse "zos:/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :query "query"
     )
 )
 (test "test_uri_zos107"
-    (uri-parse "http:/id44#fragment")
+    (uri-parse "zos:/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :fragment "fragment"
     )
 )
 (test "test_uri_zos108"
-    (uri-parse "http:/id44")
+    (uri-parse "zos:/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos109"
-    (uri-parse "http:/id44?query#fragment")
+    (uri-parse "zos:/id44?query#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :query "query"
@@ -2535,137 +2309,118 @@
     )
 )
 (test "test_uri_zos110"
-    (uri-parse "http:/id44?query")
+    (uri-parse "zos:/id44?query")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :query "query"
     )
 )
 (test "test_uri_zos111"
-    (uri-parse "http:/id44#fragment")
+    (uri-parse "zos:/id44#fragment")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
         :fragment "fragment"
     )
 )
 (test "test_uri_zos112"
-    (uri-parse "http:/id44")
+    (uri-parse "zos:/id44")
     (prepare-uri
-        :scheme "http"
+        :scheme "zos"
         :port 80
         :path "id44"
     )
 )
 (test "test_uri_zos113"
-    (uri-parse "http:/?query#fragment")
-    (prepare-uri
-        :scheme "http"
-        :port 80
-        :query "query"
-        :fragment "fragment"
-    )
+    (uri-parse "zos:/?query#fragment")
+    nil
 )
 (test "test_uri_zos114"
-    (uri-parse "http:/#fragment")
-    (prepare-uri
-        :scheme "http"
-        :port 80
-        :fragment "fragment"
-    )
+    (uri-parse "zos:/#fragment")
+    nil
 )
 (test "test_uri_zos115"
-    (uri-parse "http:/?query")
-    (prepare-uri
-        :scheme "http"
-        :port 80
-        :query "query"
-    )
+    (uri-parse "zos:/?query")
+    nil
 )
 (test "test_uri_zos116"
-    (uri-parse "http:/")
-    (prepare-uri
-        :scheme "http"
-        :port 80
-    )
+    (uri-parse "zos:/")
+    nil
 )
 (test "test_uri_zos117"
-    (uri-parse "http:")
-    (prepare-uri
-        :scheme "http"
-        :port 80
-    )
+    (uri-parse "zos:")
+    nil
 )
 
 (test "test_uri_zos_1"
-    (uri-parse "http://")
+    (uri-parse "zos://")
     nil
 )
 (test "test_uri_zos_2"
-    (uri-parse "http:///id44?query#fragment")
+    (uri-parse "zos:///id44?query#fragment")
     nil
 )
 (test "test_uri_zos_3"
-    (uri-parse "http:///id44?query")
+    (uri-parse "zos:///id44?query")
     nil
 )
 (test "test_uri_zos_4"
-    (uri-parse "http:///id44#fragment")
+    (uri-parse "zos:///id44#fragment")
     nil
 )
 (test "test_uri_zos_5"
-    (uri-parse "http:///id44")
+    (uri-parse "zos:///id44")
     nil
 )
 (test "test_uri_zos_6"
-    (uri-parse "http:///id44?query#fragment")
+    (uri-parse "zos:///id44?query#fragment")
     nil
 )
 (test "test_uri_zos_7"
-    (uri-parse "http:///id44?query")
+    (uri-parse "zos:///id44?query")
     nil
 )
 (test "test_uri_zos_8"
-    (uri-parse "http:///id44#fragment")
+    (uri-parse "zos:///id44#fragment")
     nil
 )
 (test "test_uri_zos_9"
-    (uri-parse "http:///id44")
+    (uri-parse "zos:///id44")
     nil
 )
 (test "test_uri_zos_10"
-    (uri-parse "http:///?query#fragment")
+    (uri-parse "zos:///?query#fragment")
     nil
 )
 (test "test_uri_zos_11"
-    (uri-parse "http:///?query")
+    (uri-parse "zos:///?query")
     nil
 )
 (test "test_uri_zos_12"
-    (uri-parse "http:///#fragment")
+    (uri-parse "zos:///#fragment")
     nil
 )
 (test "test_uri_zos_13"
-    (uri-parse "http:///")
+    (uri-parse "zos:///")
     nil
 )
 (test "test_uri_zos_14"
-    (uri-parse "http://")
+    (uri-parse "zos://")
     nil
 )
 (test "test_uri_zos_15"
-    (uri-parse "http://host?query#fragment")
+    (uri-parse "zos://host?query#fragment")
     nil
 )
 (test "test_uri_zos_16"
-    (uri-parse "http://host?query")
+    (uri-parse "zos://host?query")
     nil
 )
 (test "test_uri_zos_17"
-    (uri-parse "http://host#fragment")
+    (uri-parse "zos://host#fragment")
     nil
 )
 (test "test_uri_zos_18"
@@ -2721,197 +2476,197 @@
     nil
 )
 (test "test_uri_zos_31"
-    (uri-parse "http//host/id44?query#fragment")
+    (uri-parse "zos//host/id44?query#fragment")
     nil
 )
 (test "test_uri_zos_32"
-    (uri-parse "http//host/id44?query")
+    (uri-parse "zos//host/id44?query")
     nil
 )
 (test "test_uri_zos_33"
-    (uri-parse "http//host/id44#fragment")
+    (uri-parse "zos//host/id44#fragment")
     nil
 )
 (test "test_uri_zos_34"
-    (uri-parse "http//host/id44")
+    (uri-parse "zos//host/id44")
     nil
 )
 (test "test_uri_zos_35"
-    (uri-parse "http//host/id44?query#fragment")
+    (uri-parse "zos//host/id44?query#fragment")
     nil
 )
 (test "test_uri_zos_36"
-    (uri-parse "http//host/id44?query")
+    (uri-parse "zos//host/id44?query")
     nil
 )
 (test "test_uri_zos_37"
-    (uri-parse "http//host/id44#fragment")
+    (uri-parse "zos//host/id44#fragment")
     nil
 )
 (test "test_uri_zos_38"
-    (uri-parse "http//host/id44")
+    (uri-parse "zos//host/id44")
     nil
 )
 (test "test_uri_zos_39"
-    (uri-parse "http//host/?query#fragment")
+    (uri-parse "zos//host/?query#fragment")
     nil
 )
 (test "test_uri_zos_40"
-    (uri-parse "http//host/?query")
+    (uri-parse "zos//host/?query")
     nil
 )
 (test "test_uri_zos_41"
-    (uri-parse "http//host/#fragment")
+    (uri-parse "zos//host/#fragment")
     nil
 )
 (test "test_uri_zos_42"
-    (uri-parse "http//host/")
+    (uri-parse "zos//host/")
     nil
 )
 (test "test_uri_zos_43"
-    (uri-parse "http//host")
+    (uri-parse "zos//host")
     nil
 )
 (test "test_uri_zos_44"
-    (uri-parse "http:path?query#fragment")
+    (uri-parse "zos:path?query#fragment")
     nil
 )
 (test "test_uri_zos_45"
-    (uri-parse "http:path?query")
+    (uri-parse "zos:path?query")
     nil
 )
 (test "test_uri_zos_46"
-    (uri-parse "http:path#fragment")
+    (uri-parse "zos:path#fragment")
     nil
 )
 (test "test_uri_zos_47"
-    (uri-parse "http:path")
+    (uri-parse "zos:path")
     nil
 )
 (test "test_uri_zos_48"
-    (uri-parse "http:path?query#fragment")
+    (uri-parse "zos:path?query#fragment")
     nil
 )
 (test "test_uri_zos_49"
-    (uri-parse "http:path?query")
+    (uri-parse "zos:path?query")
     nil
 )
 (test "test_uri_zos_50"
-    (uri-parse "http:path#fragment")
+    (uri-parse "zos:path#fragment")
     nil
 )
 (test "test_uri_zos_51"
-    (uri-parse "http:path")
+    (uri-parse "zos:path")
     nil
 )
 (test "test_uri_zos_52"
-    (uri-parse "http:?query#fragment")
+    (uri-parse "zos:?query#fragment")
     nil
 )
 (test "test_uri_zos_53"
-    (uri-parse "http:#fragment")
+    (uri-parse "zos:#fragment")
     nil
 )
 (test "test_uri_zos_54"
-    (uri-parse "http:?query")
+    (uri-parse "zos:?query")
     nil
 )
 
 
 (test "test_uri_zos_55"
-    (uri-parse "http/id44?query#fragment")
+    (uri-parse "zos/id44?query#fragment")
     nil
 )
 (test "test_uri_zos_56"
-    (uri-parse "http/id44?query")
+    (uri-parse "zos/id44?query")
     nil
 )
 (test "test_uri_zos_57"
-    (uri-parse "http/id44#fragment")
+    (uri-parse "zos/id44#fragment")
     nil
 )
 (test "test_uri_zos_58"
-    (uri-parse "http/id44")
+    (uri-parse "zos/id44")
     nil
 )
 (test "test_uri_zos_59"
-    (uri-parse "http/id44?query#fragment")
+    (uri-parse "zos/id44?query#fragment")
     nil
 )
 (test "test_uri_zos_60"
-    (uri-parse "http/id44?query")
+    (uri-parse "zos/id44?query")
     nil
 )
 (test "test_uri_zos_61"
-    (uri-parse "http/id44#fragment")
+    (uri-parse "zos/id44#fragment")
     nil
 )
 (test "test_uri_zos_62"
-    (uri-parse "http/id44")
+    (uri-parse "zos/id44")
     nil
 )
 (test "test_uri_zos_63"
-    (uri-parse "http/?query#fragment")
+    (uri-parse "zos/?query#fragment")
     nil
 )
 (test "test_uri_zos_64"
-    (uri-parse "http/#fragment")
+    (uri-parse "zos/#fragment")
     nil
 )
 (test "test_uri_zos_65"
-    (uri-parse "http/?query")
+    (uri-parse "zos/?query")
     nil
 )
 (test "test_uri_zos_66"
-    (uri-parse "http/")
+    (uri-parse "zos/")
     nil
 )
 (test "test_uri_zos_67"
-    (uri-parse "httppath?query#fragment")
+    (uri-parse "zospath?query#fragment")
     nil
 )
 (test "test_uri_zos_68"
-    (uri-parse "httppath?query")
+    (uri-parse "zospath?query")
     nil
 )
 (test "test_uri_zos_69"
-    (uri-parse "httppath#fragment")
+    (uri-parse "zospath#fragment")
     nil
 )
 (test "test_uri_zos_70"
-    (uri-parse "httppath")
+    (uri-parse "zospath")
     nil
 )
 (test "test_uri_zos_71"
-    (uri-parse "httppath?query#fragment")
+    (uri-parse "zospath?query#fragment")
     nil
 )
 (test "test_uri_zos_72"
-    (uri-parse "httppath?query")
+    (uri-parse "zospath?query")
     nil
 )
 (test "test_uri_zos_73"
-    (uri-parse "httppath#fragment")
+    (uri-parse "zospath#fragment")
     nil
 )
 (test "test_uri_zos_74"
-    (uri-parse "httppath")
+    (uri-parse "zospath")
     nil
 )
 (test "test_uri_zos_75"
-    (uri-parse "http?query#fragment")
+    (uri-parse "zos?query#fragment")
     nil
 )
 (test "test_uri_zos_76"
-    (uri-parse "http#fragment")
+    (uri-parse "zos#fragment")
     nil
 )
 (test "test_uri_zos_77"
-    (uri-parse "http?query")
+    (uri-parse "zos?query")
     nil
 )
 (test "test_uri_zos_78"
-    (uri-parse "http")
+    (uri-parse "zos")
     nil
 )
 (test "test_uri_zos_79"
