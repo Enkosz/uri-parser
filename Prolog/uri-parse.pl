@@ -254,10 +254,6 @@ uri_path_zos -->
      length(Id44, Id44Length), Id44Length =< 44},
     !.
 
-uri_path_zos -->
-    [],
-    !.
-
 uri_id44(Id44) -->
     identificator(A, ['.', ' '], alnum),
     [.],
@@ -283,8 +279,6 @@ checkPath(path(AtomPath)) :-
     atom_chars(AtomPath, CharsPath),
     phrase(uri_path_zos,  CharsPath),
     !.
-
-checkPath(path([])) :- !.
 
 %------------------------------------------------------------------------------
 
