@@ -145,37 +145,37 @@ test(fragment_1) :- \+(uri_parse("scheme://host/#", _)).
 test(fragment_2) :- \+(uri_parse("scheme://host#", _)).
 
 % TEST SCHEMA MAILTO
-test(mailto1) :- uri_parse("mailto:userinfo", uri('mailto', 'userinfo', [], [], [], [], [])).
-test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'host', [], [], [], [])).
-test(mailto3) :- uri_parse("mailto:", uri('mailto', [], [], [], [], [], [])).
-test(mailto4) :- uri_parse("mailto:userinfo@host.com", uri('mailto', 'userinfo', 'host.com', [], [], [], [])).
-test(mailto5) :- uri_parse("mailto:user.info",uri('mailto', 'user.info', [], [], [], [], [])).
+test(mailto1) :- uri_parse("mailto:userinfo", uri('mailto', 'userinfo', [], 80, [], [], [])).
+test(mailto2) :- uri_parse("mailto:userinfo@host", uri('mailto', 'userinfo', 'host', 80, [], [], [])).
+test(mailto3) :- uri_parse("mailto:", uri('mailto', [], [], 80, [], [], [])).
+test(mailto4) :- uri_parse("mailto:userinfo@host.com", uri('mailto', 'userinfo', 'host.com', 80, [], [], [])).
+test(mailto5) :- uri_parse("mailto:user.info",uri('mailto', 'user.info', [], 80, [], [], [])).
 test(mailto_1) :- \+(uri_parse("mailto:userinfo@", _)).
 test(mailto_2) :- \+(uri_parse("mailto:userinfo@host?query", _)).
 test(mailto_3) :- \+(uri_parse("mailto:userinfo@host/path", _)).
 
 % TEST SCHEMA FAX
-test(fax1) :- uri_parse("fax:userinfo", uri('fax', 'userinfo', [], [], [], [], [])).
-test(fax2) :- uri_parse("fax:user123info", uri('fax', 'user123info', [], [], [], [], [])).
-test(fax3) :- uri_parse("fax:", uri('fax', [], [], [], [], [], [])).
+test(fax1) :- uri_parse("fax:userinfo", uri('fax', 'userinfo', [], 80, [], [], [])).
+test(fax2) :- uri_parse("fax:user123info", uri('fax', 'user123info', [], 80, [], [], [])).
+test(fax3) :- uri_parse("fax:", uri('fax', [], [], 80, [], [], [])).
 test(fax_2) :- \+(uri_parse("fax:user info", _)).
 test(fax_3) :- \+(uri_parse("fax:userinfo@host", _)).
 test(fax_4) :- \+(uri_parse("fax:userinfo/path", _)).
 
 % TEST SCHEMA TEL
-test(tel1) :- uri_parse("tel:userinfo", uri('tel', 'userinfo', [], [], [], [], [])).
-test(tel2) :- uri_parse("tel:user123info", uri('tel', 'user123info', [], [], [], [], [])).
-test(tel3) :- uri_parse("tel:0293564242", uri('tel', '0293564242', [], [], [], [], [])).
-test(tel4) :- uri_parse("tel:", uri('tel', [], [], [], [], [], [])).
+test(tel1) :- uri_parse("tel:userinfo", uri('tel', 'userinfo', [], 80, [], [], [])).
+test(tel2) :- uri_parse("tel:user123info", uri('tel', 'user123info', [], 80, [], [], [])).
+test(tel3) :- uri_parse("tel:0293564242", uri('tel', '0293564242', [], 80, [], [], [])).
+test(tel4) :- uri_parse("tel:", uri('tel', [], [], 80, [], [], [])).
 test(tel_1) :- \+(uri_parse("tel:user info", _)).
 test(tel_2) :- \+(uri_parse("tel:userinfo@host", _)).
 test(tel_3) :- \+(uri_parse("tel:userinfo/path", _)).
 
 % TEST SCHEMA NEWS
-test(news1) :- uri_parse("news:host", uri('news', [], 'host', [], [], [], [])).
-test(news2) :- uri_parse("news:host.subhost", uri('news', [], 'host.subhost', [], [], [], [])).
-test(news3) :- uri_parse("news:ho123st", uri('news', [], 'ho123st', [], [], [], [])).
-test(news4) :- uri_parse("news:", uri('news', [], [], [], [], [], [])).
+test(news1) :- uri_parse("news:host", uri('news', [], 'host', 80, [], [], [])).
+test(news2) :- uri_parse("news:host.subhost", uri('news', [], 'host.subhost', 80, [], [], [])).
+test(news3) :- uri_parse("news:ho123st", uri('news', [], 'ho123st', 80, [], [], [])).
+test(news4) :- uri_parse("news:", uri('news', [], [], 80, [], [], [])).
 test(news_1) :- \+(uri_parse("news:ho st", _)).
 test(news_2) :- \+(uri_parse("news:ho/st", _)).
 test(news_3) :- \+(uri_parse("news:host/path", _)).

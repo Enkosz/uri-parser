@@ -135,7 +135,7 @@
 			 (T (value (get-fragment uri-struct)))))
   )
 ; Funzione di supporto per la creazione di una istanza di authority
-(defun make-uri-authority (&optional userinfo host port)
+(defun make-uri-authority (&optional userinfo host (port (make-instance 'port :value 80)))
   (make-instance 'authority 
 		 :userinfo userinfo
 		 :host host

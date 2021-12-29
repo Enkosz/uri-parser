@@ -843,6 +843,7 @@
     (prepare-uri
         :scheme "mailto"
         :userinfo "userinfo"
+        :port 80
     )
 )
 (test "test-mailto2"
@@ -851,12 +852,14 @@
         :scheme "mailto"
         :userinfo "userinfo"
         :host "host"
+        :port 80
     )
 )
 (test "test-mailto3"
     (uri-parse "mailto:")
     (prepare-uri
         :scheme "mailto"
+        :port 80
     )
 )
 (test "test-mailto4"
@@ -865,6 +868,7 @@
         :scheme "mailto"
         :userinfo "userinfo"
         :host "host.com"
+        :port 80
     )
 )
 (test "test-mailto5"
@@ -872,6 +876,7 @@
     (prepare-uri
         :scheme "mailto"
         :userinfo "user.info"
+        :port 80
     )
 )
 (test "test-mailto_1"
@@ -893,6 +898,7 @@
     (prepare-uri
         :scheme "fax"
         :userinfo "userinfo"
+        :port 80
     )
 )
 (test "test-fax2"
@@ -900,12 +906,14 @@
     (prepare-uri
         :scheme "fax"
         :userinfo "user123info"
+        :port 80
     )
 )
 (test "test-fax3"
     (uri-parse "fax:")
     (prepare-uri
         :scheme "fax"
+        :port 80
     )
 )
 (test "test-fax_1"
@@ -927,6 +935,7 @@
     (prepare-uri
         :scheme "tel"
         :userinfo "userinfo"
+        :port 80
     )
 )
 (test "test-tel2"
@@ -934,6 +943,7 @@
     (prepare-uri
         :scheme "tel"
         :userinfo "user123info"
+        :port 80
     )
 )
 (test "test-tel3"
@@ -941,12 +951,14 @@
     (prepare-uri
         :scheme "tel"
         :userinfo "0293564242"
+        :port 80
     )
 )
 (test "test-tel4"
     (uri-parse "tel:")
     (prepare-uri
         :scheme "tel"
+        :port 80
     )
 )
 (test "test-tel_1"
@@ -968,6 +980,7 @@
     (prepare-uri
         :scheme "news"
         :host "host"
+        :port 80
     )
 )
 (test "test-news2"
@@ -975,6 +988,7 @@
     (prepare-uri
         :scheme "news"
         :host "host.subhost"
+        :port 80
     )
 )
 (test "test-news3"
@@ -982,12 +996,14 @@
     (prepare-uri
         :scheme "news"
         :host "ho123st"
+        :port 80
     )
 )
 (test "test-news4"
     (uri-parse "news:")
     (prepare-uri
         :scheme "news"
+        :port 80    
     )
 )
 (test "test-news_1"

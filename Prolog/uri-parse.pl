@@ -48,7 +48,7 @@ uri_parse_(URIString, uri(URI)) :-
 %------------------------------------------------------------------------------
 
 % ["fax" | "tel"] ':' [userinfo] 
-uri(components(Scheme, UserInfo, host([]), port([]),
+uri(components(Scheme, UserInfo, host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(Scheme),
     {current_scheme(Scheme)},
@@ -61,14 +61,14 @@ uri(components(Scheme, UserInfo, host([]), port([]),
 
 % "news" ':' [host] 
 uri(components(scheme('news'),
-	       userinfo([]), Host, port([]),
+	       userinfo([]), Host, port(80),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('news')),
     uri_host_aux(Host),
     !.
 
 uri(components(scheme('news'),
-	       userinfo([]), host([]), port([]),
+	       userinfo([]), host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('news')),
     !.
@@ -76,7 +76,7 @@ uri(components(scheme('news'),
 %------------------------------------------------------------------------------
 
 % "mailto" ':' [userinfo ['@'' host]]
-uri(components(scheme('mailto'), UserInfo, Host, port([]),
+uri(components(scheme('mailto'), UserInfo, Host, port(80),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
     uri_userinfo_scheme_syntax(UserInfo),
@@ -85,13 +85,13 @@ uri(components(scheme('mailto'), UserInfo, Host, port([]),
     !.
 
 % "mailto" ':' [userinfo]
-uri(components(scheme('mailto'), UserInfo, host([]), port([]),
+uri(components(scheme('mailto'), UserInfo, host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
     uri_scheme(scheme('mailto')),
     !,
     uri_userinfo_scheme_syntax(UserInfo).
 
-uri(components(scheme('mailto'), userInfo([]), host([]), port([]),
+uri(components(scheme('mailto'), userInfo([]), host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
            [], !.
 
