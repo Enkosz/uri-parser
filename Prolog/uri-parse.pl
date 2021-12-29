@@ -13,13 +13,15 @@ uri_display(URIStruct) :-
 
 uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Frag), Stream) :-
     is_stream(Stream),
-    format(Stream,'Scheme:      ~w ~n', [Scheme]),
-    format(Stream,'UserInfo:    ~w ~n', [UserInfo]),
-    format(Stream,'Host:        ~w ~n', [Host]),
-    format(Stream,'Port:        ~w ~n', [Port]),
-    format(Stream,'Path:        ~w ~n', [Path]),
-    format(Stream,'Query:       ~w ~n', [Query]),
-    format(Stream,'Fragment:    ~w', [Frag]),
+    format(Stream,
+        'Scheme:      ~w~n\c
+        UserInfo:    ~w~n\c
+        Host:        ~w~n\c
+        Port:        ~w~n\c
+        Path:        ~w~n\c
+        Query:       ~w~n\c
+        Fragment:    ~w', [Scheme, UserInfo, Host, Port, Path, Query, Frag]),
+    close(Stream),
     !.
 
 uri_display(false, Stream) :-
@@ -60,46 +62,53 @@ uri(components(Scheme, UserInfo, host([]), port(80),
 %------------------------------------------------------------------------------
 
 % "news" ':' [host] 
-uri(components(scheme('news'),
+uri(components(scheme(Scheme),
 	       userinfo([]), Host, port(80),
 	       path([]), query([]), fragment([]))) -->
-    uri_scheme(scheme('news')),
+    uri_scheme(scheme(Scheme)),
+    {scheme_equals_ignore_case(Scheme, "news")},
     uri_host_aux(Host),
     !.
 
-uri(components(scheme('news'),
+uri(components(scheme(Scheme),
 	       userinfo([]), host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
-    uri_scheme(scheme('news')),
+    uri_scheme(scheme(Scheme)),
+    {scheme_equals_ignore_case(Scheme, "news")},
     !.
 
 %------------------------------------------------------------------------------
 
 % "mailto" ':' [userinfo ['@'' host]]
-uri(components(scheme('mailto'), UserInfo, Host, port(80),
+uri(components(scheme(Scheme), UserInfo, Host, port(80),
 	       path([]), query([]), fragment([]))) -->
-    uri_scheme(scheme('mailto')),
+    uri_scheme(scheme(Scheme)),
+    {scheme_equals_ignore_case(Scheme, "mailto")},
     uri_userinfo_scheme_syntax(UserInfo),
     [@],
     uri_host_aux(Host), 
     !.
 
 % "mailto" ':' [userinfo]
-uri(components(scheme('mailto'), UserInfo, host([]), port(80),
+uri(components(scheme(Scheme), UserInfo, host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
-    uri_scheme(scheme('mailto')),
-    !,
-    uri_userinfo_scheme_syntax(UserInfo).
+    uri_scheme(scheme(Scheme)),
+    {scheme_equals_ignore_case(Scheme, "mailto")},
+    uri_userinfo_scheme_syntax(UserInfo),
+    !.
 
-uri(components(scheme('mailto'), userInfo([]), host([]), port(80),
+uri(components(scheme(Scheme), userInfo([]), host([]), port(80),
 	       path([]), query([]), fragment([]))) -->
-           [], !.
+           uri_scheme(scheme(Scheme)), 
+           {scheme_equals_ignore_case(Scheme, "mailto")},
+           !.
 
 %------------------------------------------------------------------------------
 
 % zos
-uri(components(scheme('zos'), UserInfo, Host, Port, Path, Query, Fragment)) -->
-    uri_scheme(scheme('zos')),
+uri(components(scheme(Scheme), UserInfo, Host, Port, Path, Query, Fragment)) -->
+    uri_scheme(scheme(Scheme)),
+    {scheme_equals_ignore_case(Scheme, "zos")},
     !,
     uri_authority(components(UserInfo, Host, Port)),
     uri_subdomain(components(Path, Query, Fragment)),
@@ -149,8 +158,13 @@ uri_scheme(scheme(Scheme)) -->
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
-current_scheme(scheme('tel')) :- !.
-current_scheme(scheme('fax')) :- !.
+current_scheme(scheme(Scheme)) :- 
+    scheme_equals_ignore_case(Scheme, "tel"), 
+    !.
+    
+current_scheme(scheme(Scheme)) :- 
+    scheme_equals_ignore_case(Scheme, "fax"), 
+    !.
 
 %------------------------------------------------------------------------------
 
@@ -356,3 +370,10 @@ digits([X | Xs]) -->
     digit(X),
     digits(Xs).
 digits([X | []]) --> digit(X), !.
+
+%------------------------------------------------------------------------------
+
+scheme_equals_ignore_case(Atom, Scheme) :-
+        atom_string(Atom, String),
+        string_lower(String, StringLowerCase),
+        StringLowerCase = Scheme.
