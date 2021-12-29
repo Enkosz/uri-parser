@@ -409,12 +409,12 @@
     )
   )
 
-(defun parse-news (URIStringList)
+(defun parse-news (URIStringList URIScheme)
     (let (
     (parsed-host (multiple-value-list (parse-host URIStringList))))
       (values 
       (make-uri-structure 
-        (make-instance 'schema :value "news")
+        (make-instance 'schema :value URIScheme)
         (make-uri-authority 
         nil 
         (first parsed-host))) 
@@ -438,7 +438,7 @@
   )
 )
 
-(defun parse-mailto (URIStringList)
+(defun parse-mailto (URIStringList URIScheme)
   (let (
 	(parsed-userinfo (multiple-value-list
 			  (parse-userinfo URIStringList '(eof)))))
@@ -449,7 +449,7 @@
         (if (null (first parsed-host))
           (error 'uri-invalid-mailto)
           (values (make-uri-structure 
-		            (make-instance 'schema :value "mailto")
+		            (make-instance 'schema :value URIScheme)
 		            (make-uri-authority 
 		              (first parsed-userinfo) 
 		              (first parsed-host)))  
@@ -457,14 +457,14 @@
       (if (null (first parsed-userinfo))
         (error 'uri-invalid-mailto)
         (values(make-uri-structure 
-              (make-instance 'schema :value "mailto")
+              (make-instance 'schema :value URIScheme)
               (make-uri-authority 
                (first parsed-userinfo)))   
 	     (second parsed-userinfo))))
     )
   )
 
-(defun parse-zos (URIStringList)
+(defun parse-zos (URIStringList URIScheme)
       (let* (
 	     (parsed-authority (multiple-value-list
 				(parse-authority URIStringList)))
@@ -475,7 +475,7 @@
 	     (parsed-fragment (multiple-value-list
 			       (parse-fragment (second parsed-query)))))
 	(values (make-uri-structure 
-		 (make-instance 'schema :value "zos")
+		 (make-instance 'schema :value URIScheme)
 		 (first parsed-authority)
 		 (first parsed-path)
 		 (first parsed-query)
@@ -485,25 +485,25 @@
 
 (defun is-special-scheme (URIScheme)
   (or 
-   (equalp URIScheme "news")
-   (equalp URIScheme "zos")
-   (equalp URIScheme "fax")
-   (equalp URIScheme "tel")
-   (equalp URIScheme "mailto")))
+   (equalp (string-downcase URIScheme) "news")
+   (equalp (string-downcase URIScheme) "zos")
+   (equalp (string-downcase URIScheme) "fax")
+   (equalp (string-downcase URIScheme) "tel")
+   (equalp (string-downcase URIScheme) "mailto")))
 
 (defun parse-special-schema-uri (URIStringList URIScheme)
   (cond
   ((and
     (eq (first UriStringList) 'eof)
-    (equalp URIScheme "zos")) (error 'uri-invalid-path-zos)) 
+    (equalp (string-downcase URIScheme) "zos")) (error 'uri-invalid-path-zos)) 
    ((eq (first UriStringList) 'eof) (values (make-uri-structure 
                                         (make-instance 'schema :value URIScheme)) 
                                         URIStringList))
-   ((equalp URIScheme "news") (parse-news URIStringList))
-   ((or (equalp URIScheme "fax")
-	(equalp URIScheme "tel")) (parse-telfax URIStringList URIScheme))
-   ((equalp URIScheme "mailto") (parse-mailto URIStringList))
-   ((equalp URIScheme "zos") (parse-zos URIStringList))
+   ((equalp (string-downcase URIScheme) "news") (parse-news URIStringList URIScheme))
+   ((or (equalp (string-downcase URIScheme) "fax")
+	(equalp (string-downcase URIScheme) "tel")) (parse-telfax URIStringList URIScheme))
+   ((equalp (string-downcase URIScheme) "mailto") (parse-mailto URIStringList URIScheme))
+   ((equalp (string-downcase URIScheme) "zos") (parse-zos URIStringList URIScheme))
    )
   )
 
