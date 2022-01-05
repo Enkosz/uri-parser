@@ -135,19 +135,22 @@
 			 (T (value (get-fragment uri-struct)))))
   )
 ; Funzione di supporto per la creazione di una istanza di authority
-(defun make-uri-authority (&optional userinfo host (port (make-instance 'port :value 80)))
+(defun make-uri-authority
+	(&optional userinfo host (port (make-instance 'port :value 80)))
   (make-instance 'authority 
 		 :userinfo userinfo
 		 :host host
 		 :port port))
 ; Funzione di supporto per la creazione di una istanza di uri-structure
-(defun make-uri-structure (Scheme &optional (authority (make-uri-authority)) path query fragment)
+(defun make-uri-structure
+	(Scheme &optional (authority (make-uri-authority)) path query fragment)
   (make-instance 'uri-structure 
 		 :schema Scheme
 		 :authority authority
 		 :path path
 		 :query query
 		 :fragment fragment))
+
 #| Funzione che permette di recuperare tramite ricorsione identificatori delimi-
    tati dai caratteri inseriti in delimitators, di ritornare NIL in caso ci si
    imbatta nei caratteri inseriti in banned.
@@ -170,66 +173,81 @@
 #| Funzione che permette di gestire i casi speciali di identificatore che sono
    ricorsivi su un carattere delimitatore (vedasi host).
 |#
-(defun identificator-special (list delimitator delimitatorIdentificator &optional bannedIdentificator)
+(defun identificator-special (list del delIdent &optional banned)
   (cond 
-   ((member (first list) '(#\. #\/ #\? #\# #\@ #\: eof)) (error 'uri-invalid-identificatorSpecial))
-   (T (let ((parse (multiple-value-list (identificator list delimitatorIdentificator bannedIdentificator))))
-	(if (eq (first (second parse)) delimitator) ; abbiamo un subhost/subpath
-            (let ((secondParse (multiple-value-list (identificator-special (cdr (second parse)) delimitator delimitatorIdentificator bannedIdentificator))))
-              (values (append (first parse) (list delimitator) (first secondParse)) (second secondParse)))  
-	  (values-list parse))))
-  )
-)
+   ((member (first list) '(#\. #\/ #\? #\# #\@ #\: eof))
+	(error 'uri-invalid-identificatorSpecial))
+   (T (let ((parse (multiple-value-list (identificator list delIdent banned))))
+		(if (eq (first (second parse)) del) ; abbiamo un subhost/subpath
+			(let (
+				  (secondParse
+				   (multiple-value-list
+					(identificator-special
+					 (cdr (second parse)) del delIdent banned))))
+			  (values
+			   (append (first parse) (list del) (car secondParse))
+			   (second secondParse)))  
+		  (values-list parse))))))
 
 (defun space-encoding (URIList)
   (cond 
-    ((null URIList) nil)
-    ((eq (car URIList) #\Space) (append '(#\% #\2 #\0) (space-encoding(cdr URIList))))
-    (T (cons (car URIList) (space-encoding(cdr URIList))))
-  )
-)
+   ((null URIList)
+	nil)
+   ((eq (car URIList) #\Space)
+	(append '(#\% #\2 #\0) (space-encoding(cdr URIList))))
+   (T
+	(cons (car URIList) (space-encoding(cdr URIList))))))
 
 (defun parse-scheme (list)
-  (multiple-value-bind (parsed remaining)
-		       (identificator list '(#\:) (coerce "/?#@" 'list))
-		       (cond 
-			((null parsed) (error 'uri-invalid-scheme))
-			(T (values (make-instance 'schema :value (coerce parsed 'string)) (rest remaining))))
-		       )
-  )
+  (multiple-value-bind
+   (parsed remaining)
+   (identificator list '(#\:) (coerce "/?#@" 'list))
+   (cond
+	((null parsed) (error 'uri-invalid-scheme))
+	(T (values
+		(make-instance 'schema :value (coerce parsed 'string))
+		(rest remaining))))))
 
 (defun parse-userinfo (list &optional delimitatorSpecial)
-  (multiple-value-bind (parsed remaining)
-		       (identificator list (append '(#\@) delimitatorSpecial) (set-difference '(#\/ #\? #\# #\: #\Space) delimitatorSpecial))
-		       (cond ((null parsed) 
-			      (values nil remaining)
-			      )
-			     ((not (null delimitatorSpecial)) (values 
-							       (make-instance 'userinfo :value (coerce parsed 'string)) 
-							       remaining))
-			     (T (values 
-				 (make-instance 'userinfo :value (coerce parsed 'string)) 
-				 (cdr remaining))))))
+  (multiple-value-bind
+   (parsed remaining)
+   (identificator
+	list
+	(append '(#\@) delimitatorSpecial)
+	(set-difference '(#\/ #\? #\# #\: #\Space) delimitatorSpecial))
+   (cond
+	((null parsed) (values nil remaining))
+	((not (null delimitatorSpecial))
+	 (values
+	  (make-instance 'userinfo :value (coerce parsed 'string)) 
+	  remaining))
+	(T (values
+		(make-instance 'userinfo :value (coerce parsed 'string)) 
+		(cdr remaining))))))
 
 (defun parse-host-aux (list)
-  (multiple-value-bind (parsed remaining)
-		       (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@ #\Space))
-		       (cond ((null parsed) 
-			      (error 'uri-invalid-host))
-			     (T (values 
-				 (make-instance 'host :value (coerce parsed 'string)) 
-				 remaining))
-			     )
-		       )
-  )
+  (multiple-value-bind
+   (parsed remaining)
+   (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@ #\Space))
+   (cond
+	((null parsed)
+	 (error 'uri-invalid-host))
+	(T (values 
+		(make-instance 'host :value (coerce parsed 'string)) remaining)))))
 
 (defun triplet (list &optional final)
-  (let ((parse (multiple-value-list (identificator list '(#\. eof #\: #\/) '(#\@ #\? #\#  #\Space)))))
+  (let ((parse
+		 (multiple-value-list
+		  (identificator list '(#\. eof #\: #\/) '(#\@ #\? #\#  #\Space)))))
     (cond 
-     ((null (first parse)) (error 'ip-non-valido))
-     ((and final (eq (first (second parse)) #\.)) (error 'ip-non-valido))
-     ((and (not final) (not(eq (first (second parse)) #\.))) (error 'ip-non-valido))
-     (T (values (first parse) (second parse))))))
+     ((null (first parse))
+	  (error 'ip-non-valido))
+     ((and final (eq (first (second parse)) #\.))
+	  (error 'ip-non-valido))
+     ((and (not final) (not(eq (first (second parse)) #\.)))
+	  (error 'ip-non-valido))
+     (T
+	  (values (first parse) (second parse))))))
 
 (defun parse-ip (list)
   (let* (
@@ -245,10 +263,20 @@
      ((or (< num1 0) (> num1 255)
           (< num2 0) (> num2 255)
           (< num3 0) (> num3 255)
-          (< num4 0) (> num4 255)) (error 'ip-non-valido))
+          (< num4 0) (> num4 255))
+	  (error 'ip-non-valido))
      ((member (first (second fourhTriplet)) '(#\/ #\: eof)) 
-      (values (make-instance 'host :value (coerce 
-					   (append (first firstTriplet) '(#\.) (first secondTriplet) '(#\.) (first thirdTriplet) '(#\.) (first fourhTriplet)) 'string)) (second fourhTriplet)))
+      (values
+	   (make-instance
+		'host :value (coerce
+					  (append (first firstTriplet)
+							  '(#\.)
+							  (first secondTriplet)
+							  '(#\.)
+							  (first thirdTriplet)
+							  '(#\.)
+							  (first fourhTriplet)) 'string))
+	   (second fourhTriplet)))
      (T (error 'ip-non-valido)))))
 
 (defun parse-host (list)
@@ -260,18 +288,16 @@
       (values 
        (make-instance 'port :value 80) 
        list)
-    (multiple-value-bind (parsed remaining)
-			 (identificator (cdr list) '(#\/ eof))
-			 (cond ((null parsed) 
-				(error 'uri-invalid-port))
-			       ((every #'digit-char-p (coerce parsed 'string)) (values 
-										(make-instance 'port :value (parse-integer(coerce parsed 'string)))
-										remaining))
-			       (T (error 'uri-invalid-port))
-			       )
-			 )
-    )
-  )
+    (multiple-value-bind
+	 (parsed remaining)
+	 (identificator (cdr list) '(#\/ eof))
+	 (cond
+	  ((null parsed) (error 'uri-invalid-port))
+	  ((every #'digit-char-p (coerce parsed 'string))
+	   (values
+		(make-instance 'port :value (parse-integer (coerce parsed 'string)))
+		remaining))
+	  (T (error 'uri-invalid-port))))))
 
 (defun parse-path-aux (list)
   (cond 
@@ -282,32 +308,33 @@
   (multiple-value-bind
    (parsed remaining)
    (parse-path-aux list)
-   (cond ((null parsed) (values nil remaining))
-	 (T (values (make-instance 'path :value (coerce (space-encoding parsed) 'string)) 
-		    remaining)))))
+   (cond
+	((null parsed) (values nil remaining))
+	(T (values
+		(make-instance 'path :value (coerce (space-encoding parsed) 'string)) 
+		remaining)))))
 
 (defun parse-id44 (list)
   (if (eq (first list) #\.) (error 'invalid-uri-id44)
     (multiple-value-bind
      (parsed remaining)
      (identificator list '(#\( #\? #\# eof) '(#\@ #\Space #\) #\%))
-     (cond ((null parsed) (error 'uri-invalid-id44))
-	   ((and (<= (list-length parsed) 44) (not (eq (first (last parsed)) #\.))) (values
-					  (coerce parsed 'string)
-					  remaining))))))
+     (cond
+	  ((null parsed) (error 'uri-invalid-id44))
+	  ((and (<= (list-length parsed) 44) (not (eq (first (last parsed)) #\.)))
+	   (values (coerce parsed 'string) remaining))))))
 
 (defun parse-id8 (list)
-   (multiple-value-bind
-    (parsed remaining)
-    (identificator list '(#\)) '(#\@ #\. #\Space #\? #\#))
-    (cond ((null parsed) (error 'uri-invalid-id8))
-	  ((and 
-      (<= (list-length parsed) 8) 
-      (not (digit-char-p (first parsed)))
-      (every #'alphanumericp (coerce parsed 'string))
-      ) (values
-					(coerce parsed 'string)
-					remaining)))))
+  (multiple-value-bind
+   (parsed remaining)
+   (identificator list '(#\)) '(#\@ #\. #\Space #\? #\#))
+   (cond
+	((null parsed) (error 'uri-invalid-id8))
+	((and
+	  (<= (list-length parsed) 8)
+	  (not (digit-char-p (first parsed)))
+	  (every #'alphanumericp (coerce parsed 'string)))
+	 (values (coerce parsed 'string) remaining)))))
 
 
 (defun parse-path-zos (list)
@@ -340,7 +367,8 @@
      (identificator (cdr list) '(#\# eof))
      (cond ((null parsed) (error 'uri-invalid-query))
 	   (T (values
-	       (make-instance 'userinfo :value (coerce (space-encoding parsed) 'string)) 
+	       (make-instance
+			'userinfo :value (coerce (space-encoding parsed) 'string)) 
 	       remaining))
 	   ))))
 
@@ -352,7 +380,8 @@
      (identificator (cdr list) '(eof))
      (cond ((null parsed) (error 'uri-invalid-fragment))
 	   (T (values
-	       (make-instance 'userinfo :value (coerce (space-encoding parsed) 'string)) 
+	       (make-instance
+			'userinfo :value (coerce (space-encoding parsed) 'string)) 
 	        remaining))))))
 
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
@@ -493,17 +522,22 @@
 
 (defun parse-special-schema-uri (URIStringList URIScheme)
   (cond
-  ((and
+   ((and
     (eq (first UriStringList) 'eof)
-    (equalp (string-downcase URIScheme) "zos")) (error 'uri-invalid-path-zos)) 
-   ((eq (first UriStringList) 'eof) (values (make-uri-structure 
-                                        (make-instance 'schema :value URIScheme)) 
-                                        URIStringList))
-   ((equalp (string-downcase URIScheme) "news") (parse-news URIStringList URIScheme))
+    (equalp (string-downcase URIScheme) "zos"))
+	(error 'uri-invalid-path-zos)) 
+   ((eq (first UriStringList) 'eof)
+	(values (make-uri-structure
+			 (make-instance 'schema :value URIScheme)) URIStringList))
+   ((equalp (string-downcase URIScheme) "news")
+	(parse-news URIStringList URIScheme))
    ((or (equalp (string-downcase URIScheme) "fax")
-	(equalp (string-downcase URIScheme) "tel")) (parse-telfax URIStringList URIScheme))
-   ((equalp (string-downcase URIScheme) "mailto") (parse-mailto URIStringList URIScheme))
-   ((equalp (string-downcase URIScheme) "zos") (parse-zos URIStringList URIScheme))
+		(equalp (string-downcase URIScheme) "tel"))
+	(parse-telfax URIStringList URIScheme))
+   ((equalp (string-downcase URIScheme) "mailto")
+	(parse-mailto URIStringList URIScheme))
+   ((equalp (string-downcase URIScheme) "zos")
+	(parse-zos URIStringList URIScheme))
    )
   )
 
@@ -533,7 +567,8 @@
 ; Richiama una funzione che gestisce i vari tipi di URI
 (defun uri-parse_ (URIStringList)
   (let 
-      ((parsed_uri (multiple-value-list (parse-uri-type (append URIStringList '(eof))))))
+      ((parsed_uri (multiple-value-list
+					(parse-uri-type (append URIStringList '(eof))))))
     (cond 
      ((not (eq (first (second parsed_uri)) 'eof)) (error 'invalid-uri))
      (T (first parsed_uri))
