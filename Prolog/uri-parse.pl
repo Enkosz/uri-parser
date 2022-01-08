@@ -21,7 +21,6 @@ uri_display(uri(Scheme, UserInfo, Host, Port, Path, Query, Frag), Stream) :-
         Path:        ~w~n\c
         Query:       ~w~n\c
         Fragment:    ~w', [Scheme, UserInfo, Host, Port, Path, Query, Frag]),
-    close(Stream),
     !.
 
 uri_display(false, Stream) :-
@@ -154,7 +153,7 @@ uri_subdomain(components(path([]), query([]), fragment([]))) -->
 
 % scheme
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList, ['/', '?', '#', '@', ':', ' '], ascii),
+    identificator(SchemeList, ['/', '?', '#', '@', ':'], ascii),
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
@@ -170,7 +169,7 @@ current_scheme(scheme(Scheme)) :-
 
 % userinfo
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':'], ascii),
     [@],
     { atom_chars(UserInfo, UserInfoList) },
     !.
@@ -178,7 +177,7 @@ uri_userinfo(userinfo(UserInfo)) -->
 uri_userinfo(userinfo([])) --> [], !.
 
 uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':', ' '], ascii),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':'], ascii),
     { atom_chars(UserInfo, UserInfoList) },
     !.
 
@@ -203,14 +202,14 @@ uri_ip(Ip) -->
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 uri_host(X) -->
-    identificator(A, ['.', '/', '?', '#', '@', ':', ' '], ascii),
+    identificator(A, ['.', '/', '?', '#', '@', ':'], ascii),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 
 uri_host(X) -->
-    identificator(X, ['.', '/', '?', '#', '@', ':', ' '], ascii).
+    identificator(X, ['.', '/', '?', '#', '@', ':'], ascii).
 
 %------------------------------------------------------------------------------
 
@@ -328,12 +327,7 @@ uri_fragment_aux(FragmentList) -->
 
 %------------------------------------------------------------------------------
 
-% identificator
-identificator(['%', '2', '0' | T], List, CharType) -->
-    [' '],
-    {valid_char(' ', List, CharType)},
-    identificator(T, List, CharType),
-    !.
+% identificator 
 identificator([H | T], List, CharType) -->
     [H],
     {valid_char(H, List, CharType)},
