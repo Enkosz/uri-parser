@@ -245,6 +245,15 @@
         :port 80
     )
 )
+(test "test-userinfo8"
+    (uri-parse "http://userin fo@host")
+    (prepare-uri
+        :scheme "http"
+        :userinfo "userin fo"
+        :host "host"
+        :port 80
+    )
+)
 (test "test-userinfo_1"
     (uri-parse "http://user@info@host")
     nil
@@ -266,7 +275,7 @@
     nil
 )
 (test "test-userinfo_6"
-    (uri-parse "http://userin fo@host")
+    (uri-parse "s://@host")
     nil
 )
 (test "test-userinfo_7"
@@ -277,10 +286,7 @@
     (uri-parse "http://@")
     nil
 )
-(test "test-userinfo_8"
-    (uri-parse "s://@host")
-    nil
-)
+
 
 ; TEST HOST
 (test "test-host1"
@@ -401,7 +407,31 @@
         :path "path"
     )
 )
-
+(test "test-host15"
+    (uri-parse "scheme://host ")
+    (prepare-uri
+        :scheme "scheme"
+        :host "host "
+        :port 80
+    )
+)
+(test "test-host16"
+    (uri-parse "scheme://userinfo@ho st:123")
+    (prepare-uri
+        :scheme "scheme"
+        :userinfo "userinfo"
+        :host "ho st"
+        :port 123
+    )
+)
+(test "test-host17"
+    (uri-parse "scheme:// host")
+    (prepare-uri
+        :scheme "scheme"
+        :host " host"
+        :port 80
+    )
+)
 (test "test-host_1"
     (uri-parse "scheme://userinfo@ho?st:123")
     nil
@@ -423,7 +453,7 @@
     nil
 )
 (test "test-host_6"
-    (uri-parse "scheme://userinfo@ho st:123")
+    (uri-parse "s://")
     nil
 )
 (test "test-host_7"
@@ -451,7 +481,7 @@
     nil
 )
 (test "test-host_13"
-    (uri-parse "scheme://host ")
+    (uri-parse "scheme://#host")
     nil
 )
 (test "test-host_14"
@@ -472,18 +502,6 @@
 )
 (test "test-host_18"
     (uri-parse "scheme://?host")
-    nil
-)
-(test "test-host_19"
-    (uri-parse "scheme://#host")
-    nil
-)
-(test "test-host_20"
-    (uri-parse "scheme:// host")
-    nil
-)
-(test "test-host_21"
-    (uri-parse "s://")
     nil
 )
 
@@ -613,7 +631,7 @@
         :scheme "scheme"
         :host "host"
         :port 80
-        :path "pro%20va"
+        :path "pro va"
     )
 )
 (test "test-path7"
@@ -686,13 +704,13 @@
         :query "query"
     )
 )
-(test "test-query1"
+(test "test-query2"
     (uri-parse "scheme://host/?qu ery")
     (prepare-uri
         :scheme "scheme"
         :host "host"
         :port 80
-        :query "qu%20ery"
+        :query "qu ery"
     )
 )
 (test "test-query3"
@@ -825,7 +843,7 @@
         :scheme "scheme"
         :host "host"
         :port 80
-        :fragment "fr%20ag"
+        :fragment "fr ag"
     )
 )
 (test "test-fragment_1"
@@ -916,15 +934,19 @@
         :port 80
     )
 )
-(test "test-fax_1"
+(test "test-fax4"
     (uri-parse "fax:user info")
-    nil
+    (prepare-uri
+        :scheme "fax"
+        :userinfo "user info"
+        :port 80
+    )
 )
-(test "test-fax_2"
+(test "test-fax_1"
     (uri-parse "fax:userinfo@host")
     nil
 )
-(test "test-fax_3"
+(test "test-fax_2"
     (uri-parse "fax:userinfo/path")
     nil
 )
@@ -961,15 +983,19 @@
         :port 80
     )
 )
-(test "test-tel_1"
+(test "test-tel5"
     (uri-parse "tel:user info")
-    nil
+    (prepare-uri
+        :scheme "tel"
+        :userinfo "user info"
+        :port 80
+    )
 )
-(test "test-tel_2"
+(test "test-tel_1"
     (uri-parse "tel:userinfo@host")
     nil
 )
-(test "test-tel_3"
+(test "test-tel_2"
     (uri-parse "tel:userinfo/path")
     nil
 )
@@ -1006,8 +1032,16 @@
         :port 80    
     )
 )
-(test "test-news_1"
+(test "test-news5"
     (uri-parse "news:ho st")
+     (prepare-uri
+        :scheme "news"
+        :host "ho st"
+        :port 80
+    )
+)
+(test "test-news_1"
+    (uri-parse "news:userinfo@host")
     nil
 )
 (test "test-news_2"
@@ -1030,10 +1064,7 @@
     (uri-parse "news:host:80")
     nil
 )
-(test "test-news_7"
-    (uri-parse "news:userinfo@host")
-    nil
-)
+
 
 ;   TEST SCHEMA ZOS
 (test "test-zos1"

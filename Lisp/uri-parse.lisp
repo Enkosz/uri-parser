@@ -189,15 +189,6 @@
 			   (second secondParse)))  
 		  (values-list parse))))))
 
-(defun space-encoding (URIList)
-  (cond 
-   ((null URIList)
-	nil)
-   ((eq (car URIList) #\Space)
-	(append '(#\% #\2 #\0) (space-encoding(cdr URIList))))
-   (T
-	(cons (car URIList) (space-encoding(cdr URIList))))))
-
 (defun parse-scheme (list)
   (multiple-value-bind
    (parsed remaining)
@@ -214,7 +205,7 @@
    (identificator
 	list
 	(append '(#\@) delimitatorSpecial)
-	(set-difference '(#\/ #\? #\# #\: #\Space) delimitatorSpecial))
+	(set-difference '(#\/ #\? #\# #\:) delimitatorSpecial))
    (cond
 	((null parsed) (values nil remaining))
 	((not (null delimitatorSpecial))
@@ -228,7 +219,7 @@
 (defun parse-host-aux (list)
   (multiple-value-bind
    (parsed remaining)
-   (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@ #\Space))
+   (identificator-special list #\. '(#\. #\/ #\: eof) '(#\? #\# #\@))
    (cond
 	((null parsed)
 	 (error 'uri-invalid-host))
@@ -311,7 +302,7 @@
    (cond
 	((null parsed) (values nil remaining))
 	(T (values
-		(make-instance 'path :value (coerce (space-encoding parsed) 'string)) 
+		(make-instance 'path :value (coerce parsed 'string)) 
 		remaining)))))
 
 (defun parse-id44 (list)
@@ -368,7 +359,7 @@
      (cond ((null parsed) (error 'uri-invalid-query))
 	   (T (values
 	       (make-instance
-			'userinfo :value (coerce (space-encoding parsed) 'string)) 
+			'userinfo :value (coerce parsed 'string)) 
 	       remaining))
 	   ))))
 
@@ -381,7 +372,7 @@
      (cond ((null parsed) (error 'uri-invalid-fragment))
 	   (T (values
 	       (make-instance
-			'userinfo :value (coerce (space-encoding parsed) 'string)) 
+			'userinfo :value (coerce parsed 'string)) 
 	        remaining))))))
 
 ; Restituisce un oggetto composed che contiene userinfo, host, port e il resto dell'input da parsare
