@@ -7,6 +7,7 @@
 :- module(uri_parse, [uri_parse/2, uri_display/1, uri_display/2]).
 
 % uri_display
+% stampa uriStruct
 uri_display(URIStruct) :-
     current_output(CurrentStream),
     uri_display(URIStruct, CurrentStream).
@@ -30,6 +31,7 @@ uri_display(false, Stream) :-
 %------------------------------------------------------------------------------
 
 % uri_parse
+% metodo principale, esegue il parser 
 uri_parse(URIString, uri(Scheme, UserInfo, Host, Port, Path, Query, Frag)) :-
     string_chars(URIString, URIChars),
     uri_parse_(URIChars,
@@ -105,6 +107,7 @@ uri(components(scheme(Scheme), userInfo([]), host([]), port(80),
 %------------------------------------------------------------------------------
 
 % zos
+% caso di uri1, ma con path obbligatorio
 uri(components(scheme(Scheme), UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(scheme(Scheme)),
     {scheme_equals_ignore_case(Scheme, "zos")},
@@ -116,7 +119,7 @@ uri(components(scheme(Scheme), UserInfo, Host, Port, Path, Query, Fragment)) -->
 
 %------------------------------------------------------------------------------
 
-% URI
+% URI1: scheme ':' [authorithy] ['/' [path] ['?' query] ['#' fragment]]
 uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
     uri_scheme(Scheme),
     uri_authority(components(UserInfo, Host, Port)),
@@ -126,6 +129,7 @@ uri(components(Scheme, UserInfo, Host, Port, Path, Query, Fragment)) -->
 %------------------------------------------------------------------------------
 
 % Uri authority
+% regola che si occupa di userinfo, host e port
 uri_authority(components(UserInfo, Host, Port)) -->
     [/, /],
     uri_userinfo(UserInfo),
@@ -139,6 +143,8 @@ uri_authority(components(userinfo([]), host([]), port(80))) -->
 
 %------------------------------------------------------------------------------
 
+% Uri subdomain
+% regola che si occupa di path, query e fragment
 uri_subdomain(components(Path, Query, Fragment)) -->
     [/],
     uri_path(Path),
@@ -176,6 +182,7 @@ uri_userinfo(userinfo(UserInfo)) -->
 
 uri_userinfo(userinfo([])) --> [], !.
 
+% userinfo speciale, per i casi URI2
 uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
     identificator(UserInfoList, ['/', '?', '#', '@', ':'], ascii),
     { atom_chars(UserInfo, UserInfoList) },
@@ -247,6 +254,8 @@ uri_path_aux(PathList) -->
     identificator(PathList, ['/', '?', '#', '@', ':'], ascii),
     !.
 
+% path_zos
+% regola per il path dello zos 
 uri_path_zos -->
     uri_id44(Id44),
     ['('],
@@ -287,6 +296,8 @@ uri_id8(Id8) -->
     identificator(Id8, [' '], alnum),
     !.
 
+% checkPath
+% controlla ex-post la correttezza del path di zos
 checkPath(path(AtomPath)) :-
     atom(AtomPath),
     atom_chars(AtomPath, CharsPath),
@@ -352,12 +363,16 @@ valid_char_aux(X, [Invalid_char | Rest]) :-
 
 %------------------------------------------------------------------------------
 
+% triplets
+% controlla e divide le triplette di numeri per l'ip
 triplets(TripletsChars) --> 
     digit(A), digit(B), digit(C),
     {TripletsChars = [A, B, C],
      number_chars(TripletsNumber, TripletsChars),
      between(0, 255, TripletsNumber) }.
 
+% digit
+% controlla che X sia una digit
 digit(X) --> [X], { is_digit(X) }.
 
 digits([X | Xs]) -->
@@ -367,6 +382,8 @@ digits([X | []]) --> digit(X), !.
 
 %------------------------------------------------------------------------------
 
+% schema equals ignore case
+% controlla che i atom e scheme siano uguali, case insensitive
 scheme_equals_ignore_case(Atom, Scheme) :-
         atom_string(Atom, String),
         string_lower(String, StringLowerCase),
