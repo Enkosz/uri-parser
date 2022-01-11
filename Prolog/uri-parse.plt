@@ -14,7 +14,8 @@ test(schema7) :- uri_parse("s+:", uri('s+', [], [], 80, [], [], [])).
 test(schema8) :- uri_parse("s-:", uri('s-', [], [], 80, [], [], [])).  
 test(schema9) :- uri_parse("s.:", uri('s.', [], [], 80, [], [], [])).  
 test(schema10) :- uri_parse("+:", uri('+', [], [], 80, [], [], [])).  
-test(schema11) :- uri_parse("1:", uri('1', [], [], 80, [], [], [])).                  
+test(schema11) :- uri_parse("1:", uri('1', [], [], 80, [], [], [])).    
+test(schema12) :- uri_parse("ù:", uri('ù', [], [], 80, [], [], [])).                 
 test(schema_1) :- \+(uri_parse("://google.com", _)).
 test(schema_2) :- \+(uri_parse("@://google.com", _)).
 test(schema_3) :- \+(uri_parse("h:h://google.com", _)).
@@ -28,7 +29,7 @@ test(schema_10) :- \+(uri_parse("s#:", _)).
 test(schema_11) :- \+(uri_parse("s@:", _)). 
 test(schema_12) :- \+(uri_parse("s::", _)). 
 test(schema_13) :- \+(uri_parse(":", _)).                                   
-test(schema_14) :- \+(uri_parse("ù:", _)).                                          
+                                       
 
 
 % TEST USERINFO

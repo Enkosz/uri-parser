@@ -159,7 +159,7 @@ uri_subdomain(components(path([]), query([]), fragment([]))) -->
 
 % scheme
 uri_scheme(scheme(Scheme)) --> 
-    identificator(SchemeList, ['/', '?', '#', '@', ':'], ascii),
+    identificator(SchemeList, ['/', '?', '#', '@', ':'], print),
     [:],
     { atom_chars(Scheme, SchemeList) }.
 
@@ -175,7 +175,7 @@ current_scheme(scheme(Scheme)) :-
 
 % userinfo
 uri_userinfo(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':'], ascii),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':'], print),
     [@],
     { atom_chars(UserInfo, UserInfoList) },
     !.
@@ -184,7 +184,7 @@ uri_userinfo(userinfo([])) --> [], !.
 
 % userinfo speciale, per i casi URI2
 uri_userinfo_scheme_syntax(userinfo(UserInfo)) -->
-    identificator(UserInfoList, ['/', '?', '#', '@', ':'], ascii),
+    identificator(UserInfoList, ['/', '?', '#', '@', ':'], print),
     { atom_chars(UserInfo, UserInfoList) },
     !.
 
@@ -209,14 +209,14 @@ uri_ip(Ip) -->
     { flatten([A, '.', B, '.', C, '.', D], Ip) }.
 
 uri_host(X) -->
-    identificator(A, ['.', '/', '?', '#', '@', ':'], ascii),
+    identificator(A, ['.', '/', '?', '#', '@', ':'], print),
     [.],
     uri_host(B),
     {flatten([[A | [.]], B], X)},
     !.
 
 uri_host(X) -->
-    identificator(X, ['.', '/', '?', '#', '@', ':'], ascii).
+    identificator(X, ['.', '/', '?', '#', '@', ':'], print).
 
 %------------------------------------------------------------------------------
 
@@ -245,13 +245,13 @@ uri_path(path([])) --> [], !.
 
 % path_aux//1
 uri_path_aux(PathList) -->
-    identificator(A, ['/', '?', '#', '@', ':'], ascii),
+    identificator(A, ['/', '?', '#', '@', ':'], print),
     [/],
     uri_path_aux(B),
     {PathList = [A, [/ | B]]},
     !.
 uri_path_aux(PathList) -->
-    identificator(PathList, ['/', '?', '#', '@', ':'], ascii),
+    identificator(PathList, ['/', '?', '#', '@', ':'], print),
     !.
 
 % path_zos
@@ -317,7 +317,7 @@ uri_query(query([])) --> [], !.
 
 uri_query_aux(QueryList) -->
     [?],
-    identificator(QueryList, ['#'], ascii),
+    identificator(QueryList, ['#'], print),
     !.
 
 %------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ uri_fragment(fragment([])) --> [], !.
 
 uri_fragment_aux(FragmentList) -->
     [#],
-    identificator(FragmentList, [], ascii),
+    identificator(FragmentList, [], print),
     !.
 
 %------------------------------------------------------------------------------
