@@ -598,14 +598,12 @@
 ;; output: uri-structure
 (defun uri-parse (URIString)
   (handler-case (uri-parse_ (coerce URIString 'list))
-    (error (c)
-	   (format t "URI non valido")
-	   (values nil c))))
+    (error ())))
 
 ;; funzione che permette la stampa dell'uri-structure
 ;; input: uri-structure, optional Stream
 (defun uri-display (URIStruct &optional (Stream t))
-  (if (typep URIStruct 'uri-structure)
+  (when (typep URIStruct 'uri-structure)
     (format Stream 
       (concatenate 'string
         "Scheme:   ~S~%" 
@@ -621,6 +619,5 @@
     (uri-port URIStruct)
     (uri-path URIStruct)
     (uri-query URIStruct)
-    (uri-fragment URIStruct))
-    (format Stream "Uri invalid")))
+    (uri-fragment URIStruct))))
 
