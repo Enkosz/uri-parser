@@ -25,3 +25,29 @@ Possiamo definire dunque dei predicati principali:
       stampare in modo formattato le singole componenti del nostro URI.
     - uri_display/1, permette dato un oggetto di tipo URI la stampa sullo 
       STDOUT.
+
+L'idea di base per la realizzazione del parser è la divisione in più parti della
+stringa in input tramite un predicato principale di appoggio, ovvero
+    - identificator//3, che è una DCG che ci permette di divedere in due una
+      una lista data in input grazie ad una lista di delimitatori.
+
+Quindi la stringa URI presa in input da uri_parse/2, verrà prima trasformata in 
+lista e successivamente divisa nei vari campi. La divisione dei campi avviene 
+grazie alla grammatica definita dalla consegna.
+
+In particolare abbiamo costruito un AST nel seguente modo:
+    - Scheme 
+    - Authority
+      - Userinfo
+      - Host
+      - Port 
+    - Subdomain
+      - Path
+      - Query
+      - Fragment
+
+Ognuno dei seguenti elementi è stato parsato attraverso dei predicati dedicati.
+
+Inoltre, per garantire il codice più completo possibile, abbiamo implementato 
+degli unit test che è possibile eseguire per controllare la correttezza del 
+parser.
