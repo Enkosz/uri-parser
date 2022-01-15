@@ -365,7 +365,7 @@ imbatta nei caratteri inseriti in banned.|#
 				  (cond ((null id8) (error 'invalid-zos-path))
 						(T (values
 							(make-instance
-							 'path :value (concatenate 'string id44 "(" id8 ")"))
+							'path :value (concatenate 'string id44 "(" id8 ")"))
 							(cdr extra))))))
 			   (T (values (make-instance 'path :value id44) remaining)))))))
 

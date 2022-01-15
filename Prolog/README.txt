@@ -3,6 +3,9 @@ Componenti del gruppo:
     2) 872783 Giannino Simone
     3) 866147 Biotto Simone
 
+Requisiti:
+Per una corretta esecuzione è richiesta almeno la LTS di Swipl 8.4.1
+
 Introduzione:
 L'obiettivo del progetto propostoci è la realizzazione di un parser per stringhe
 URI. La versione presentata e sviluppata è una semplificazione della specifica 
