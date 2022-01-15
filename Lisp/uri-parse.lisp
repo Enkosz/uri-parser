@@ -98,8 +98,9 @@ Se uri-parsed-struct è NIL i metodi ritorneranno NIL.
   (when uri-struct (value (get-schema uri-struct))))
 
 (defun uri-userinfo (uri-struct)
-  (when uri-struct (cond ((null (get-userinfo (get-authority uri-struct))) nil)
-						 (T (value (get-userinfo (get-authority uri-struct)))))))
+  (when uri-struct (cond
+					 ((null (get-userinfo (get-authority uri-struct))) nil)
+					 (T (value (get-userinfo (get-authority uri-struct)))))))
 
 (defun uri-host (uri-struct)
   (when uri-struct (cond ((null (get-host (get-authority uri-struct))) nil)
@@ -397,156 +398,156 @@ imbatta nei caratteri inseriti in banned.|#
 			 'userinfo :value (coerce parsed 'string)) 
 			 remaining))))))
 
- ;; Input: una lista da parsare
- ;; Output: un oggetto che contiene userinfo, host e port + il resto
- (defun parse-authority (URIStringList)
-   (if (and (eq (first URIStringList) #\/) 
-			(eq (second URIStringList) #\/))
-	 (let* (
-	   (URIList (cdr (cdr URIStringList)))
-	   (parsed-userinfo (multiple-value-list
-		   (parse-userinfo URIList)))
-	   (parsed-host (multiple-value-list
-			 (parse-host (second parsed-userinfo))))
-	   (parsed-port (multiple-value-list
-			 (parse-port (second parsed-host)))))
-	   (values 
+;; Input: una lista da parsare
+;; Output: un oggetto che contiene userinfo, host e port + il resto
+(defun parse-authority (URIStringList)
+  (if (and (eq (first URIStringList) #\/) 
+		   (eq (second URIStringList) #\/))
+	  (let* (
+			 (URIList (cdr (cdr URIStringList)))
+			 (parsed-userinfo (multiple-value-list
+							   (parse-userinfo URIList)))
+			 (parsed-host (multiple-value-list
+						   (parse-host (second parsed-userinfo))))
+			 (parsed-port (multiple-value-list
+						   (parse-port (second parsed-host)))))
+		(values 
 		 (make-instance 'authority 
-		   :userinfo (first parsed-userinfo) 
-		   :host (first parsed-host) 
-		   :port (first parsed-port)) 
+						:userinfo (first parsed-userinfo) 
+						:host (first parsed-host) 
+						:port (first parsed-port)) 
 		 (second parsed-port)))
-	 (values 
-		 (make-instance 'authority 
-		   :userinfo nil 
-		   :host nil 
-		   :port (make-instance 'port :value 80)) 
-		 URIStringList)))
+	  (values 
+	   (make-instance 'authority 
+					  :userinfo nil 
+					  :host nil 
+					  :port (make-instance 'port :value 80)) 
+	   URIStringList)))
 
- ;; funzione ausialiaria che gestisce lo slash per il path
- (defun slash (list)
-   (cond
+;; funzione ausialiaria che gestisce lo slash per il path
+(defun slash (list)
+  (cond
 	((or (eq (first list) 'eof) (null list)) list)
 	((eq (first list) #\/) (cdr list))
 	(T (error 'uri-invalid-slash))))
 
- ;; scheme ':' [authority] ['/' [path] ['?' query] ['#' fragment]]
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-default-uri (URIStringList)
-   (let* (
-	  (parsed-authority (multiple-value-list
-				 (parse-authority URIStringList)))
-	  (parsed-path (multiple-value-list
-				(parse-path (slash (second parsed-authority)))))
-	  (parsed-query (multiple-value-list
-			 (parse-query (second parsed-path))))
-	  (parsed-fragment (multiple-value-list
-				(parse-fragment (second parsed-query)))))
-	 (list 
-	  (first parsed-authority) 
-	  (first parsed-path) 
-	  (first parsed-query) 
-	  (first parsed-fragment)
-	  (second parsed-fragment))))
+;; scheme ':' [authority] ['/' [path] ['?' query] ['#' fragment]]
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-default-uri (URIStringList)
+  (let* (
+		 (parsed-authority (multiple-value-list
+							(parse-authority URIStringList)))
+		 (parsed-path (multiple-value-list
+					   (parse-path (slash (second parsed-authority)))))
+		 (parsed-query (multiple-value-list
+						(parse-query (second parsed-path))))
+		 (parsed-fragment (multiple-value-list
+						   (parse-fragment (second parsed-query)))))
+	(list 
+	 (first parsed-authority) 
+	 (first parsed-path) 
+	 (first parsed-query) 
+	 (first parsed-fragment)
+	 (second parsed-fragment))))
 
- ;; "news" ':' [host]
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-news (URIStringList URIScheme)
-	 (let (
-	 (parsed-host (multiple-value-list (parse-host URIStringList))))
-	   (values 
-	   (make-uri-structure 
-		 (make-instance 'schema :value URIScheme)
-		 (make-uri-authority 
-		 nil 
-		 (first parsed-host))) 
-	   (second parsed-host))))
+;; "news" ':' [host]
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-news (URIStringList URIScheme)
+  (let (
+		(parsed-host (multiple-value-list (parse-host URIStringList))))
+	(values 
+	 (make-uri-structure 
+	  (make-instance 'schema :value URIScheme)
+	  (make-uri-authority 
+	   nil 
+	   (first parsed-host))) 
+	 (second parsed-host))))
 
- ;; "tel" ':' [userinfo]
- ;; "fax" ':' [userinfo]
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-telfax (URiStringList URIScheme)
-   (let (
-	 (parsed-userinfo (multiple-value-list
-			   (parse-userinfo URIStringList '(eof)))))
-	 (if (null (first parsed-userinfo))
-	   (error 'uri-invalid-telfax)
-	   (values 
-	   (make-uri-structure 
-		 (make-instance 'schema :value URIScheme)
-		 (make-uri-authority 
-		 (first parsed-userinfo))) 
-	   (second parsed-userinfo)))))
-
- ;; "mailto" ':' [userinfo ['@' host]]
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-mailto (URIStringList URIScheme)
-   (let (
-	 (parsed-userinfo (multiple-value-list
-			   (parse-userinfo URIStringList '(eof)))))
-	 (if (equal (first (second parsed-userinfo)) #\@)
-		 (let (
-			   (parsed-host (multiple-value-list
-				 (parse-host (cdr (second parsed-userinfo))))))
-		 (if (null (first parsed-host))
-		   (error 'uri-invalid-mailto)
-		   (values (make-uri-structure 
-					 (make-instance 'schema :value URIScheme)
-					 (make-uri-authority 
-					   (first parsed-userinfo) 
-					   (first parsed-host)))  
-				 (second parsed-host))))
-	   (if (null (first parsed-userinfo))
-		 (error 'uri-invalid-mailto)
-		 (values(make-uri-structure 
-			   (make-instance 'schema :value URIScheme)
-			   (make-uri-authority 
-				(first parsed-userinfo)))   
-		  (second parsed-userinfo))))))
-
- ;; "zos" ':' [authority] '/' pathZos ['?' query] ['#' fragment]
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-zos (URIStringList URIScheme)
-	   (let* (
-		  (parsed-authority (multiple-value-list
-				 (parse-authority URIStringList)))
-		  (parsed-path (multiple-value-list
-				(parse-path-zos (second parsed-authority))))
-		  (parsed-query (multiple-value-list
-				 (parse-query (second parsed-path))))
-		  (parsed-fragment (multiple-value-list
-					(parse-fragment (second parsed-query)))))
-	 (values (make-uri-structure 
+;; "tel" ':' [userinfo]
+;; "fax" ':' [userinfo]
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-telfax (URiStringList URIScheme)
+  (let (
+		(parsed-userinfo (multiple-value-list
+						  (parse-userinfo URIStringList '(eof)))))
+	(if (null (first parsed-userinfo))
+		(error 'uri-invalid-telfax)
+		(values 
+		 (make-uri-structure 
 		  (make-instance 'schema :value URIScheme)
-		  (first parsed-authority)
-		  (first parsed-path)
-		  (first parsed-query)
-		  (first parsed-fragment)
-		  )  
-		 (second parsed-fragment))))
+		  (make-uri-authority 
+		   (first parsed-userinfo))) 
+		 (second parsed-userinfo)))))
 
- ;; funzione che restituisce T se è uno schema speciale
- (defun is-special-scheme (URIScheme)
-   (or 
-	(equalp (string-downcase URIScheme) "news")
-	(equalp (string-downcase URIScheme) "zos")
-	(equalp (string-downcase URIScheme) "fax")
-	(equalp (string-downcase URIScheme) "tel")
-	(equalp (string-downcase URIScheme) "mailto")))
+;; "mailto" ':' [userinfo ['@' host]]
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-mailto (URIStringList URIScheme)
+  (let (
+		(parsed-userinfo (multiple-value-list
+						  (parse-userinfo URIStringList '(eof)))))
+	(if (equal (first (second parsed-userinfo)) #\@)
+		(let (
+			  (parsed-host (multiple-value-list
+							(parse-host (cdr (second parsed-userinfo))))))
+		  (if (null (first parsed-host))
+			  (error 'uri-invalid-mailto)
+			  (values (make-uri-structure 
+					   (make-instance 'schema :value URIScheme)
+					   (make-uri-authority 
+						(first parsed-userinfo) 
+						(first parsed-host)))  
+					  (second parsed-host))))
+		(if (null (first parsed-userinfo))
+			(error 'uri-invalid-mailto)
+			(values(make-uri-structure 
+					(make-instance 'schema :value URIScheme)
+					(make-uri-authority 
+					 (first parsed-userinfo)))   
+				   (second parsed-userinfo))))))
 
- ;; Chiama la funzione corretta a seconda dello scheme trovato
- ;; input: lista da parsare, stringa che rappresenta lo scheme
- ;; output: Uri-structure
- (defun parse-special-schema-uri (URIStringList URIScheme)
-   (cond
+;; "zos" ':' [authority] '/' pathZos ['?' query] ['#' fragment]
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-zos (URIStringList URIScheme)
+  (let* (
+		 (parsed-authority (multiple-value-list
+							(parse-authority URIStringList)))
+		 (parsed-path (multiple-value-list
+					   (parse-path-zos (second parsed-authority))))
+		 (parsed-query (multiple-value-list
+						(parse-query (second parsed-path))))
+		 (parsed-fragment (multiple-value-list
+						   (parse-fragment (second parsed-query)))))
+	(values (make-uri-structure 
+			 (make-instance 'schema :value URIScheme)
+			 (first parsed-authority)
+			 (first parsed-path)
+			 (first parsed-query)
+			 (first parsed-fragment)
+			 )  
+			(second parsed-fragment))))
+
+;; funzione che restituisce T se è uno schema speciale
+(defun is-special-scheme (URIScheme)
+  (or 
+   (equalp (string-downcase URIScheme) "news")
+   (equalp (string-downcase URIScheme) "zos")
+   (equalp (string-downcase URIScheme) "fax")
+   (equalp (string-downcase URIScheme) "tel")
+   (equalp (string-downcase URIScheme) "mailto")))
+
+;; Chiama la funzione corretta a seconda dello scheme trovato
+;; input: lista da parsare, stringa che rappresenta lo scheme
+;; output: Uri-structure
+(defun parse-special-schema-uri (URIStringList URIScheme)
+  (cond
 	((and
-	 (eq (first UriStringList) 'eof)
-	 (equalp (string-downcase URIScheme) "zos"))
+	  (eq (first UriStringList) 'eof)
+	  (equalp (string-downcase URIScheme) "zos"))
 	 (error 'uri-invalid-path-zos)) 
 	((eq (first UriStringList) 'eof)
 	 (values (make-uri-structure
@@ -562,13 +563,13 @@ imbatta nei caratteri inseriti in banned.|#
 	((equalp (string-downcase URIScheme) "zos")
 	 (parse-zos URIStringList URIScheme))))
 
- ;; Chiama la funzione corretta in base a cosa abbiamo dopo "scheme :"
- ;; input: lista rappresentante la stringa da parsare
- ;; output uri-structure
- (defun parse-uri-type (URIStringList)
-   (let (
-	 (parsed-scheme (multiple-value-list (parse-scheme URIStringList))))
-	 (cond
+;; Chiama la funzione corretta in base a cosa abbiamo dopo "scheme :"
+;; input: lista rappresentante la stringa da parsare
+;; output uri-structure
+(defun parse-uri-type (URIStringList)
+  (let (
+		(parsed-scheme (multiple-value-list (parse-scheme URIStringList))))
+	(cond
 	  ((is-special-scheme (value (first parsed-scheme))) 
 	   (parse-special-schema-uri
 		(second parsed-scheme) (value (first parsed-scheme)))
@@ -578,11 +579,11 @@ imbatta nei caratteri inseriti in banned.|#
 		   ((otherComp (parse-default-uri (second parsed-scheme))))
 		 (values 
 		  (make-instance 'uri-structure 
-		   :schema (first parsed-scheme) 
-		   :authority (first otherComp)
-		   :path (second otherComp)
-		   :query (third otherComp)
-		   :fragment (fourth otherComp))
+						 :schema (first parsed-scheme) 
+						 :authority (first otherComp)
+						 :path (second otherComp)
+						 :query (third otherComp)
+						 :fragment (fourth otherComp))
 		  (fifth otherComp)))))))
 
  ;; Utility interna, aggiunge EOF alla fine della lista come delimitatore
@@ -597,32 +598,33 @@ imbatta nei caratteri inseriti in banned.|#
 	  ((not (eq (first (second parsed_uri)) 'eof)) (error 'invalid-uri))
 	  (T (first parsed_uri)))))
 
- ;; Funzione principale, converte la stringa in Input come una lista di caratteri
- ;; in caso di un qualunque tipo di errore restituisce NIL
- ;; input: Stringa da parsare
- ;; output: uri-structure
- (defun uri-parse (URIString)
-   (handler-case (uri-parse_ (coerce URIString 'list))
-	 (error ())))
+;; Funzione principale, converte la stringa in Input come una lista
+;; di caratteri
+;; in caso di un qualunque tipo di errore restituisce NIL
+;; input: Stringa da parsare
+;; output: uri-structure
+(defun uri-parse (URIString)
+  (handler-case (uri-parse_ (coerce URIString 'list))
+	(error ())))
 
- ;; funzione che permette la stampa dell'uri-structure
- ;; input: uri-structure, optional Stream
- (defun uri-display (URIStruct &optional (Stream t))
-   (when (typep URIStruct 'uri-structure)
-	 (format Stream 
-	   (concatenate 'string
-		 "Scheme:   ~S~%" 
-		 "Userinfo: ~S~%"
-		 "Host:     ~S~%"
-		 "Port:     ~S~%"
-		 "Path:     ~S~%"
-		 "Query:    ~S~%"
-		 "Fragment: ~S~%") 
-	 (uri-scheme URIStruct) 
-	 (uri-userinfo URIStruct)
-	 (uri-host URIStruct)
-	 (uri-port URIStruct)
-	 (uri-path URIStruct)
-	 (uri-query URIStruct)
-	 (uri-fragment URIStruct))))
+;; funzione che permette la stampa dell'uri-structure
+;; input: uri-structure, optional Stream
+(defun uri-display (URIStruct &optional (Stream t))
+  (when (typep URIStruct 'uri-structure)
+ (format Stream 
+   (concatenate 'string
+	 "Scheme:   ~S~%" 
+	 "Userinfo: ~S~%"
+	 "Host:     ~S~%"
+	 "Port:     ~S~%"
+	 "Path:     ~S~%"
+	 "Query:    ~S~%"
+	 "Fragment: ~S~%") 
+   (uri-scheme URIStruct) 
+   (uri-userinfo URIStruct)
+   (uri-host URIStruct)
+   (uri-port URIStruct)
+   (uri-path URIStruct)
+   (uri-query URIStruct)
+   (uri-fragment URIStruct))))
 
